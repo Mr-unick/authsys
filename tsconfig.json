@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "paths": {
+      "@components/*": ["src/components/*"],  // Alias for your components
+      "@shadcn/*": ["node_modules/@shadcn/react-ui/*"]  // Alias for ShadCN components
+    },
+    "allowJs": true,
+    "skipLibCheck": true,
+    
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "experimentalDecorators": true, 
+    "emitDecoratorMetadata":true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "strictNullChecks": true
+  },
+  "include": [
+    "next-env.d.ts",
+    ".next/types/**/*.ts",
+    "**/*.ts",
+    "**/*.tsx"
+, "src/app/entity/LoginLogoutLog.ts", "src/pages/api/auth/[...nextauth].js"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
