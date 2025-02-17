@@ -329,8 +329,8 @@ export const leadDetailSample = {
 
 
   
-  export const  AUTH_CLIENT = "279388001610-3b0d7ncjdlndvpe72kovec19s8qtohto.apps.googleusercontent.com"
-  export const AUTH_SECREAT = "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"
+  // export const  AUTH_CLIENT = "279388001610-3b0d7ncjdlndvpe72kovec19s8qtohto.apps.googleusercontent.com"
+  // export const AUTH_SECREAT = "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"
 
 
 //   INSERT INTO permissions (policy_name, permission, action) 
