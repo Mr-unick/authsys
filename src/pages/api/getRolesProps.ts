@@ -16,11 +16,8 @@ export default async function handler(req, res) {
 
   if (req.method == "GET") {
     try {
-      const BuisnesData = await RolesRepo.getMany();
-
-      console.log(BuisnesData);
-
-      const tablerows = BuisnesData.map((data) => {
+       const RolesData = await RolesRepo.getMany();
+      const tablerows = RolesData.map((data) => {
         return {
           id: data.id,
           name: data.name,
@@ -30,9 +27,7 @@ export default async function handler(req, res) {
       const tabledata = new GenerateTable({
         name: "Roles",
         data: tablerows,
-        form:{
-          url
-        }
+
       });
 
       const response: ResponseInstance = {

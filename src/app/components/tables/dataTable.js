@@ -28,11 +28,16 @@ import {
 import Block from "./tags/column";
 import TD from "./tags/column";
 import TH from "./tags/head";
+import { useRouter } from "next/router";
+import Link from "next/link";
 
 const DataTable = ({ url }) => {
   const [tableData, setTableData] = useState(null);
   const [rows, setRows] = useState([]);
   const [change, setChange] = useState(false);
+  const router = useRouter();
+  
+    const { asPath } = router;
 
   const handleSortChange = (key) => {
     // setSortKey(key);
@@ -103,6 +108,7 @@ const DataTable = ({ url }) => {
     return <div className="text-center p-4 h-[80vh] w-full flex justify-center items-center">No data available.</div>;
   }
 
+
   return (
     <div className="w-full font-pretty">
       {/* <h1 className="my-2 text-md font-normal">{tableData.title}</h1> */}
@@ -149,10 +155,14 @@ const DataTable = ({ url }) => {
             Export
           </Button>
           {tableData.create && (
+            // <Button className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
+            //   <Modal title={`Add ${tableData.name}`}>
+            //     <FormComponent />
+            //   </Modal>
+            // </Button>
+
             <Button className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
-              <Modal title={`Add ${tableData.name}`}>
-                <FormComponent />
-              </Modal>
+              <Link href={`${asPath}form`}>{`Add ${tableData.name}`}</Link>
             </Button>
           )}
         </div>
@@ -162,46 +172,39 @@ const DataTable = ({ url }) => {
           <thead className="text-xs text-gray-100  bg-[#4E49F2] rounded-md p-3  first-letter:uppercase">
             <tr>
               {tableData.columns.map((key) => (
-                <TH key={key}>
-                  {key}
-                </TH>
+                <TH key={key}>{key}</TH>
               ))}
-              {(tableData.update || tableData.delete) && (
-                <TH>Actions</TH>
-              )}
+              {(tableData.update || tableData.delete) && <TH>Actions</TH>}
             </tr>
           </thead>
           <tbody>
             {rows.map((row, index) => (
               <tr key={index} className="border-b hover:bg-[#F2F2F2]">
                 {Object.values(row).map((value, idx) => (
-                  <TD key={idx} >
-                    {value}
-                  </TD>
+                  <TD key={idx}>{value}</TD>
                 ))}
 
                 {(tableData.update || tableData.delete) && (
-                  <TD >
+                  <TD>
                     <div className="flex gap-5">
-                    {tableData.update && (
-                      <Modal title={`Edit`}>
-                        <div className="w-full h-full bg-red">
-                          sssssssssssssssssssss
-                        </div>
-                      </Modal>
-                    )}
-                    {tableData.delete && (
-                      <button
-                        onClick={() => {
-                          handleDelete(row.id);
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        Delete
-                      </button>
-                    )}
+                      {tableData.update && (
+                        <Modal title={`Edit`}>
+                          <div className="w-full h-full bg-red">
+                            sssssssssssssssssssss
+                          </div>
+                        </Modal>
+                      )}
+                      {tableData.delete && (
+                        <button
+                          onClick={() => {
+                            handleDelete(row.id);
+                          }}
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
-                    
                   </TD>
                 )}
               </tr>

@@ -1,11 +1,12 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { AUTH_CLIENT, AUTH_SECREAT } from "../../../../const";
 
 export default NextAuth({
   providers: [
     GoogleProvider({
-      clientId: process.env.AUTH_CLIENT ,
-      clientSecret: process.env.AUTH_SECRET,
+      clientId: AUTH_CLIENT ,
+      clientSecret: AUTH_SECREAT,
     }),
   ],
   pages: {

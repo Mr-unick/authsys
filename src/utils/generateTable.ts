@@ -15,6 +15,7 @@ export class GenerateTable {
       delete: haspermission(UsserData, `${table.name}_delete`),
       view: haspermission(UsserData, `${table.name}_view`),
       create: haspermission(UsserData, `${table.name}_create`),
+      createform :'roleform',
       rows: table.data,
       columns: Object.keys(table.data[0])
     };

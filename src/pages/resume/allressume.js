@@ -22,9 +22,10 @@ console.log('this',resumedata)
   }
 
   return (
-    <div>
+    <div className="m-5 bg-gray-50">
       <select
         onChange={(e) => {handleselect(e)}}
+        className="px-2 py-1 rounded-sm border-[1px] w-[20%] m-2"
       >
         <option value={"Minimal"}>Minimal</option>
         <option value={"Modern"}>Modern</option>

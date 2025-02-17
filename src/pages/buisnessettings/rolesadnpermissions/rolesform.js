@@ -91,7 +91,6 @@ const RolePermissionsForm = () => {
       permissions: Object.keys(permissions).filter(key => permissions[key])
     };
     console.log('Role Data:', roleData);
-    // Add submission logic
   };
 
   return (

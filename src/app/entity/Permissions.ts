@@ -12,6 +12,9 @@ export class Permissions {
   @Column()
   permission: string;
 
+  @Column()
+  action: string;
+
   @ManyToMany(() => Roles, role => role.permissions)
   @JoinColumn() 
   role:typeof Roles[];

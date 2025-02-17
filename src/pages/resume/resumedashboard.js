@@ -102,8 +102,8 @@ export default function ResumeDashboard() {
   //   router.push("/resume/resumesignin");
   // }
 
-  const handleRedirect = () => {
-    router.push("/resume/resumebuilder");
+  const handleRedirect = (loc) => {
+    router.push(loc);
   };
 
   const handleselect = (data) => {
@@ -137,17 +137,26 @@ export default function ResumeDashboard() {
       </div>
 
       <div className="px-10">
-        <button>Create</button>
+       
       </div>
       <div className="flex flex-col w-full px-10">
-        <div className="w-screen gap-6 mt-10">
+        <div className="w-screen flex gap-6 mt-10">
           <button
             onClick={() => {
-              handleRedirect();
+              handleRedirect("/resume/resumebuilder");
             }}
-            className="px-4 py-2 rounded-md text-center bg-blue-600 text-white"
+            className="px-4 py-2 rounded-md text-center bg-blue-600 text-white flex items-center gap-1"
           >
-            <Plus size={9} color="white" />
+            <Plus size={14} color="white" /> Create Resume
+          </button>
+
+          <button
+            onClick={() => {
+              handleRedirect('/resume/resumeguide');
+            }}
+            className="px-4 py-2 rounded-md text-center bg-blue-600 text-white flex items-center gap-1"
+          >
+             Resume Guide
           </button>
           
         </div>

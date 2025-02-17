@@ -328,40 +328,90 @@ export const leadDetailSample = {
 }
 
 
-// INSERT INTO `policies` (`policy_name`, `permission`, `action`) VALUES
-//   ('dashboard', 'view_dashboard', 'view'),
-//   ('leads', 'view_leads', 'view'),
-//   ('leads', 'create_lead', 'create'),
-//   ('leads', 'update_lead', 'update'),
-//   ('leads', 'delete_lead', 'delete'),
-//   ('leads', 'restore_lead', 'restore'),
-//   ('leads', 'view_board_leads', 'view'),
-//   ('leads', 'create_board_leads', 'create'),
-//   ('leads', 'update_board_leads', 'update'),
-//   ('leads', 'delete_board_leads', 'delete'),
-//   ('leads', 'restore_board_leads', 'restore'),
-//   ('leads', 'view_table_leads', 'view'),
-//   ('leads', 'create_table_leads', 'create'),
-//   ('leads', 'update_table_leads', 'update'),
-//   ('leads', 'delete_table_leads', 'delete'),
-//   ('leads', 'restore_table_leads', 'restore'),
-//   ('users', 'view_users', 'view'),
-//   ('users', 'create_user', 'create'),
-//   ('users', 'update_user', 'update'),
-//   ('users', 'delete_user', 'delete'),
-//   ('users', 'restore_user', 'restore'),
-//   ('business_settings', 'view_business_settings', 'view'),
-//   ('business_settings', 'update_business_settings', 'update'),
-//   ('business_settings', 'view_roles_permissions', 'view'),
-//   ('business_settings', 'update_roles_permissions', 'update'),
-//   ('business_settings', 'view_business_details', 'view'),
-//   ('business_settings', 'update_business_details', 'update'),
-//   ('business_settings', 'view_area_of_operation', 'view'),
-//   ('business_settings', 'update_area_of_operation', 'update'),
-//   ('business_settings', 'view_lead_stages', 'view'),
-//   ('business_settings', 'update_lead_stages', 'update'),
-//   ('business_settings', 'view_branches', 'view'),
-//   ('business_settings', 'update_branches', 'update'),
-//   ('settings', 'view_settings', 'view'),
-//   ('settings', 'update_settings', 'update');
   
+  export const  AUTH_CLIENT = "279388001610-3b0d7ncjdlndvpe72kovec19s8qtohto.apps.googleusercontent.com"
+  export const AUTH_SECREAT = "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"
+
+
+//   INSERT INTO permissions (policy_name, permission, action) 
+// VALUES 
+
+// ('roles', 'view_roles', 'view'),
+// ('roles', 'update_roles', 'update'),
+// ('roles', 'create_roles', 'create'),
+// ('roles', 'delete_roles', 'delete'),
+// ('roles', 'restore_roles', 'restore'),
+
+
+// ('policy', 'view_policy', 'view'),
+// ('policy', 'update_policy', 'update'),
+// ('policy', 'create_policy', 'create'),
+// ('policy', 'delete_policy', 'delete'),
+// ('policy', 'restore_policy', 'restore'),
+
+
+// ('business', 'view_business', 'view'),
+// ('business', 'update_business', 'update'),
+// ('business', 'create_business', 'create'),
+// ('business', 'delete_business', 'delete'),
+// ('business', 'restore_business', 'restore'),
+
+
+// ('branches', 'view_branches', 'view'),
+// ('branches', 'update_branches', 'update'),
+// ('branches', 'create_branches', 'create'),
+// ('branches', 'delete_branches', 'delete'),
+// ('branches', 'restore_branches', 'restore'),
+
+
+// ('leadstages', 'view_leadstages', 'view'),
+// ('leadstages', 'update_leadstages', 'update'),
+// ('leadstages', 'create_leadstages', 'create'),
+// ('leadstages', 'delete_leadstages', 'delete'),
+// ('leadstages', 'restore_leadstages', 'restore'),
+
+
+// ('area_of_operation', 'view_area_of_operation', 'view'),
+// ('area_of_operation', 'update_area_of_operation', 'update'),
+// ('area_of_operation', 'create_area_of_operation', 'create'),
+// ('area_of_operation', 'delete_area_of_operation', 'delete'),
+// ('area_of_operation', 'restore_area_of_operation', 'restore'),
+
+
+// ('users', 'view_users', 'view'),
+// ('users', 'update_users', 'update'),
+// ('users', 'create_users', 'create'),
+// ('users', 'delete_users', 'delete'),
+// ('users', 'restore_users', 'restore'),
+
+
+// ('settings', 'update_settings', 'update'),
+// ('settings', 'restore_settings', 'restore'),
+
+
+// ('dashboard', 'view_dashboard', 'view'),
+
+
+// ('leads', 'view_leads', 'view'),
+// ('leads', 'update_leads', 'update'),
+// ('leads', 'create_leads', 'create'),
+// ('leads', 'delete_leads', 'delete'),
+// ('leads', 'restore_leads', 'restore'),
+
+
+// ('leaddetails', 'view_leaddetails', 'view'),
+// ('leaddetails', 'update_leaddetails', 'update'),
+// ('leaddetails', 'create_leaddetails', 'create'),
+// ('leaddetails', 'delete_leaddetails', 'delete'),
+// ('leaddetails', 'restore_leaddetails', 'restore'),
+
+
+// ('personal_info', 'view_personal_info', 'view'),
+// ('personal_info', 'update_personal_info', 'update'),
+
+// ('source', 'view_source', 'view'),
+// ('source', 'update_source', 'update'),
+
+
+// ('freshleads', 'view_freshleads', 'view'),
+// ('freshleads', 'assign_freshleads', 'assign');

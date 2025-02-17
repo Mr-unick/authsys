@@ -9,6 +9,7 @@ import { useEffect } from "react";
 
 
 
+
 export default function resume(){
 
   const { data: session } = useSession();
@@ -46,7 +47,7 @@ export default function resume(){
       </div>
     </div>
     <div class="w-full mx-auto mt-10 text-center md:w-4/12">
-      <img src="undraw_hiring_8szx.svg" alt="Hellonext feedback boards software screenshot" class="w-full rounded-lg shadow-2xl" />
+      <img src={'./undraw.svg'} alt="Hellonext feedback boards software screenshot" class="w-full rounded-lg shadow-2xl" />
     </div>
   </section>
   

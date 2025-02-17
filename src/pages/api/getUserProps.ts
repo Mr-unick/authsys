@@ -19,10 +19,11 @@ export default async function handler(req, res) {
     try {
 
       const BuisnesData = await AppDataSource.getRepository(Users).find({relations: [
-        "role",'business'
+        "role",'business', "role.permissions"
       ]});
 
       console.log(BuisnesData);
+
     
 
       const tablerows = BuisnesData.map(data =>{

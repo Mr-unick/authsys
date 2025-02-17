@@ -56,23 +56,23 @@ import { ResponseInstance } from "../../utils/instances";
           },
           {
             title: "Buisnes Details",
-            url: "/buisnessettings/buisness",
+            url: "/buisnessettings/buisness/buisness",
             permissionRequired: "view_nested_dashboard",
           },
           
           {
             title: "Area Of Operation",
-            url: "/buisnessettings/areaofsales",
+            url: "/buisnessettings/areaofsales/areaofsales",
             permissionRequired: "view_nested_about",
           },
           {
             title: "Lead Stages",
-            url: "/buisnessettings/leadstages",
+            url: "/buisnessettings/leadstages/leadstages",
             permissionRequired: "view_nested_about",
           },
           {
             title: "Branches",
-            url: "/buisnessettings/branches",
+            url: "/buisnessettings/branches/branches",
             permissionRequired: "view_nested_about",
           },
         ],

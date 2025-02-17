@@ -13,6 +13,7 @@ export type ResponseInstance = {
     delete: boolean;
     view: boolean;
     create: boolean;
+    createform:string
     rows: Array<object>;
     columns: Array<string>;
   };
