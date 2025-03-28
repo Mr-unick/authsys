@@ -7,15 +7,11 @@ import { StageChangeHistory } from "../../app/entity/StageChangeHistory";
 import { LeadStages } from "../../app/entity/LeadStages";
 import { LeadsTableInstace, ResponseInstance } from "../../utils/instances";
 import { GenerateTable } from "../../utils/generateTable";
+import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function handler(req, res) {
+  let user = await VerifyToken(req, res,'leads');
   if (req.method == "POST") {
-    const leadData = {
-      name: "John Doe",
-      email: "johndoe@example.com",
-      phone: "123-456-7890",
-      lead_source: "Website",
-    };
 
     const userRepository = AppDataSource.getRepository(Users);
     const businessRepository = AppDataSource.getRepository(Business);
@@ -140,7 +136,7 @@ export default async function handler(req, res) {
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
-            });
+            }).policy(user,'leads').addform('leadform').gettable();
       
             const response: ResponseInstance = {
               message: "Request successful",
@@ -152,26 +148,5 @@ export default async function handler(req, res) {
     }
   }
 
-  //   if (req.method === 'PUT') {
-  //     const { leadId, userIds } = req.body;
-
-  //     const leadRepository = AppDataSource.getRepository(Leads);
-  //     const userRepository = AppDataSource.getRepository(Users);
-
-  //     const lead = await leadRepository.findOne({
-  //       where: { id: leadId },
-  //       relations: ['users'],
-  //     });
-
-  //     if (!lead) {
-  //       return res.status(404).json({ message: 'Lead not found' });
-  //     }
-
-  //     const usersToAdd = await userRepository.findByIds(userIds);
-
-  //     lead.users = [...lead.users, ...usersToAdd];
-  //     await leadRepository.save(lead);
-
-  //     res.json(lead);
-  //   }
+ 
 }

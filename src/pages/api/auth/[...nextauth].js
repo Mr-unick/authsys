@@ -1,6 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { AUTH_CLIENT, AUTH_SECREAT } from "../../../../const";
+import { AUTH_CLIENT, AUTH_SECREAT} from "../../../../const";
 
 export default NextAuth({
   providers: [

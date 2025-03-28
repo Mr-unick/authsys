@@ -1,28 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { jwtVerify } from 'jose';
+import { hasroutepermission } from './utils/authroization';
 
-export function middleware(NextRequest) {
+export async function middleware(request) {
 
-    const token = NextRequest.cookies.get('authToken'); 
+    const token = request.cookies.get('token');
 
-    const responce = NextResponse.next();
+    const response = NextResponse.next();
 
-    responce.headers.set('X-Custom-Header', 'My custom header value')
+    response.headers.set('X-Custom-Header', 'My custom header value');
 
-    // if (!token) {
-     
-    //     return NextResponse.redirect(new URL('/login', NextRequest.url)); 
-    // }
 
-  
+    if (request.url == 'http://localhost:3000/api/auth/login') {
+        return response;
+    }
 
-   
-    return NextResponse.next();
+    if (!token) {
+        return NextResponse.redirect(new URL('/login', request.url));
+    }
+
+
+    if (token && request.url == 'http://localhost:3000/login') {
+
+        return NextResponse.redirect(new URL('/', request.url));
+
+    }
+
+
+
+    return response;
 }
 
 export const config = {
-    matcher: ['/'], 
+    matcher: ['/((?!login|_next).*)'],
 };
-
-// export const config = {
-//     matcher: ['/((?!login|_next).*)'], 
-// };

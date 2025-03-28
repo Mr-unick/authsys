@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne
 import {  Users } from './Users';
 import { Permissions } from './Permissions';
 import { Business } from './Business';
+import { Branch } from './Branch';
 
 
 
@@ -23,9 +24,14 @@ export class Roles {
   @JoinColumn()
   users:typeof Users[];
 
-  @ManyToOne(type => Business, buisnes => buisnes.role)
+  @ManyToOne(type => Business, buisnes => buisnes.role, { nullable: true })
   @JoinColumn({name:'buisnesId',referencedColumnName:'id'})
   buisness:typeof Business;
+
+  @ManyToOne(type => Branch, branch => branch.roles)
+  @JoinColumn({name:'branchId',referencedColumnName:'id'})
+  branch:typeof Branch;
+
 
   @ManyToMany(type => Permissions, permissions => permissions.role)
   @JoinTable({

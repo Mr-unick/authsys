@@ -15,7 +15,8 @@ export class LeadStages {
   @Column()
   colour :string
 
-
+  @Column()
+  discription:string
 
  @Column({ type: 'timestamp' ,nullable: true})
    created_at: Timestamp;
@@ -23,15 +24,15 @@ export class LeadStages {
   @Column({ type: 'timestamp', nullable: true })
    updated_at: Timestamp;
 
-  @ManyToOne(() => Business, business => business.leadStages)
+  @ManyToOne(() => Business, business => business.leadStages, { nullable: true })
   @JoinColumn()
   business:typeof Business;
 
-  @OneToMany(() => Leads, lead => lead.stage)
+  @OneToMany(() => Leads, lead => lead.stage, { nullable: true })
   @JoinColumn()
   leads:typeof Leads[];
 
-  @OneToMany(() => StageChangeHistory, stageChangeHistory => stageChangeHistory.stage)
+  @OneToMany(() => StageChangeHistory, stageChangeHistory => stageChangeHistory.stage, { nullable: true })
   @JoinColumn()
   stageChangeHistory: StageChangeHistory[];
 }

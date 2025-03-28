@@ -5,189 +5,178 @@ import SelectComponent from "./select";
 import InputComponent from "./input";
 import RadioGroupComponent from "./radiogroup";
 import SwitchComponent from "./switch";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import { ROOT_URL } from "../../../../const";
+import { toast } from "react-toastify";
+import TextAreaComponent from "./textarea";
+import { redirect } from "next/navigation";
+import { useRouter } from "next/router";
 
-export default function FormComponent({url}) {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+export default function FormComponent({ formdata, id, setOpen }) {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [data, setdata] = useState([]);
+  const [change, setChange] = useState(false)
+  const [res, setRes] = useState(false)
+  const router = useRouter();
 
-  const [data ,setdata]=useState(null);
 
-  
-  let data2 = [
-    {
-      name: "gender",
-      type: "select",
-      label: "Gender",
-      options: ["Male", "Female", "Other"],
-      value: "Male",
-      required: false, 
-    },
-    {
-      name: "name",
-      type: "text",
-      label: "Enter Name",
-      value: "",
-      required: false,  
-    },
-    {
-      name: "email",
-      type: "email",
-      label: "Enter Email",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "image",
-      type: "file",
-      label: "Select Profile",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "password",
-      type: "password",
-      label: "Enter Password",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "confirm password",
-      type: "password",
-      label: "Confirm Password",
-      value: "",
-      required: false,  
-    },
-    {
-      name: "address",
-      type: "text",
-      label: "Enter your address",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "gender",
-      type: "radiogroup",
-      label: "Select Gender",
-      options: ["Male", "Female", "Other"],
-      required: false, 
-    },
-    {
-      name: "adhar",
-      type: "file",
-      label: "Upload Adhar",
-      value: "",
-      required: false, 
-    },
-   
-    {
-      name: "agrred",
-      type: "checkbox",
-      label: "Agree to terms and conditions",
-      value: "",
-      required: false,  
-      newRow: true,
-      
-    }
-    
-  ];
-
-  const handleFetchData =()=>{
-    axios.post(`${ROOT_URL}api/${'getBuisnessProps'}?type=getform`).then((res)=>{
-     setdata( res.data.data)
-
-     console.log(res.data,'this is fetched data')
-    })
-  }
+  const handleFetchdata = useCallback(() => {
+    axios
+      .get(`${ROOT_URL}api/forms/${formdata?.formurl}?id=${id}`)
+      .then((res) => res.data)
+      .then((res) => {
+        setdata(res);
+        setRes(res);
+        
+      })
+      .catch(error => {
+        console.error("Failed to fetch data:", error);
+      });
+    setChange(false);
+  }, [change]);
 
   const onSubmit = async (data) => {
-    console.log(data); 
-    alert('Form submitted successfully!');
+
+    if (res.method === "post") {
+
+      let response = await axios.post(`${ROOT_URL}api/${res.submiturl}`, data);
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        router.back();
+      } else {
+        toast.error(response.data.message);
+      }
+
+
+    } else if (res.method === "put") {
+
+      let response = await axios.post(`${ROOT_URL}api/${res.submiturl}?id=${id}`, data);
+
+      if (response.status === 200) {
+        toast.success(response.data.message);
+        router.current();
+      } else {
+        toast.error(response.data.message);
+
+      }
+
+    } else {
+      toast.error("Something went wrong");
+    }
+
   };
 
-  // useEffect(()=>{
-  //   handleFetchData();
-  // },[])
+  useEffect(() => {
+    handleFetchdata();
+  }, []);
 
 
- 
+
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col justify-around w-[40rem] px-5 py-2">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className={`flex flex-col justify-around  px-5 py-2 ${data?.fields?.length <= 10 ? "w-[40rem]" : "w-[60rem]"}`}
+    >
       <div>
-        <h1 className="mb-5 text-xl font-normal text-gray-700">Hello</h1>
+        <h1 className="mb-6 text-xl font-normal text-gray-700">
+          {data?.title}
+        </h1>
       </div>
-      <div className="grid grid-cols-2 gap-x-8 gap-y-8">
-        {data2.map((field, key) => {
-          const gridClasses = field.newRow ? 'col-span-2' : '';
-          const validationRules = field.required ? { required: `${field.name} is required` } : {};
+      <div className={`grid  gap-x-8 gap-y-8 ${data?.fields?.length <= 10 ? "grid-cols-2" : "grid-cols-3"}`}>
+        {data?.fields?.map((field, key) => {
+          const gridClasses = field.newRow ? "col-span-2" : "";
+          const validationRules = field.required
+            ? { required: `${field.name} is required` }
+            : {};
 
           if (field.type === "select") {
             return (
               <div key={key} className={gridClasses}>
                 <SelectComponent
+                  value={field.value}
                   label={field.label}
                   options={field.options}
                   required={field.required}
+                  disabled={field.disabled}
                   {...register(field.name, validationRules)}
                 />
-                {errors[field.name] && <p className="text-red-500 text-xs mt-2">{errors[field.name]?.message}</p>}
+                {errors[field.name] && (
+                  <p className="text-red-500 text-xs mt-2">
+                    {errors[field.name]?.message}
+                  </p>
+                )}
               </div>
             );
-          } else if (field.type === "checkbox") {
-            return (
-              <div key={key} className={gridClasses}>
-                <CheckBoxComponent
-                  name={field.name}
-                  label={field.label}
-                  required={field.required}
-                  {...register(field.name, validationRules)}
-                />
-                {errors[field.name] && <p className="text-red-500 text-xs mt-2">{errors[field.name]?.message}</p>}
-              </div>
-            );
-          } else if (field.type === "text" || field.type === "file" || field.type === "password" || field.type === "email") {
+          } else if (
+            field.type === "text" ||
+            field.type === "file" ||
+            field.type === "password" ||
+            field.type === "email" ||
+            field.type === "color" ||
+            field.type === "date" ||
+            field.type === "time" ||
+            field.type === "colour"
+          ) {
             return (
               <div key={key} className={gridClasses}>
                 <InputComponent
+                  value={field.value}
                   type={field.type}
                   label={field.label}
-                 
+                  placeholder={field.placeholder}
                   required={field.required}
+                  disabled={field.disabled}
                   {...register(field.name, validationRules)}
                 />
-                {errors[field?.name] && <p className="text-red-500 text-xs mt-2">{errors[field?.name]?.message}</p>}
+                {errors[field?.name] && (
+                  <p className="text-red-500 text-xs mt-2">
+                    {errors[field?.name]?.message}
+                  </p>
+                )}
               </div>
             );
-          } else if (field.type === "radiogroup") {
+          } else if (field.type === "textarea") {
             return (
               <div key={key} className={gridClasses}>
-                <RadioGroupComponent
+                <TextAreaComponent
+                  value={field.value}
                   label={field.label}
-                  options={field.options}
+                  placeholder={field.placeholder}
                   required={field.required}
                   {...register(field.name, validationRules)}
                 />
-                {errors[field.name] && <p className="text-red-500 text-xs mt-2">{errors[field.name]?.message}</p>}
               </div>
-            );
-          } else if (field.type === "switch"){
-
-            <div key={key} className={gridClasses}>
-                <SwitchComponent
+            )
+          } else if (field.type === "date") {
+            return (
+              <div key={key} className={gridClasses}>
+                <TextAreaComponent
+                  value={field.value}
                   label={field.label}
+                  placeholder={field.placeholder}
+                  required={field.required}
                   {...register(field.name, validationRules)}
                 />
-                {errors[field.name] && <p className="text-red-500 text-xs mt-2">{errors[field.name]?.message}</p>}
-            </div>
-
+              </div>
+            )
           }
         })}
-
       </div>
 
-      <div className="flex justify-end w-full mt-4 ">
-        <Button className="w-[8rem] bg-[#4E49F2] hover:bg-[#4E49F2]" type="submit">Submit</Button>
+      <div className="flex justify-end w-full mt-8 gap-4 ">
+        <Button
+          className="w-[8rem] bg-[#4E49F2] hover:bg-[#4E49F2]"
+          type="submit"
+        // onClick={()=>{onsubmit}}
+        >
+          Submit
+        </Button>
       </div>
     </form>
   );

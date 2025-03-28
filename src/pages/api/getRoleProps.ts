@@ -9,14 +9,20 @@ import { Roles } from "../../app/entity/Roles";
 import { Business } from "../../app/entity/Business";
 import { Permissions } from "../../app/entity/Permissions";
 import { In } from "typeorm";
+import { Branch } from "../../app/entity/Branch";
+import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function handler(req, res) {
-    
+
+  let user = await VerifyToken(req, res, 'roles');
+
   const RolesRepo = RolesRepository.onlyPermit(1);
 
   if (req.method == "GET") {
     try {
+      
        const RolesData = await RolesRepo.getMany();
+       
       const tablerows = RolesData.map((data) => {
         return {
           id: data.id,
@@ -27,8 +33,8 @@ export default async function handler(req, res) {
       const tabledata = new GenerateTable({
         name: "Roles",
         data: tablerows,
+      }).policy(user,'roles').addform('roleform').formtype('page').gettable();
 
-      });
 
       const response: ResponseInstance = {
         message: "Request successful",
@@ -50,9 +56,23 @@ export default async function handler(req, res) {
 
   if (req.method == "POST"){
 
-    const { name , permissions ,branch , buisnesId} = req.body;
+    const { name , permissions ,branch} = req.body;
 
     let buisnes = await AppDataSource.getRepository(Business).findOne({where:{id:1}});
+
+    let rolebranch;
+
+
+    if(!buisnes){
+      const response: ResponseInstance = {
+        message: "Business not found",
+        data: [],
+        status: 404,
+      };
+      res.json(response);
+      return;
+    }
+
 
     let newRole =  new Roles();
     
@@ -61,17 +81,27 @@ export default async function handler(req, res) {
     })
 
   
-    newRole.name = "Admin";
+    newRole.name = name;
     newRole.permissions = permissionsList;
-    newRole.buisness=buisnes;
     newRole.created_at = new Date();
+
+    if (branch) {
+      rolebranch = await AppDataSource.getRepository(Branch).findOne({ where: { id: branch } })
+      newRole.branch = rolebranch;
+    }
+   
+    newRole.buisness= buisnes;
 
 
     AppDataSource.getRepository(Roles).save(newRole);
 
-    res.json(newRole)
+    const response: ResponseInstance = {
+      message: "New Role Created Successfully",
+      data: newRole,
+      status: 200,
+    };
+    res.json(response);
     
-
   }
   if (req.method == "DELETE") {
     try {

@@ -10,33 +10,37 @@ export type ResponseInstance = {
     name: string;
     title: string;
     update: boolean;
+    updateform:object
     delete: boolean;
     view: boolean;
     create: boolean;
-    createform:string
+    createform:object
+    formtype:string
     rows: Array<object>;
     columns: Array<string>;
   };
 
  
 
-  export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'checkbox' | 'switch' | 'checkbox';
+  export type FieldType = 'text' | 'number' | 'email' | 'password' | 'select' | 'color' | 'switch' | 'checkbox' | 'textarea' | 'date' | "time" | "color";
 
   export interface InputField {
     name: string;
     type: FieldType;
     label: string;
-    value?: string | number | boolean;
+    value?: string | number | boolean | null;
     placeholder?: string;
     options?: string[] | null;  
     required?: boolean | false;
     newRow ?:boolean | false
+    disabled:boolean
 }
 
 export type FormInstance = {
   title : string | null,
   fields :Array<InputField>,
-  submiturl : string
+  submiturl : string,
+  method : string
 }
 
 

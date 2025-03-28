@@ -8,7 +8,10 @@
     ],
     "paths": {
       "@components/*": ["src/components/*"],  // Alias for your components
-      "@shadcn/*": ["node_modules/@shadcn/react-ui/*"]  // Alias for ShadCN components
+      "@shadcn/*": ["node_modules/@shadcn/react-ui/*"]  ,// Alias for ShadCN components
+      "@/*": [
+        "./src/*"
+      ],
     },
     "allowJs": true,
     "skipLibCheck": true,

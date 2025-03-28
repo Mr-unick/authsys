@@ -1,14 +1,33 @@
-
-
-
-
-
+import { forwardRef } from "react";
 import { Input } from "../../../components/components/ui/input";
 
+const InputComponent = forwardRef(({
+  label,
+  placeholder,
+  type,
+  name,
+  required,
+  value, disabled,
+  ...rest
+}, ref) => {
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-sm text-gray-500">
+        {label}{required ? <span className="text-red-500">*</span> : <span className="text-gray-400 ml-1 text-xs"> (optional)</span>}
+      </label>
+      <Input 
+        {...rest}
+        ref={ref}
+        name={name}
+        className="placeholder:text-gray-600 placeholder:text-xs border-[1px] border-gray-300 " 
+        type={type} 
+        defaultValue={value}
+        disabled={disabled}
+    
+        placeholder={placeholder}
+      />
+    </div>
+  );
+});
 
-export default function InputComponent({label,type,name,required,...rest}) {
-    return <div className="flex flex-col gap-1">
-   <label className="text-sm text-gray-500">{ label}{ required ? "*" : " (optional)"}</label>
-    <Input {...rest} className="placeholder:text-black border-[1px] border-[#4E49F2]" type={type}  placeholder={label}/>
-  </div>
-}
+export default InputComponent;

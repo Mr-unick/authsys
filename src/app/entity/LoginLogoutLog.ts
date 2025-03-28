@@ -20,8 +20,8 @@ export class LoginLogoutLog {
   @Column()
   user_agent: string;
 
-  // @ManyToOne(() => Users, user => user.id)
-  // @JoinColumn()
-  // user: Users;
+  @ManyToOne(() => Users, user => user.id)
+  @JoinColumn()
+  user:typeof Users;
 
 }

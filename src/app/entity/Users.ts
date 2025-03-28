@@ -6,6 +6,7 @@ import { Roles } from './Roles';
 import { Notification } from './Notifications';
 import { StageChangeHistory } from './StageChangeHistory';
 import { Leads } from './Leads';
+import { Comment } from './Comment';
 
 @Entity('users')
 
@@ -18,6 +19,9 @@ export class Users {
 
   @Column()
   email: string;
+   
+  @Column()
+  password: string;
 
   @Column({nullable:true})
   created_at: Date;
@@ -29,7 +33,7 @@ export class Users {
   @JoinColumn({name:'buisnesId',referencedColumnName:'id'})
   business:typeof Business;
 
-  @ManyToMany(() => Leads, (leads) => leads.users)
+  @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
   leads: Leads[];
 
   @ManyToOne(type => Roles, role => role.users)
@@ -41,14 +45,18 @@ export class Users {
   // @JoinColumn()
   // notifications: Notification[];
 
-  // @OneToMany(() => LoginLogoutLog, log => log.user)
-  // @JoinColumn()
-  // loginLogoutLogs: LoginLogoutLog[];
+  @OneToMany(() => LoginLogoutLog, log => log.user,{nullable:true})
+  @JoinColumn()
+  loginLogoutLogs: LoginLogoutLog[];
 
   // @OneToMany(type => StageChangeHistory,history=> history.changed_by)
 
-  @OneToMany(() => StageChangeHistory, history => history.changed_by)
+  @OneToMany(() => StageChangeHistory, history => history.changed_by, { nullable: true })
   // @JoinColumn({name:'id',referencedColumnName:'changed_by'})
   history:typeof StageChangeHistory[];
+
+
+  @OneToMany(()=>Comment,comment=>comment.user,{nullable:true})
+  comment:typeof Comment
 
 }

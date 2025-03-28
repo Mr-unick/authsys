@@ -1,13 +1,43 @@
 
 export const ROOT_URL = "http://localhost:3000/"
-export const permissions =[
-    'view_dashboard','view_settings','view_about','view_contact',"view_nested_dashboard","create_post",'posts_edit'
+export const permissions = [
+  'view_dashboard', 'view_settings', 'view_about', 'view_contact', "view_nested_dashboard", "create_post", 'posts_edit', 'view_user'
 ]
 
-export const UsserData ={
-    role : "Admin",
-    permissions:permissions
+export const UsserData = {
+  role: "Buisness Admin",
+  permissions: permissions
 }
+
+
+export const Gates = [
+  {
+    "route": "/",
+    "permissionRequired": "view_dashboard"
+  },
+  {
+    "route": "boardleads",
+    "permissionRequired": "view_dashboard"
+  },
+  {
+    "route": "tableleads",
+    "permissionRequired": "view_nested_dashboard"
+  },
+  {
+    "route": "users",
+    "permissionRequired": "view_contact"
+  },
+  {
+    "route": "branches",
+    "permissionRequired": "view_nested_about"
+  },
+  {
+    "route": "settings",
+    "permissionRequired": "view_settings"
+  }
+]
+
+
 export const sampleData = {
   personalInfo: {
     name: 'John Doe',
@@ -130,7 +160,8 @@ export const sampleData = {
     'Certified Scrum Master (CSM)'
   ]
 };
-export const GEMNIKEY= 'AIzaSyDxEib-er30XwjLmzeGn6kmVZpElqCauto'
+
+export const GEMNIKEY = 'AIzaSyDxEib-er30XwjLmzeGn6kmVZpElqCauto'
 // export const  sampleData = {
 //     personalInfo: {
 //       name: 'John Doe',
@@ -177,7 +208,7 @@ export const GEMNIKEY= 'AIzaSyDxEib-er30XwjLmzeGn6kmVZpElqCauto'
 
 export const SampleLeads = [
   {
-    "id": "12345",
+    "id": "1",
     "name": "John Doe",
     "number": "+1234567890",
     "messageCount": 42,
@@ -267,7 +298,7 @@ export const SampleLeads = [
     "lastContactTime": "2025-01-29T16:00:00Z"
   }
 ]
-;
+  ;
 
 export const Stages = [
   {
@@ -328,9 +359,9 @@ export const leadDetailSample = {
 }
 
 
-  
-  // export const  AUTH_CLIENT = "279388001610-3b0d7ncjdlndvpe72kovec19s8qtohto.apps.googleusercontent.com"
-  // export const AUTH_SECREAT = "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"
+
+export const AUTH_CLIENT = "279388001610-3b0d7ncjdlndvpe72kovec19s8qtohto.apps.googleusercontent.com"
+export const AUTH_SECREAT = "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"
 
 
 //   INSERT INTO permissions (policy_name, permission, action) 
@@ -415,3 +446,75 @@ export const leadDetailSample = {
 
 // ('freshleads', 'view_freshleads', 'view'),
 // ('freshleads', 'assign_freshleads', 'assign');
+
+export const chartDataYear = [
+  { month: "January", desktop: 186, mobile: 100 },
+  { month: "February", desktop: 305, mobile: 120 },
+  { month: "March", desktop: 237, mobile: 95 },
+  { month: "April", desktop: 73, mobile: 60 },
+  { month: "May", desktop: 209, mobile: 140 },
+  { month: "June", desktop: 214, mobile: 130 },
+  { month: "July", desktop: 174, mobile: 110 },
+  { month: "August", desktop: 114, mobile: 80 },
+  { month: "September", desktop: 154, mobile: 90 },
+  { month: "November", desktop: 24, mobile: 20 },
+  { month: "December", desktop: 214, mobile: 150 },
+];
+
+
+export const chartDataMonth = [
+  { month: "Sam", assigned: 186, conversions: 80 },
+  { month: "John", assigned: 86, conversions: 20 },
+  { month: "jane", assigned: 16, conversions: 8 },
+  { month: "Nick", assigned: 126, conversions: 100 },
+  { month: "Peter", assigned: 86, conversions: 30 },
+];
+
+export const userData = [
+  { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 },
+  { id: 2, username: 'janesmith', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'jane@example.com', assignedLeads: 36, conversionPercentage: 42 },
+  { id: 3, username: 'mikebrown', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'mike@example.com', assignedLeads: 18, conversionPercentage: 33 },
+  { id: 4, username: 'sarahlee', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'sarah@example.com', assignedLeads: 42, conversionPercentage: 50 },
+  { id: 5, username: 'davidwang', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'david@example.com', assignedLeads: 31, conversionPercentage: 39 },
+  { id: 6, username: 'emilyjones', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'emily@example.com', assignedLeads: 27, conversionPercentage: 33 },
+  { id: 7, username: 'alexnguyen', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'alex@example.com', assignedLeads: 33, conversionPercentage: 42 },
+  { id: 8, username: 'lisapark', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'lisa@example.com', assignedLeads: 19, conversionPercentage: 37 },
+  { id: 9, username: 'ryankim', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'ryan@example.com', assignedLeads: 29, conversionPercentage: 38 }
+];
+
+
+
+  export const Comments = [
+    {
+      "id": 1,
+      "user": "John Doe",
+      "timestamp": "2025-03-27T12:30:00Z",
+      "text": "This is a great post! I really enjoyed reading it.",
+      "attachment": {
+        "type": "image",
+        "preview": "https://images.pexels.com/photos/349758/hummingbird-bird-birds-349758.jpeg"
+      }
+    },
+    
+    {
+      "id": 2,
+      "user": "Jane Smith",
+      "timestamp": "2025-03-26T14:45:00Z",
+      "text": "I have some feedback on this topic. Let me know when you're available.",
+      "attachment": {
+        "type": "file",
+        "file": {
+          "name": "document.pdf",
+          'url':'https://portal.abuad.edu.ng/lecturer/documents/1554208765DATA_AND_INFORMATION.pdf'
+        }
+      }
+    },
+    {
+      "id": 3,
+      "user": "Mark Johnson",
+      "timestamp": "2025-03-25T09:10:00Z",
+      "text": "Interesting perspective! Thanks for sharing.",
+      "attachment": null
+    }
+  ]
+

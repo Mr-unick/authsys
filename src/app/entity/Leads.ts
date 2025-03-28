@@ -6,6 +6,7 @@ import { AreaOfOperation } from './AreaOfOperation';
 import { StageChangeHistory } from './StageChangeHistory';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
+import { Comment } from './Comment';
 
 @Entity('leads')
 export class Leads {
@@ -22,7 +23,16 @@ export class Leads {
   @Column()
   phone: string;
 
-  @Column()
+  @Column({nullable:true})
+  address: string;
+
+  @Column({ nullable: true ,default:'active'})
+  status: string;
+
+  @Column({nullable:true})
+  second_phone: string;
+
+  @Column({ nullable: true })
   lead_source: string;
 
   @Column()
@@ -31,8 +41,7 @@ export class Leads {
   @Column()
   updated_at: Date;
 
-
-  @ManyToMany(() => Users, (users) => users.leads)
+  @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
   @JoinTable({ 
     name: 'lead_users', 
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
@@ -40,15 +49,18 @@ export class Leads {
   })
   users: Users[];
 
-  @OneToMany(() => StageChangeHistory, (history) => history.lead)
+  @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
   history: StageChangeHistory[];
 
-  @ManyToOne(() => LeadStages, stage => stage.leads)
+  @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
   @JoinColumn() 
   stage:typeof LeadStages;
 
   @ManyToOne(() => Business, business => business.id)
   business:typeof Business;
+
+  @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
+  comments: typeof Comment
 
   // @ManyToOne(() => AreaOfOperation, areaOfOperation => areaOfOperation.leads)
   // areaOfOperation: AreaOfOperation;

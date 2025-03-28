@@ -7,16 +7,10 @@ import { AppDataSource } from "../lib/data-source"
 
 export const BuisnessRepository = AppDataSource.getRepository(Business).extend({
 
-    onlyPermit(businessId: number , userId : number | null ) {
+    onlyPermit(businessId: number  ) {
 
-        if(userId){
-            return this.createQueryBuilder("buisness")
-            .where("buisness.id = :businessId", { businessId })
-          
-        }else{
-            return this.createQueryBuilder("buisness")
+        return this.createQueryBuilder("buisness")
             .where("lead.businessId = :businessId", { businessId })
-        }
        
     },
 

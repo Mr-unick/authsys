@@ -5,10 +5,13 @@ import { ResponseInstance } from "../../utils/instances";
 import { Business } from "../../app/entity/Business";
 import { GenerateForm } from "../../utils/generateForm";
 import { title } from "process";
+import { VerifyToken } from "@/utils/VerifyToken";
 
 
 export default async function handler(req, res) {
- const BusinesRepo = AppDataSource.getRepository(Business);
+
+  let user = await VerifyToken(req, res,'business'); // verify token and get user details
+  const BusinesRepo = AppDataSource.getRepository(Business);
   if (req.method == "GET") {
 
     try {
@@ -17,17 +20,32 @@ export default async function handler(req, res) {
         .createQueryBuilder("business")
         .getMany();
 
-      const tablerows = BuisnesData.map(data=>{
-      return  {
-          id : data.id,
-          name : data.name
+      const tablerows = BuisnesData.map(data => {
+        return {
+          id: data.id,
+          name: data.business_name,
+          gst_number: data.gst_number,
+          pan_number: data.pan_number,
+          business_address: data.business_address,
+          city: data.city,
+          state: data.state,
+          pin_code: data.pin_code,
+          contact_number: data.contact_number,
+          email: data.email,
+          website: data.website,
+          owner_name: data.owner_name,
+          owner_contact: data.owner_contact,
+          owner_email: data.owner_email,
+          business_description: data.business_description,
         }
       })
 
+      console.log(user)
+
       const tabledata = new GenerateTable({
-        name: "Users",
+        name: "Buisness",
         data: tablerows,
-      });
+      }).policy(user, 'business').addform('buisnessform').gettable();
 
       const response: ResponseInstance = {
         message: "Request successful",
@@ -39,7 +57,7 @@ export default async function handler(req, res) {
     } catch (e) {
       const response: ResponseInstance = {
         message: "Something Went Wrong",
-        data: [],
+        data: [{message:e.message}],
         status: 500,
       };
 
@@ -72,126 +90,50 @@ export default async function handler(req, res) {
     }
   }
 
-  if(req.method == "POST"){
+  if (req.method == "POST") {
 
-    if(req.query.type == 'getform'){
+    try {
+      const { business_name, gst_number, pan_number, business_address, city, state, pin_code, contact_number, email, website, owner_name, owner_contact, owner_email, business_description } = req.body;
 
-          const formdata = new GenerateForm("User Form");
+      const newbuisness = new Business();
+      newbuisness.business_name = business_name;
+      newbuisness.gst_number = gst_number;
+      newbuisness.pan_number = pan_number;
+      newbuisness.business_address = business_address;
+      newbuisness.city = city;
+      newbuisness.state = state;
+      newbuisness.pin_code = pin_code;
+      newbuisness.contact_number = contact_number;
+      newbuisness.email = email;
+      newbuisness.website = website;
+      newbuisness.owner_name = owner_name;
+      newbuisness.owner_contact = owner_contact;
+      newbuisness.owner_email = owner_email;
+      newbuisness.business_description = business_description;
 
-           let data = [
-    {
-      name: "gender",
-      type: "select",
-      label: "Gender",
-      options: ["Male", "Female", "Other"],
-      value: "Male",
-      required: true, 
-    },
-    {
-      name: "name",
-      type: "text",
-      label: "Enter Name",
-      value: "",
-      required: true,  
-    },
-    {
-      name: "email",
-      type: "email",
-      label: "Enter Email",
-      value: "",
-      required: true, 
-    },
-    {
-      name: "image",
-      type: "file",
-      label: "Select Profile",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "password",
-      type: "password",
-      label: "Enter Password",
-      value: "",
-      required: true, 
-    },
-    {
-      name: "confirm password",
-      type: "password",
-      label: "Confirm Password",
-      value: "",
-      required: true,  
-    },
-    {
-      name: "address",
-      type: "text",
-      label: "Enter your address",
-      value: "",
-      required: false, 
-    },
-    {
-      name: "gender",
-      type: "radiogroup",
-      label: "Select Gender",
-      options: ["Male", "Female", "Other"],
-      required: true, 
-    },
-    {
-      name: "adhar",
-      type: "file",
-      label: "Upload Adhar",
-      value: "",
-      required: false, 
-    },
-   
-    {
-      name: "agrred",
-      type: "checkbox",
-      label: "Agree to terms and conditions",
-      value: "",
-      required: true,  
-      newRow: true,
-      
-    }, {
-      name: "isbuisness",
-      type: "switch",
-      label: "Is Buisnes ?",
-      value: "",
-     
-    },
-    
-  ];
+      const buisnessRepo = AppDataSource.getRepository(Business);
 
-          
-          formdata.addField({
-              name: 'name',
-              type: 'text',
-              label: 'Enter Your Name',
-              value: '',
-          }).newRow();
-    
-          formdata.addField({
-              name: 'gender',
-              type: 'select',
-              label: 'Gender',
-              options: ['Male', 'Female', 'Other'],
-              value: '' 
-          }).newRow();
+      const buisness = await buisnessRepo.save(newbuisness);
 
-          const response: ResponseInstance = {
-            message: "get dat",
-            data: {
-              title:'Users',
-              fields : data,
-              submitUrl : ""
-            },
-            status: 200,
-          };
-        
-          res.json(response);
-        }else{
+      const response: ResponseInstance = {
+        message: "Buisness created successfully",
+        data: buisness,
+        status: 200,
+      };
 
-        }
+      res.json(response);
+
+    } catch (error) {
+      const response: ResponseInstance = {
+        message: "Something went wrong while creating buisness",
+        data: [error],
+        status: 500,
+      };
+      res.json(response);
+
     }
-  
+
+
+  }
+
 }

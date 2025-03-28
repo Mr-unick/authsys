@@ -12,13 +12,20 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "../../../components/components/ui/breadcrumb";
+import { ToastContainer, toast } from 'react-toastify';
+import { useEffect, useState } from "react";
 
 export default function HomeLayout({ children }) {
   const router = useRouter();
+ 
 
   const { asPath } = router;
 
+
   let allBreadClumbps = new Map();
+
+  const Toast = () => toast.error("Wow so easy!");
+  
 
   let breadcrumb = "/";
 
@@ -73,7 +80,11 @@ export default function HomeLayout({ children }) {
               </BreadcrumbList>
             </Breadcrumb>
           )}
-          <div className="">Logout</div>
+          <div className="">
+            <button onClick={Toast}>
+              Logout
+            </button>
+          </div>
         </div>
 
         <div className="hidden flex-col  max-md:flex px-10 mb-5">

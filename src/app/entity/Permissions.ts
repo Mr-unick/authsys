@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
 import { Roles } from './Roles';
+import { Policy } from './Policy';
 
 @Entity('permissions')
 export class Permissions {
@@ -7,10 +8,10 @@ export class Permissions {
   id: number;
 
   @Column()
-  policy:string;
+  permission: string;
 
   @Column()
-  permission: string;
+  description: string;
 
   @Column()
   action: string;
@@ -18,4 +19,8 @@ export class Permissions {
   @ManyToMany(() => Roles, role => role.permissions)
   @JoinColumn() 
   role:typeof Roles[];
+
+  @ManyToOne(() => Policy, policy => policy.permissions)
+  @JoinColumn() 
+  policy:typeof Policy[];
 }

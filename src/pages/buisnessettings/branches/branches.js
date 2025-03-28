@@ -1,11 +1,10 @@
 
 
+import DataTable from "../../../app/components/tables/dataTable";
 
 
+export default function buisness (){
 
-export default function Branches (){
-
-    return <h1>Hello</h1>
-        {/* <DataTable tableData ={tableData} rows={rows} /> */}
-   
+    return   <DataTable url = {'getBranchProps'} />
+  
 };

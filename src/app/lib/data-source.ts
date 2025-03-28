@@ -14,18 +14,21 @@ import { Leads } from "../entity/Leads";
 import { LeadStages } from "../entity/LeadStages";
 import { AreaOfOperation } from "../entity/AreaOfOperation";
 import { BuisnesAdmin } from "../entity/BuisnesAdmin";
+import { Policy } from "../entity/Policy";
+import { Branch } from "../entity/Branch";
+import { Comment } from "../entity/Comment";
 
 
 export const AppDataSource = new DataSource({
-    type: "mysql",
-    host: "localhost",
-    port: 3306,
-    username: "root",
-    password: "pass",
-    database: "authsys",
-    synchronize:false, 
-    logging: true,    
-  entities:[__dirname + '/../**/*.entity.{js,ts}',Users,Business,Roles,SuperAdmin,StageChangeHistory,Notification,Permissions,LoginLogoutLog,Leads,LeadStages,AreaOfOperation,BuisnesAdmin],
+  type: "mysql",
+  host: "localhost",
+  port: 3306,
+  username: "root",
+  password: 'pass',
+  database: "authsys",
+  synchronize: false,
+  logging: false,
+  entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment],
 });
 
 await AppDataSource.initialize()
