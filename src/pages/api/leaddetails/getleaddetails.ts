@@ -22,47 +22,16 @@ export default async function handler(req, res) {
         },relations:['history','history.stage','history.changed_by','comments','comments.user']
      })
 
-   let newhistory = new StageChangeHistory;
-        newhistory.stage = await AppDataSource.getRepository(LeadStages).findOne({
-        where: {
-            id: 3
-        }
-     });
-
-     newhistory.reason = "New Lead";
-     newhistory.lead = lead?.id;
-     
-
-     
-    newhistory.changed_at = new Date();
-     newhistory.updated_at = new Date();
-        newhistory.changed_by = await AppDataSource.getRepository(Users).findOne({
-            where: {
-                id: 1
-            }
-        });
-
-    let newComment = new Comment;
-    newComment.comment = "Nothing to say";
-    newComment.lead = lead?.id;
-    newComment.created_at = new Date();
-    newComment.user = await AppDataSource.getRepository(Users).findOne({
-        where: {
-            id: 1
-        }
-    });
-    
-    // await AppDataSource.getRepository(Comment).save(newComment);
-
-    //  await AppDataSource.getRepository(StageChangeHistory).save(newhistory);
+   
 
      let history = lead?.history.map((item) => {
+        const stage = item?.stage;
          return {
-             stage: item.stage.stage_name,
+         //    stage: item?.stage?.stage_name,
              changedAt: item.changed_at,
              changedBy:item.changed_by.name,
              reason: item.reason,
-             colour: item.stage.colour  // Colour from Stages array
+         //    colour: item.stage.colour  
          }
      })
 
@@ -74,32 +43,32 @@ export default async function handler(req, res) {
         name: lead?.name,
         email: lead?.email,
         phone: lead?.phone,
-        secondPhone: lead?.secondNumber || "No second phone",
+        secondPhone: lead?.second_phone || "No second phone",
         address: lead?.address,
         city: lead?.city || "Mumbai",
         state: lead?.state || "Maharashtra",
         country: lead?.country || "India",
-        pincode: lead?.zip || "411001",
+        pincode: lead?.pincode || "411001",
         leadStatus: lead?.status || "active",
-         leadSource: lead?.source || "Website",
-         leadStage: lead?.history[lead?.history.length - 1].stage.stage_name,
+        leadSource: lead?.lead_source || "Website",
+    //    leadStage: lead?.history[lead?.history.length - 1].stage.stage_name,
         notes: lead?.notes || "No notes",
-        collaborators: lead?.collaborators || [],
+         collaborators: lead?.users || [],
          stageChangeHistory: history,
-         comments: lead?.comments?.map((item) => {
-            return {
-                comment: item.comment,
-                user: item.user.name,
-                createdAt: item.created_at
-            }
-         })
+        //  comments: lead?.comments?.map((item) => {
+        //     return {
+        //         comment: item.comment,
+        //         user: item.user.name,
+        //         createdAt: item.created_at
+        //     }
+        //  })
      }
 
      if (!lead) {
         const response : ResponseInstance = {
             status: 404,
             message: "Lead not found",
-            data: [id]
+            data: []
         }
         return res.json(response);
      }

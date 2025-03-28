@@ -88,8 +88,8 @@ export default async function handler(req, res) {
       newUser.name = name;
       newUser.password = password;
       newUser.email = email;
-      newUser.role = userrole;
-      newUser.business = buisness;
+      newUser.role = req.body.role;
+      newUser.business = req.body.buisness;
 
       await AppDataSource.getRepository(Users).save(newUser);
 

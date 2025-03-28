@@ -44,9 +44,7 @@ export default async function handler(req, res) {
 
     if(req.method == "POST"){
         try {
-            const {name,email,branch_code,number,address,state,district,city,pincode,discription} = req.body;
-
-            let business = await AppDataSource.getRepository(Business).findOne({where:{id:1}});
+            const {name,email,branch_code,number,address,state,district,city,pincode,discription ,buisness} = req.body;
 
             const newBranch = new Branch();
             newBranch.name = name;
@@ -60,7 +58,7 @@ export default async function handler(req, res) {
             newBranch.pincode = pincode;
             newBranch.discription = discription;
             newBranch.location = 'nothing for now';
-            newBranch.buisness = business;
+            newBranch.buisness = buisness;
 
             await AppDataSource.getRepository(Branch).save(newBranch);
 

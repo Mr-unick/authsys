@@ -55,7 +55,7 @@ export default async function handler(req, res) {
     const newStage = new LeadStages();
     newStage.stage_name = stage_name;
     newStage.colour = colour;
-    newStage.business = business;
+    newStage.business = user.buisness_id;
     newStage.discription = discription;
 
     await AppDataSource.getRepository(LeadStages).save(newStage);

@@ -23,6 +23,21 @@ export class Leads {
   @Column()
   phone: string;
 
+  @Column()
+  city: string;
+
+  @Column()
+  state: string;
+
+  @Column()
+  country: string;
+
+  @Column()
+  notes: string;
+
+  @Column()
+  pincode: string;
+
   @Column({nullable:true})
   address: string;
 

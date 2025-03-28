@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       newRole.branch = rolebranch;
     }
    
-    newRole.buisness= buisnes;
+    newRole.buisness= req.body.buisness;
 
 
     AppDataSource.getRepository(Roles).save(newRole);

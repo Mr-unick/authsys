@@ -25,14 +25,14 @@ export class LeadStages {
    updated_at: Timestamp;
 
   @ManyToOne(() => Business, business => business.leadStages, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({name:'buisnessId'})
   business:typeof Business;
 
   @OneToMany(() => Leads, lead => lead.stage, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({name:'lead_Id'})
   leads:typeof Leads[];
 
   @OneToMany(() => StageChangeHistory, stageChangeHistory => stageChangeHistory.stage, { nullable: true })
-  @JoinColumn()
+  @JoinColumn({name:'stage_Id'})
   stageChangeHistory: StageChangeHistory[];
 }

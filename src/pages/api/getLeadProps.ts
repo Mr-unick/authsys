@@ -36,25 +36,27 @@ export default async function handler(req, res) {
 
     const newLead = new Leads();
 
-    newLead.name = leaddata?.name;
-    newLead.email = leaddata?.email;
-    newLead.phone = leaddata?.phone;
-    newLead.lead_source = leaddata?.lead_source;
+    newLead.name = req.body.name;
+    newLead.email = req.body.email;
+    newLead.phone =  req.body.phone;
+    newLead.lead_source = 'website';
     newLead.created_at = new Date();
     newLead.updated_at = new Date();
     newLead.users = [user];
-    newLead.stage = stage;
-    newLead.business = business;
+    newLead.stage = req.body.stage;
+    newLead.business = req.body.business;
 
     await leadRepository.save(newLead);
+
+
 
     const newStageChangeHistory = new StageChangeHistory();
 
     newStageChangeHistory.changed_at = new Date();
-    newStageChangeHistory.lead = newLead;
+    newStageChangeHistory.lead =req.body.user;
     newStageChangeHistory.stage = newLead.stage;
     newStageChangeHistory.reason = "Nothing Special";
-    newStageChangeHistory.changed_by = user;
+    newStageChangeHistory.changed_by = req.body.user;
 
     await StageChangeHistoryRepository.save(newStageChangeHistory);
 

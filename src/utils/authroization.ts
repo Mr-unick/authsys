@@ -4,7 +4,7 @@ type UserInstance = {
     permissions: Array<any>;
   };
  
- export const haspermission =( user:UserInstance,requiredPermission:string) : boolean=>{
+ export const haspermission =( user,requiredPermission:string) : boolean=>{
 
     if( user.role == 'Admin'){
         return true
