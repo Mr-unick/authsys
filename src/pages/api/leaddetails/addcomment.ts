@@ -27,7 +27,7 @@ export default async function addComment(req, res) {
         newcomment.comment = stage;
         newcomment.lead = leadId;
         newcomment.user = user.id;
-        newcomment.created_at= new Date();
+     //   newcomment.created_at= new Date();
         
 
         await AppDataSource.getRepository(Comment).save(newcomment);
