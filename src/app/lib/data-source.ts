@@ -21,11 +21,11 @@ import { Comment } from "../entity/Comment";
 
 export const AppDataSource = new DataSource({
   type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "root",
-  password: 'pass',
-  database: "authsys",
+  host: process.env.DBHOST,
+  port: parseInt(process.env.DBPORT || '3306'),
+  username: process.env.DBUSER,
+  password: process.env.DBPASSWORD,
+  database: process.env.DBNAME,
   synchronize: false,
   logging: false,
   entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment],
