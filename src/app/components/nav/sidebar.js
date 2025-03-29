@@ -31,7 +31,7 @@ export default  function SideBar() {
 
   useEffect(() => {
     setLoder(true)
-    axios.get('http://localhost:3000/api/getSidebarProps')
+    axios.get('api/getSidebarProps')
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data)
