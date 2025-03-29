@@ -11,7 +11,7 @@ export async function middleware(request) {
     response.headers.set('X-Custom-Header', 'My custom header value');
 
 
-    if (request.url == 'http://localhost:3000/api/auth/login') {
+    if (request.url == '/api/auth/login') {
         return response;
     }
 
@@ -20,7 +20,7 @@ export async function middleware(request) {
     }
 
 
-    if (token && request.url == 'http://localhost:3000/login') {
+    if (token && request.url == '/login') {
 
         return NextResponse.redirect(new URL('/', request.url));
 
