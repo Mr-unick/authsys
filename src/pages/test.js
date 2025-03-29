@@ -57,7 +57,7 @@ const Dashboard = () => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
   return (
-    <div className="min-h-screen bg-gray-100  space-y-4 px-2 pb-24">
+    <div className="min-h-screen bg-gray-100  space-y-4 px-2 pb-24 max-sm:pb-36 ">
       {/* Top row metrics */}
       <div className="grid grid-cols-5 gap-4">
         <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
@@ -130,7 +130,7 @@ const Dashboard = () => {
       {/* Charts grid */}
       <div className="grid grid-cols-12 gap-4">
         {/* Line Chart */}
-        <Card className="col-span-8">
+        <Card className="col-span-8 max-sm:col-span-12">
           <CardHeader>
             <CardTitle>Yearly Trend</CardTitle>
           </CardHeader>
@@ -140,7 +140,7 @@ const Dashboard = () => {
         </Card>
 
         {/* Pie Charts and Donut */}
-        <Card className="col-span-4">
+        <Card className="col-span-4 max-sm:col-span-12">
           <CardHeader>
             <CardTitle>Lead Source</CardTitle>
           </CardHeader>
@@ -158,7 +158,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="col-span-6 ">
+        <Card className="col-span-6 max-sm:col-span-12 ">
           <CardHeader>
             <CardTitle>Sales Persons</CardTitle>
           </CardHeader>
@@ -169,7 +169,7 @@ const Dashboard = () => {
 
         {/* Bar Chart */}
 
-        <Card className="col-span-6">
+        <Card className="col-span-6 max-sm:col-span-12">
           <CardHeader>
             <CardTitle>Performance</CardTitle>
           </CardHeader>
