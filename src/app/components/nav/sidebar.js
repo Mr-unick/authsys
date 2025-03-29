@@ -10,6 +10,7 @@ import { HomeIcon } from "lucide-react";
 
 
 
+
 export const NavLink = ({ href, children }) => {
   const router = useRouter();
   const isActive = router.pathname === href;
@@ -31,7 +32,7 @@ export default function SideBar() {
 
   useEffect(() => {
     setLoder(true)
-    axios.get('api/getSidebarProps')
+    axios.get(`https://authsys-client.vercel.app/api/getSidebarProps`)
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data)

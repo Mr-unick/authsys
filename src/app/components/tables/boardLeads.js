@@ -25,13 +25,13 @@ export default function BoardLeads() {
 
   return (
     <div className=" h-[100%] pb-5">
-      <div className="flex overflow-x-auto gap-5 h-full">
+      <div className="flex overflow-x-auto gap-5 h-full max-sm:px-2">
         {stages.map((stage) => (
-          <div key={stage} className="flex-shrink-0 w-80 max-sm:w-full">
+          <div key={stage} className="flex-shrink-0 w-80 max-sm:w-full ">
             <div style={{backgroundColor:stage.colour}} className={`flex justify-between  text-sm  sticky top-0  px-2 py-1 mb-4 rounded-md w-[40%] text-white font-medium`}>
-             <p>{stage.stage}</p> <p>10</p>
+              <p className="max-sm:px-2">{stage.stage}</p> <p>10</p>
             </div>
-            <div className="overflow-y-auto h-[calc(100vh-8rem)] flex flex-col gap-4 pb-10">
+            <div className="overflow-y-auto h-[calc(100vh-8rem)] flex flex-col gap-4  pb-10">
               {SampleLeads.map((data, index) => (
                 <BoardCard  key={index} data={data} />
               ))}

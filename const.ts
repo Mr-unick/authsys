@@ -1,5 +1,6 @@
 
 export const ROOT_URL = "/"
+export const ROOT_URL2 = "http://localhost:3000"
 export const permissions = [
   'view_dashboard', 'view_settings', 'view_about', 'view_contact', "view_nested_dashboard", "create_post", 'posts_edit', 'view_user'
 ]
