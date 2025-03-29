@@ -55,9 +55,9 @@ export default function HomeLayout({ children }) {
         </div>
         <SideBar />
       </div>
-      <div className="w-[83%] min-xl:w[80$] min-lg[80%] min-md:w[80%] max-lg:w-[100%] relative ">
+      <div className="w-[83%] min-xl:w[80$] min-lg[80%] min-md:w[80%] max-lg:w-[100%] max-sm:w-[100%] relative ">
         <div className="w-full  flex justify-between px-10 max-sm:px-3 min-sm:px-5 py-4  ">
-          <div className="hidden max-lg:flex">
+          <div className="hidden max-lg:flex ">
             <NavBar />
           </div>
 

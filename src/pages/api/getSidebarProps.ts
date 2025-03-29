@@ -35,13 +35,13 @@ export default async function handler(req, res) {
     },
     {
       title: "Notifications",
-      url: "/",
+      url: "/notifications",
       permissionRequired: "view_dashboard",
 
     },
     {
       title: "Activity",
-      url: "/",
+      url: "/activity",
       permissionRequired: "view_dashboard",
 
     },
