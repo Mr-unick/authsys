@@ -240,7 +240,7 @@ const DataTable = ({ url }) => {
     setSelectedRows([]);
   }, [filteredRows]);
 
-  console.log(tableData, 'this is table data')
+
 
   if (res?.type == 'model') {
     return <Modal title={`Add ${tableData?.name}`} open={true} >
@@ -254,17 +254,17 @@ const DataTable = ({ url }) => {
   const displayData = sortedData();
 
   return (
-    <div className="w-full font-pretty">
+    <div className="w-full font-pretty max-sm:px-2">
       {/* Table actions and filters */}
 
       {
         tableData?.rows?.length > 0 && <div className="mb-5 flex justify-between">
           <div className="flex gap-3">
-            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white">
+            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white max-sm:w-[100%]">
               <Search size={14} />
               <input
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="border-none outline-none text-sm w-[80%]"
+                className="border-none outline-none text-sm w-[80%] "
                 type="text"
                 placeholder="Search..."
                 value={searchTerm}
@@ -274,8 +274,9 @@ const DataTable = ({ url }) => {
             <Select
               onValueChange={(value) => handleSortChange(value)}
               value={sortConfig.key || ""}
+              
             >
-              <SelectTrigger className="w-[180px] h-full bg-white">
+              <SelectTrigger className="w-[180px] h-full bg-white max-sm:hidden">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
               <SelectContent>
@@ -461,7 +462,7 @@ const DataTable = ({ url }) => {
 
         {/* Pagination */}
         {
-          tableData?.rows?.length > 0 && <div className="w-full bg-white flex justify-between items-center p-2">
+          tableData?.rows?.length > 15 && <div className="w-full bg-white flex justify-between items-center p-2">
             <div className="text-sm text-gray-500">
               Showing {displayData?.length} of {rows?.length} entries
               {selectedRows.length > 0 && ` (${selectedRows?.length} selected)`}

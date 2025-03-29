@@ -5,6 +5,7 @@ import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 import { ResponseInstance } from "@/utils/instances";
+import { color } from "motion/dist/react";
 
 
 
@@ -25,13 +26,15 @@ export default async function handler(req, res) {
    
 
      let history = lead?.history.map((item) => {
-        const stage = item?.stage;
+       
+
+        let stage = item.stage;
+
          return {
-         //    stage: item?.stage?.stage_name,
+         stage: item.stage,
              changedAt: item.changed_at,
              changedBy:item.changed_by.name,
              reason: item.reason,
-         //    colour: item.stage.colour  
          }
      })
 

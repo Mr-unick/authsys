@@ -39,7 +39,7 @@ const SelectComponent = forwardRef(({
 
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm text-gray-500">
+      <label className="text-sm text-gray-500 ">
         {label}{required ? "*" : " (optional)"}
       </label>
       <Select 
@@ -51,7 +51,7 @@ const SelectComponent = forwardRef(({
       >
         <SelectTrigger ref={ref} onBlur={onBlur}>
           <SelectValue 
-            className="text-gray-400" 
+            className="text-gray-400 placeholder:text-xs" 
             placeholder={"Select "+ label} 
           />
         </SelectTrigger>

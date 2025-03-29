@@ -86,13 +86,15 @@ export default function HomeLayout({ children }) {
             </button>
           </div>
         </div>
-
-        <div className="hidden flex-col  max-md:flex px-10 max-sm:px-3 mb-5">
+{/* 
+        <div className="hidden flex-col  max-md:flex px-10 max-sm:px-3 mb-5 ">
           <p className="font-semibold text-lg">Dashboard</p>
           <p>Good Morning Mr. Nikhil !</p>
-        </div>
+        </div> */}
 
-        <div className="w-full h-full  px-10 max-sm:px-1 overflow-y-scroll max-h-fit">{children}</div>
+        
+
+        <div className="w-full h-full  px-10 max-sm:px-1 overflow-y-scroll max-h-fit max-sm:h-full ">{children}</div>
       </div>
     </div>
   );

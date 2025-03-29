@@ -6,6 +6,7 @@ import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { UsserData } from "../../../const";
 import { VerifyToken } from "@/utils/VerifyToken";
+import { Any } from "typeorm";
 
 
 
@@ -19,12 +20,15 @@ export default async function handler(req, res) {
 
      let stages = await AppDataSource.getRepository(LeadStages).createQueryBuilder('stages').limit(10).getMany();
 
-     const tabledata = new GenerateTable({
+  
+
+     let tabledata = new GenerateTable({
        name: "Lead Stages",
        data: stages,
      }).policy(user,'leadstages').addform('leadstageform').gettable();
 
      //  console.log(tabledata)
+
 
      const response: ResponseInstance = {
        message: "Succes",

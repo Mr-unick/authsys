@@ -25,7 +25,7 @@ export default function page(){
   
   
   return (
-    <div className=' bg-white rounded-md h-full overflow-y-scroll border'>
+    <div className=' bg-white  rounded-md h-full overflow-y-scroll border max-sm:mx-2'>
       <LeadDetails data={leadDetails}/>
     </div>
   );

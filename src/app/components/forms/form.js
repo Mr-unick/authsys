@@ -81,16 +81,16 @@ export default function FormComponent({ formdata, id, setOpen }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col justify-around  px-5 py-2 ${data?.fields?.length <= 10 ? "w-[40rem]" : "w-[60rem]"}`}
+      className={`flex flex-col justify-around  px-5 max-sm:px-2 max-sm:text-xs  py-2 ${data?.fields?.length <= 10 ? "w-[40rem] max-sm:w-[18rem]" : "w-[60rem]"}`}
     >
       <div>
-        <h1 className="mb-6 text-xl font-normal text-gray-700">
+        <h1 className="mb-6 text-xl max-sm:text-[1rem] font-normal text-gray-700">
           {data?.title}
         </h1>
       </div>
-      <div className={`grid  gap-x-8 gap-y-8 ${data?.fields?.length <= 10 ? "grid-cols-2" : "grid-cols-3"}`}>
+      <div className={`grid  gap-x-8 gap-y-8 max-sm:gap-y-4 ${data?.fields?.length <= 10 ? "grid-cols-2 " : "grid-cols-3"}`}>
         {data?.fields?.map((field, key) => {
-          const gridClasses = field.newRow ? "col-span-2" : "";
+          const gridClasses = field.newRow ? "col-span-2" : "max-sm:col-span-2";
           const validationRules = field.required
             ? { required: `${field.name} is required` }
             : {};

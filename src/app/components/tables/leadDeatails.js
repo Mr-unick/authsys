@@ -17,6 +17,7 @@ import CommentsSection from "./commentsSection";
 import Modal from "../modal";
 import FormComponent from "../forms/form";
 import { ToolTipComponent } from "../tooltip";
+import { Button } from "../../../components/components/ui/button";
 
 
 
@@ -70,7 +71,7 @@ export default function LeadDetails({data}) {
   //   }]
   // };
 
-console.log(data,'from lead details')
+
 
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -81,9 +82,9 @@ console.log(data,'from lead details')
   };
 
   return (
-    <div className="overflow-y-scroll px-2 h-full">
-      <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col ">
-        <div className="max-md:w-1/2 sm:w-full space-y-6  max-h-[40rem] overflow-y-scroll">
+    <div className="overflow-y-scroll px-2 max-sm:px-0 h-full ">
+      <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col">
+        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] overflow-y-scroll ">
           {/* Personal Information */}
           <div className="space-y-3 ">
             <h3 className="text-xl text-gray-900 mb-5">{data?.name}  
@@ -222,12 +223,13 @@ console.log(data,'from lead details')
                 <LeadTimeline data={data?.stageChangeHistory} />
               )
             }
-
+          
           </div>
         </div>
-        <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 ">
+        <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
           <CommentsSection comments={data?.comments} />
         </div>
+      
       </div>
 
     </div>
