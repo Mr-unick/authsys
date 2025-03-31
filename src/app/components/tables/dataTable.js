@@ -2,7 +2,7 @@
 
 import { Button } from "../../../components/components/ui/button";
 import axios from "axios";
-import { Search } from "lucide-react";
+import { FileSpreadsheet, Search, Sheet } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Select,
@@ -308,7 +308,15 @@ const DataTable = ({ url }) => {
               className="font-semibold bg-green-500 hover:bg-green-500 hover:text-white text-gray-50"
               variant="outline"
             >
-              Export {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'}
+              <>
+                <span className="max-sm:hidden">
+                  Export {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'}
+                </span>
+                <span className="max-sm:block">
+                  <FileSpreadsheet size={22} />
+                </span>
+              </>
+            
             </Button>
 
             {tableData?.create && (
@@ -333,13 +341,14 @@ const DataTable = ({ url }) => {
 
         {
           tableData?.rows?.length > 0 && <Table className="min-w-full text-sm text-left text-gray-500 bg-white">
-            <thead className="text-xs text-gray-100 bg-[#4E49F2] rounded-md p-3 first-letter:uppercase">
+            <thead className="text-xs text-gray-100  rounded-md p-3 first-letter:uppercase">
               <tr>
                 <TH >
                   <input type="checkbox"
                     checked={selectAll && filteredRows.length > 0}
                     onChange={toggleSelectAll}
-                    className="border-white"
+                  
+                   
                   />
                 </TH>
                 {tableData?.columns?.map((key) => (
@@ -352,6 +361,7 @@ const DataTable = ({ url }) => {
                   </TH>
                 ))}
                 {(tableData?.update || tableData?.delete) && <TH>Actions</TH>}
+                
               </tr>
             </thead>
             <tbody>
