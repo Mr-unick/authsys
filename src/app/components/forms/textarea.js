@@ -12,14 +12,14 @@ const TextAreaComponent = forwardRef(({
 }, ref) => {
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-sm text-gray-500">
+      <label className="text-sm max-sm:text-xs text-gray-500">
         {label}{required ? "*" : " (optional)"}
       </label>
       <Textarea
         {...rest}
         ref={ref}
         name={name}
-        className="placeholder:text-gray-600 placeholder:text-xs border-[1px] border-gray-300 resize-none"
+        className="max-sm:text-xs placeholder:text-gray-600 placeholder:text-xs border-[1px] border-gray-300 resize-none"
         defaultValue={value}
         placeholder={placeholder}
         rows={rows}

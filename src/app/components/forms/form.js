@@ -81,7 +81,7 @@ export default function FormComponent({ formdata, id, setOpen }) {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col justify-around  px-5 max-sm:px-2 max-sm:text-xs  py-2 ${data?.fields?.length <= 10 ? "w-[40rem] max-sm:w-[18rem]" : "w-[60rem]"}`}
+      className={`flex flex-col justify-around  px-5 max-sm:px-2 max-sm:max-h-[35rem] overflow-y-scroll max-sm:text-xs  py-2 ${data?.fields?.length <= 10 ? "w-[40rem] max-sm:w-[20rem]" : "w-[60rem]"}`}
     >
       <div>
         <h1 className="mb-6 text-xl max-sm:text-[1rem] font-normal text-gray-700">
