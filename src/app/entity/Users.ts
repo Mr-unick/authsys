@@ -7,6 +7,7 @@ import { Notification } from './Notifications';
 import { StageChangeHistory } from './StageChangeHistory';
 import { Leads } from './Leads';
 import { Comment } from './Comment';
+import { Activity } from './Activity';
 
 @Entity('users')
 
@@ -58,5 +59,9 @@ export class Users {
 
   @OneToMany(()=>Comment,comment=>comment.user,{nullable:true})
   comment:typeof Comment
+
+
+  @OneToMany(() => Activity, activity => activity.user, { nullable: true })
+  activities: typeof Activity[]
 
 }

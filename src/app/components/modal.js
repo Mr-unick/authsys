@@ -1,36 +1,35 @@
-import { Delete, Edit, Plus } from "lucide-react";
+import { Delete, Edit, FilePen, Plus ,Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger, DialogClose, DialogFooter
 } from "../../components/components/ui/dialog"
+import { Button } from "../../components/components/ui/button";
 
-export default function Modal({ children, title, icon }) {
+export default function Modal({ children, title, icon ,classname}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        
-  
-          <span className="max-sm:block">
+        <Button className={`max-sm:block flex items-center  gap-2 ${classname}`}>
+          <p className="max-sm:hidden">
+            {title}
+          </p>
           {
             icon == 'Add' && <Plus size={22} />
           }
 
           {
-            icon == 'Delete' && <Delete size={22} />
+            icon == 'Delete' && <Trash size={22} />
           }
 
           {
-            icon == 'Edit' && <Edit size={22} />
+            icon == 'Edit' && <FilePen size={22} />
           }
           {
             icon == 'Export' && <Edit size={22} />
           }
-             <p className="max-sm:hidden">
-
-              {title}
-            </p>
-          </span>
+            
+          </Button>
       
       </DialogTrigger>
       <DialogContent className="max-h-fit max-w-fit rounded-md max-sm:p-3">

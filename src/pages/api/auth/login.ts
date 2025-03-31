@@ -2,6 +2,8 @@ import cookie from 'cookie';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import { redirect } from 'next/navigation';
+import { AppDataSource } from '@/app/lib/data-source';
+import { Users } from '@/app/entity/Users';
 
 export default async function handler(req, res) {
 
@@ -15,9 +17,19 @@ export default async function handler(req, res) {
             role: 'Buisness Admin',
             policy: 'admin',
             permissions: [
-                'view_dashboard', 'update_settings', 'view_leadstages', 'view_freshleads', "view_branches", "update_branches", "create_branches", "delete_branches", 'view_users', 'view_area_of_operation', "view_leads", 'update_business', 'view_business',
+                'view_dashboard', 'update_settings', 'view_leadstages', 'view_freshleads', "view_branches", "update_branches", "create_branches", "delete_branches", 'view_users', 'view_area_of_operation', "view_leads", 'update_business', 'view_business', 'view_roles','edit_roles','update_roles','create_roles','delete_roles','view_comments','create_comments','update_comments','delete_comments','view_activities','create_activities','update_activities','delete_activities' , 'create_users', 'delete_users','view_roles','edit_roles','update_roles','create_roles','delete_roles','update_users'
             ]
         };
+
+        // let user = await AppDataSource.getRepository(Users).findOne({
+        //     where: {
+        //         id: 1
+        //     },relations:['role.permissions']
+        // })
+
+        // user?.role.permissions.map((permission) => {
+        //     console.log(permission.name)
+        // })
 
         const token = jwt.sign(user, 'your_secret_key', { expiresIn: '24h' });
 

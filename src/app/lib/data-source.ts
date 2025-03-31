@@ -17,6 +17,7 @@ import { BuisnesAdmin } from "../entity/BuisnesAdmin";
 import { Policy } from "../entity/Policy";
 import { Branch } from "../entity/Branch";
 import { Comment } from "../entity/Comment";
+import { Activity } from "../entity/Activity";
 
 
 export const AppDataSource = new DataSource({
@@ -28,7 +29,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DBNAME,
   synchronize: false,
   logging: false,
-  entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment],
+  entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment,Activity],
 });
 
 await AppDataSource.initialize()

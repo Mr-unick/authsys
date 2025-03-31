@@ -26,7 +26,7 @@ const getIconForRoute = (title) => {
 
 
 
-export const NavAccordion = ({ route, setOpen }) => {
+export const NavAccordion = ({ route,setOpen }) => {
   const { nestedRoutes, title } = route;
   const icon = getIconForRoute(title);
 
@@ -43,14 +43,14 @@ export const NavAccordion = ({ route, setOpen }) => {
             {nestedRoutes.map((nestedRoute, index) => {
               const nestedIcon = getIconForRoute(nestedRoute.title);
               return (
-                <button onClick={() => setOpen(false)} className="w-full">
-                <NavLink
-                  key={`${nestedRoute.title}-${index}`}
-                  href={nestedRoute.url}
-                  icon={nestedIcon}
-                >
-                  {nestedRoute.title}
-                </NavLink>
+                <button onClick={() => {setOpen && setOpen(false)}} className="w-full">
+                  <NavLink
+                    key={`${nestedRoute.title}-${index}`}
+                    href={nestedRoute.url}
+                    icon={nestedIcon}
+                  >
+                    {nestedRoute.title}
+                  </NavLink>
                 </button>
               );
             })}

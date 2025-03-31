@@ -4,7 +4,7 @@ import { ResponseInstance } from './instances';
 import { haspermission } from './authroization';
 
 
-export const VerifyToken =async (req,res,policy)=>{
+export const VerifyToken =async (req,res,policy : string | null)=>{
 
     const token = req.cookies.token;
 
@@ -21,12 +21,13 @@ export const VerifyToken =async (req,res,policy)=>{
   const secretKey = new TextEncoder().encode('your_secret_key');
   const { payload } = await jwtVerify(token, secretKey);
 
-console.log(payload,'from verify token')
-
   let isauth = haspermission(payload, `view_${policy}`);
 
+  if(policy == null){
+    return payload
+  }
 
-  if (isauth !== true){
+  if (isauth !== true && policy){
       const response: ResponseInstance = {
         message: "Unauthorised from ",
         data: [],

@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
   const secretKey = new TextEncoder().encode('your_secret_key');
   const { payload } = await jwtVerify(token, secretKey);
-  console.log(payload)
+  
   let data = [
     {
       title: "Dashboard",

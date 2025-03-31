@@ -51,7 +51,7 @@ export default async function handler(req, res) {
           id: data.id,
           name: data.name,
           role: data.role.name,
-          buiesness: data.business.name
+          
         }
       })
 

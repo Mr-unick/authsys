@@ -2,7 +2,7 @@
 
 import { Button } from "../../../components/components/ui/button";
 import axios from "axios";
-import { FileSpreadsheet, Search, Sheet } from "lucide-react";
+import { FilePen, FileSpreadsheet, Search, Sheet, Trash } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Select,
@@ -292,14 +292,24 @@ const DataTable = ({ url }) => {
           <div className="flex gap-3">
             {selectedRows?.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="text-sm">{selectedRows?.length} selected</span>
+                
                 <Button
                   onClick={() => handleActionOnSelected('delete')}
                   variant="outline"
-                  className="text-red-500 hover:text-red-700 text-sm"
+                  className="text-red-500 hover:text-red-700 text-sm max-sm:hidden"
                 >
-                  Delete Selected
+                  <span className="text-sm">Delete{"("}{selectedRows?.length}{")"}</span>
                 </Button>
+
+                <Button
+                  onClick={() => handleActionOnSelected('delete')}
+                  variant="outline"
+                  className="text-red-500 hover:text-red-700 text-sm  mxlg-sm:block ml-2 bg-red-600 text-white"
+                >
+                  <span className="text-sm"><Trash size={22}/></span>
+                </Button>
+
+
               </div>
             )}
 
@@ -320,14 +330,14 @@ const DataTable = ({ url }) => {
             </Button>
 
             {tableData?.create && (
-              <Button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
+              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] rounded-md hover:bg-[#4E49F2] text-white font-semibold">
 
                 {
-                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} icon='Add' open={open}>
+                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} icon='Add' open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
                   </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
                 }
-              </Button>
+              </button>
 
 
             )}
@@ -426,16 +436,21 @@ const DataTable = ({ url }) => {
                           <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-blue-700 text-white`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
-                                </Modal> : <Link href={`${tableData?.updateform?.formurl}?id=${row.id}`}>Edit</Link>
+                                </Modal> : <Button className="bbg-[#4E49F2] text-white">
+                                    <Link className="flex items-center gap-2"  href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
+                                   
+                                      <FilePen size={22} /><p className="max-sm:hidden">Edit</p>
+                                    </Link>
+                                </Button>
                               )}
                             </button>
                             {tableData?.delete && (
 
-                              <Modal title={`Delete`} icon='Delete' open={open}>
+                              <Modal title={`Delete`} icon='Delete' classname={`bg-red-600 text-white`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
-                                </Modal>
+                              </Modal>
                               
                             )}
                           </div>
@@ -454,14 +469,13 @@ const DataTable = ({ url }) => {
           tableData?.rows?.length == 0 && <div className="w-full h-[80vh] flex justify-center items-center flex-col gap-6">
             <h1 className="text-2xl font-bold">No data found</h1>
             {tableData?.create && (
-              <Button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
-                {/* <Link href={``}>{`Add ${tableData?.name}`}</Link> */}
+              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
                 {
-                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} open={open}>
+                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
                   </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
                 }
-              </Button>
+              </button>
 
 
             )}

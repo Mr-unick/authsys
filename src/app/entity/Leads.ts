@@ -7,6 +7,7 @@ import { StageChangeHistory } from './StageChangeHistory';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
 import { Comment } from './Comment';
+import { Activity } from './Activity';
 
 @Entity('leads')
 export class Leads {
@@ -76,6 +77,10 @@ export class Leads {
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
   comments: typeof Comment
+
+
+  @OneToMany(() => Activity, activity => activity.lead, { nullable: true })
+  activities: typeof Activity
 
   // @ManyToOne(() => AreaOfOperation, areaOfOperation => areaOfOperation.leads)
   // areaOfOperation: AreaOfOperation;

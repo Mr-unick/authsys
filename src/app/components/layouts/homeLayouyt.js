@@ -18,15 +18,30 @@ import { CircleUserRoundIcon } from "lucide-react";
 
 export default function HomeLayout({ children }) {
   const router = useRouter();
- 
+
 
   const { asPath } = router;
 
 
   let allBreadClumbps = new Map();
 
-  const Toast = () => toast.error("Wow so easy!");
-  
+  const logout = async () => {
+    const response = await fetch('/api/auth/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      router.push('/login');
+    }
+
+    toast.success("Logged Out !");
+
+  }
+
 
   let breadcrumb = "/";
 
@@ -38,12 +53,12 @@ export default function HomeLayout({ children }) {
       allBreadClumbps.set(url, breadcrumb);
     });
 
-  
- let BreadCrumbArry = [...allBreadClumbps].map((key,value)=>{
-  return {
-    key : key[0],
-    value : key[1]
-  };
+
+  let BreadCrumbArry = [...allBreadClumbps].map((key, value) => {
+    return {
+      key: key[0],
+      value: key[1]
+    };
   })
 
 
@@ -67,33 +82,33 @@ export default function HomeLayout({ children }) {
           ) : (
             <Breadcrumb>
               <BreadcrumbList>
-              {
-                BreadCrumbArry.map(bread=>{
-                  return <>
-                  <BreadcrumbSeparator />
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href={bread.value}>{bread.key.substring(0,1).toUpperCase()+ bread.key.substring(1)}</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  </>
-                })
-              }
-                
+                {
+                  BreadCrumbArry.map(bread => {
+                    return <>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbLink href={bread.value}>{bread.key.substring(0, 1).toUpperCase() + bread.key.substring(1)}</BreadcrumbLink>
+                      </BreadcrumbItem>
+                    </>
+                  })
+                }
+
               </BreadcrumbList>
             </Breadcrumb>
           )}
           <div className="">
-            <button onClick={Toast}>
-              <CircleUserRoundIcon size={20} color="gray"/>
+            <button onClick={logout}>
+              <CircleUserRoundIcon size={20} color="gray" />
             </button>
           </div>
         </div>
-{/* 
+        {/* 
         <div className="hidden flex-col  max-md:flex px-10 max-sm:px-3 mb-5 ">
           <p className="font-semibold text-lg">Dashboard</p>
           <p>Good Morning Mr. Nikhil !</p>
         </div> */}
 
-        
+
 
         <div className="w-full h-full  px-10 max-sm:px-1 overflow-y-scroll max-h-fit max-sm:h-full ">{children}</div>
       </div>

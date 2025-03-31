@@ -61,12 +61,13 @@ export const NavLink = ({ href, children, icon }) => {
 };
 
 export default function SideBar({ setOpen }) {
+
   const [sideBarData, setSideBarData] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`https://authsys-client.vercel.app/api/getSidebarProps`)
+    axios.get(`http://localhost:3000/api/getSidebarProps`)
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data);
@@ -101,7 +102,7 @@ export default function SideBar({ setOpen }) {
             <NavAccordion key={`${data.title}-${index}`} route={data} setOpen={setOpen} />
           ) : (
             <div key={`${data.title}-${index}`} className="my-1">
-              <button onClick={() => setOpen(false)} className="w-full">
+                <button onClick={() => {setOpen && setOpen(false)}} className="w-full">
                 <NavLink
                   href={data.url}
                   icon={getIconForRoute(data.title)}
