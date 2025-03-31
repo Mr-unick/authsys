@@ -59,72 +59,29 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-100  space-y-4 px-2 pb-24 max-sm:pb-36 ">
       {/* Top row metrics */}
-      <div className="grid grid-cols-5 gap-4">
-        <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-              <TrendingUp size={16} className="mr-1 text-blue-500" />
-              New
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-4 flex-1 flex justify-end">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              9
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-              <TrendingUp size={16} className="mr-1 text-blue-500" />
-              New
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-4 flex-1 flex justify-end">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              9
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-              <TrendingUp size={16} className="mr-1 text-blue-500" />
-              New
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-4 flex-1 flex justify-end">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              9
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-              <TrendingUp size={16} className="mr-1 text-blue-500" />
-              New
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-4 flex-1 flex justify-end">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              9
-            </div>
-          </CardContent>
-        </Card>
-        <Card className="h-16 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
-          <CardHeader className="py-2 px-4">
-            <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-              <TrendingUp size={16} className="mr-1 text-blue-500" />
-              New
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="py-2 px-4 flex-1 flex justify-end">
-            <div className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-              9
-            </div>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-5 gap-4 max-sm:grid-cols-2">
+       
+       {
+        [1,2,3,4,5,6].map((item)=>{
+
+          return (
+            <Card className="h-12 max-sm:h-10 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
+              <CardHeader className="py-2 px-4">
+                <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
+                  <TrendingUp size={16} className="mr-1 text-blue-500" />
+                  New
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="py-2 px-4 flex-1 flex justify-end">
+                <div className="text-2xl max-sm:text-sm font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
+                 {item}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        })
+       }
+        
       </div>
 
       {/* Charts grid */}

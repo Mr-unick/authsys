@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     },
     {
       title: "Leads",
-      url: "/users",
+      url: "/#",
       permissionRequired: "view_leads",
       nestedRoutes: [ 
         {
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     },
     {
       title: "Buisness Settings",
-      url: "/home",
+      url: "#",
       permissionRequired: 'view_business',
       nestedRoutes: [
         {

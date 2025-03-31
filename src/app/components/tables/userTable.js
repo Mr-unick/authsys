@@ -21,7 +21,7 @@ const UserTable = ({userData}) => {
             <div className="text-sm font-medium">{user.username}</div>
           </div>
           
-          <div className="flex-1 text-sm text-gray-600">{user.contact}</div>
+          <div className="flex-1 text-sm text-gray-600 max-sm:hidden">{user.contact}</div>
           
           <div className="flex justify-end space-x-6 text-sm">
             <div className="text-sm font-medium text-gray-800">{user.assignedLeads}</div>
