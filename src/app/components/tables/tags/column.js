@@ -2,8 +2,8 @@ import React from 'react';
 import { cn } from "../../../../components/lib/utils";
 
 const variants = {
-  default: "min-w-[10rem] text-gray-700",
-  badge: "min-w-[10rem]",
+  default: "min-w-[10rem] max-sm:min-w-[5rem] text-gray-700 max-sm:text-xs",
+  badge: "min-w-[10rem] max-sm:min-w-[5rem]",
   color: "flex items-center gap-2",
   list: "w-full"
 };
@@ -33,7 +33,7 @@ export default function TD({
         return (
           <div className={cn(variants.badge, className)}>
             <span className={cn(
-              "inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium text-white",
+              "inline-flex items-center px-2.5  py-1 rounded-full text-xs font-medium text-white",
               badgeVariants[children ? "active" : 'inactive'] || "bg-gray-500",
               className
             )}>
@@ -79,7 +79,7 @@ export default function TD({
   return (
     <td 
       className={cn(
-        "px-4 py-3 text-start border-y border-gray-200",
+        "px-4 max-sm:px-2  py-3 text-start border-y border-gray-200",
         type === 'list' && "max-w-xs",
         className
       )}

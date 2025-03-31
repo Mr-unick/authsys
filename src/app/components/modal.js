@@ -1,17 +1,33 @@
-import { Plus } from "lucide-react";
+import { Delete, Edit, Plus } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger, DialogClose, DialogFooter
 } from "../../components/components/ui/dialog"
 
-export default function Modal({ children, title }) {
+export default function Modal({ children, title, icon }) {
   return (
     <Dialog>
       <DialogTrigger asChild>
+        
   
           <span className="max-sm:block">
-            <Plus size={22} /> <p className="max-sm:hidden">
+          {
+            icon == 'Add' && <Plus size={22} />
+          }
+
+          {
+            icon == 'Delete' && <Delete size={22} />
+          }
+
+          {
+            icon == 'Edit' && <Edit size={22} />
+          }
+          {
+            icon == 'Export' && <Edit size={22} />
+          }
+             <p className="max-sm:hidden">
+
               {title}
             </p>
           </span>

@@ -200,7 +200,7 @@ const DataTable = ({ url }) => {
           return
         }
 
-        if(res.status == 401){
+        if (res.status == 401) {
           toast.error(res.message)
           router.back();
           return
@@ -274,7 +274,7 @@ const DataTable = ({ url }) => {
             <Select
               onValueChange={(value) => handleSortChange(value)}
               value={sortConfig.key || ""}
-              
+
             >
               <SelectTrigger className="w-[180px] h-full bg-white max-sm:hidden">
                 <SelectValue placeholder="Sort By" />
@@ -316,14 +316,14 @@ const DataTable = ({ url }) => {
                   <FileSpreadsheet size={22} />
                 </span>
               </>
-            
+
             </Button>
 
             {tableData?.create && (
               <Button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
-               
+
                 {
-                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} open={open}>
+                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} icon='Add' open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
                   </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
                 }
@@ -340,31 +340,30 @@ const DataTable = ({ url }) => {
       <div className="overflow-y-scroll max-h-[85vh] border-[1px] rounded-md">
 
         {
-          tableData?.rows?.length > 0 && <Table className="min-w-full text-sm text-left text-gray-500 bg-white">
-            <thead className="text-xs text-gray-100  rounded-md p-3 first-letter:uppercase">
-              <tr>
+          tableData?.rows?.length > 0 && <Table className="min-w-full  text-sm text-left text-gray-500 bg-white ">
+            <thead className="text-xs text-gray-100  p-3 first-letter:uppercase ">
+              <tr >
                 <TH >
                   <input type="checkbox"
                     checked={selectAll && filteredRows.length > 0}
                     onChange={toggleSelectAll}
-                  
-                   
+                    className="mx-2"
                   />
                 </TH>
                 {tableData?.columns?.map((key) => (
                   <TH
                     key={key}
                     onClick={() => handleSortChange(key)}
-                    className="cursor-pointer"
+
                   >
                     {key.replace(/_/g, ' ')} {sortConfig.key === key && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </TH>
                 ))}
                 {(tableData?.update || tableData?.delete) && <TH>Actions</TH>}
-                
+
               </tr>
             </thead>
-            <tbody>
+            <tbody className="max-w-[100%]">
               {displayData?.length === 0 ? (
                 <tr>
                   <td colSpan={tableData?.columns?.length + 2} className="px-4 py-3 text-center">
@@ -378,14 +377,14 @@ const DataTable = ({ url }) => {
                   return (
                     <tr
                       key={index}
-                      className={`border-b hover:bg-[#F2F2F2] ${isSelected ? 'bg-blue-50' : ''}`}
+                      className={` hover:bg-[#F2F2F2] ${isSelected ? 'bg-blue-50' : ''}`}
                     >
-                      <td className="px-4 py-3 text-center">
+                      <TD className="px-4 py-3 text-center">
                         <input type="checkbox"
                           checked={isSelected}
                           onChange={() => toggleRowSelection(row.id)}
                         />
-                      </td>
+                      </TD>
 
                       {Object.entries(row).map(([key, value], idx) => {
                         // Skip rendering the id column if it's not in tableData?.columns
@@ -424,21 +423,20 @@ const DataTable = ({ url }) => {
 
                       {(tableData?.update || tableData?.delete) && (
                         <TD>
-                          <div className="flex gap-5">
+                          <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
                                 </Modal> : <Link href={`${tableData?.updateform?.formurl}?id=${row.id}`}>Edit</Link>
                               )}
                             </button>
                             {tableData?.delete && (
-                              <button
-                                onClick={() => handleDelete(row.id)}
-                                className="text-red-500 hover:text-red-700"
-                              >
-                                Delete
-                              </button>
+
+                              <Modal title={`Delete`} icon='Delete' open={open}>
+                                  <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
+                                </Modal>
+                              
                             )}
                           </div>
                         </TD>
