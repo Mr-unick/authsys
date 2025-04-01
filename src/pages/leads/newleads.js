@@ -1,9 +1,11 @@
 
-
+import DataTable from "../../app/components/tables/dataTable";
 
 
 
 export default function newleads() {
-
-    return <h1>New Leads</h1>
-};
+    return <div>
+        
+        <DataTable url={'getNewLeadProps'} />
+    </div>
+}

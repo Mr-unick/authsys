@@ -2,7 +2,7 @@
 
 import { Button } from "../../../components/components/ui/button";
 import axios from "axios";
-import { FilePen, FileSpreadsheet, Search, Sheet, Trash } from "lucide-react";
+import { FilePen, FileSpreadsheet, Search, Sheet, Trash, UserPlus } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Select,
@@ -34,6 +34,7 @@ import { Checkbox } from "../../../components/components/ui/checkbox";
 import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
 import { haspermission } from "@/utils/authroization";
+import PopupModal from "../poppupmodal";
 
 
 
@@ -128,7 +129,6 @@ const DataTable = ({ url }) => {
   // Perform actions on selected rows
   const handleActionOnSelected = (action) => {
     if (selectedRows.length === 0) return;
-
     // Example: bulk delete
     if (action === 'delete') {
       if (window.confirm(`Delete ${selectedRows.length} selected items?`)) {
@@ -141,7 +141,18 @@ const DataTable = ({ url }) => {
       }
     }
 
-    // Add more bulk actions as needed
+    if(action === 'assign'){
+      // if (window.confirm(`Assign ${selectedRows.length} selected items?`)) {
+      //   Promise.all(selectedRows.map(id => axios.post(`${ROOT_URL}api/${url}?id=${id}`)))
+      //     .then(() => {
+      //       setChange(true);
+      //     })
+      // }
+      
+
+      console.log(selectedRows)
+    }
+   
   };
 
   // Delete single row
@@ -188,7 +199,7 @@ const DataTable = ({ url }) => {
     XLSX.writeFile(wb, `${tableData?.title}_${date}.xlsx`);
   };
 
-  // Fetch data
+  
   const handleFetchdata = useCallback(() => {
     axios
       .get(`${ROOT_URL}api/${url}`)
@@ -217,24 +228,24 @@ const DataTable = ({ url }) => {
     setChange(false);
   }, [url, change, router]);
 
-  // Initial data fetch
+  
   useEffect(() => {
     handleFetchdata();
   }, []);
 
-  // Fetch after changes
+  
   useEffect(() => {
     if (change) {
       handleFetchdata();
     }
   }, [change, handleFetchdata]);
 
-  // Update filtered rows when rows change
+ 
   useEffect(() => {
     handleSearchChange(searchTerm);
   }, [rows]);
 
-  // Reset selection when filtered rows change
+ 
   useEffect(() => {
     setSelectAll(false);
     setSelectedRows([]);
@@ -254,7 +265,7 @@ const DataTable = ({ url }) => {
   const displayData = sortedData();
 
   return (
-    <div className="w-full font-pretty max-sm:px-2">
+    <div className="w-full font-pretty max-sm:px-2 pb-16">
       {/* Table actions and filters */}
 
       {
@@ -290,26 +301,17 @@ const DataTable = ({ url }) => {
           </div>
 
           <div className="flex gap-3">
-            {selectedRows?.length > 0 && (
+
+
+            {selectedRows?.length > 0 && tableData?.delete && (
               <div className="flex items-center gap-2">
-                
-                <Button
-                  onClick={() => handleActionOnSelected('delete')}
-                  variant="outline"
-                  className="text-red-500 hover:text-red-700 text-sm max-sm:hidden"
-                >
-                  <span className="text-sm">Delete{"("}{selectedRows?.length}{")"}</span>
-                </Button>
+                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-700 text-sm  ml-2  flex items-center gap-2'} >Delete <Trash size={22} /></PopupModal>
+              </div>
+            )}
 
-                <Button
-                  onClick={() => handleActionOnSelected('delete')}
-                  variant="outline"
-                  className="text-red-500 hover:text-red-700 text-sm  mxlg-sm:block ml-2 bg-red-600 text-white"
-                >
-                  <span className="text-sm"><Trash size={22}/></span>
-                </Button>
-
-
+            {selectedRows?.length > 0 && tableData?.assign && (
+              <div className="flex items-center gap-2">
+                <PopupModal modaltype={'confirmassign'} classname={'bg-blue-500 text-white hover:bg-blue-700 text-sm  ml-2  flex items-center gap-2'} >Assign<UserPlus size={22} /></PopupModal>
               </div>
             )}
 
@@ -373,7 +375,7 @@ const DataTable = ({ url }) => {
 
               </tr>
             </thead>
-            <tbody className="max-w-[100%]">
+            <tbody className="max-w-[100%] bg-white ">
               {displayData?.length === 0 ? (
                 <tr>
                   <td colSpan={tableData?.columns?.length + 2} className="px-4 py-3 text-center">
