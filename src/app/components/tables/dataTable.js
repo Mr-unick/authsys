@@ -305,13 +305,13 @@ const DataTable = ({ url }) => {
 
             {selectedRows?.length > 0 && tableData?.delete && (
               <div className="flex items-center gap-2">
-                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-700 text-sm  ml-2  flex items-center gap-2'} >Delete <Trash size={22} /></PopupModal>
+                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-700 text-sm  ml-2  flex items-center gap-2'} > <p className='max-sm:hidden'>Delete </p><Trash size={22} /></PopupModal>
               </div>
             )}
 
             {selectedRows?.length > 0 && tableData?.assign && (
               <div className="flex items-center gap-2">
-                <PopupModal modaltype={'confirmassign'} classname={'bg-blue-500 text-white hover:bg-blue-700 text-sm  ml-2  flex items-center gap-2'} >Assign<UserPlus size={22} /></PopupModal>
+                <PopupModal modaltype={'confirmassign'} classname={'bg-blue-500 text-white hover:bg-blue-700 text-sm  ml-2  flex items-center gap-2'} ><p className='max-sm:hidden'>Assign </p><UserPlus size={22} /></PopupModal>
               </div>
             )}
 
