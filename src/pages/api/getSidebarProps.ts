@@ -70,7 +70,7 @@ export default async function handler(req, res) {
     },
     {
       title: "Mange Users",
-      url: "/users",
+      url: "user/users",
       permissionRequired: "view_users",
 
     },

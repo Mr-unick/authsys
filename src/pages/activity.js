@@ -11,7 +11,7 @@ const ActivityTab = () => {
             id: 1,
             user: {
                 name: 'John Doe',
-                avatar: '/api/placeholder/32/32'
+                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
             },
             action: 'created a new document',
             target: 'Annual Report 2025',
@@ -22,7 +22,7 @@ const ActivityTab = () => {
             id: 2,
             user: {
                 name: 'Jane Smith',
-                avatar: '/api/placeholder/32/32'
+                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
             },
             action: 'commented on',
             target: 'Project Timeline',
@@ -33,7 +33,7 @@ const ActivityTab = () => {
             id: 3,
             user: {
                 name: 'Robert Johnson',
-                avatar: '/api/placeholder/32/32'
+                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
             },
             action: 'scheduled a meeting with',
             target: 'Marketing Team',
@@ -44,7 +44,7 @@ const ActivityTab = () => {
             id: 4,
             user: {
                 name: 'Lisa Anderson',
-                avatar: '/api/placeholder/32/32'
+                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
             },
             action: 'updated profile information',
             target: '',
@@ -55,7 +55,7 @@ const ActivityTab = () => {
             id: 5,
             user: {
                 name: 'Michael Brown',
-                avatar: '/api/placeholder/32/32'
+                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
             },
             action: 'shared a document with you',
             target: 'Q1 Financial Report',
@@ -91,7 +91,7 @@ const ActivityTab = () => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-lg px-4 py-2 max-w-md ">
+        <div className="bg-white rounded-lg shadow-lg px-4 py-4 max-w-screen ">
             <div className="mb-4">
                
                 <div className="flex space-x-2 overflow-x-auto pb-2">
@@ -119,7 +119,7 @@ const ActivityTab = () => {
                                     <img
                                         src={activity.user.avatar}
                                         alt={activity.user.name}
-                                        className="w-10 h-10 rounded-full"
+                                        className="w-10 h-10 rounded-full object-cover"
                                     />
                                     <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full">
                                         {getActivityIcon(activity.type)}

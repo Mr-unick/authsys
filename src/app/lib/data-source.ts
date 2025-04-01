@@ -29,7 +29,7 @@ export const AppDataSource = new DataSource({
   database: process.env.DBNAME,
   synchronize: false,
   logging: false,
-  entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment,Activity],
+  entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment, Activity],
 });
 
 await AppDataSource.initialize()

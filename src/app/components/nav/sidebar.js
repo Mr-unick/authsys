@@ -46,7 +46,7 @@ export const NavLink = ({ href, children, icon }) => {
   const isActive = router.pathname === href;
 
   return (
-    <Link href={href} className="hover:no-underline">
+    <Link href={href} className="">
       <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${isActive
         ? 'bg-indigo- 600 text-white font-medium'
         : 'text-gray-300 hover:bg-indigo-600/10 hover:text-indigo-300 hover:no-underline'

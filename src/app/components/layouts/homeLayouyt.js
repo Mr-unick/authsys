@@ -86,7 +86,7 @@ export default function HomeLayout({ children }) {
           {asPath == "/" ? (
             <HeaderBar title={"Dashboard"} isDash={true} />
           ) : (
-            <Breadcrumb>
+            <Breadcrumb className="max-sm:hidden">
               <BreadcrumbList>
                 {
                   BreadCrumbArry.map(bread => {

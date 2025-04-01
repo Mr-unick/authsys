@@ -17,10 +17,10 @@ export class Permissions {
   action: string;
 
   @ManyToMany(() => Roles, role => role.permissions)
-  @JoinColumn() 
-  role:typeof Roles[];
+  @JoinColumn()
+  role: Roles[];
 
   @ManyToOne(() => Policy, policy => policy.permissions)
-  @JoinColumn() 
-  policy:typeof Policy[];
+  @JoinColumn()
+  policy: typeof Policy[];
 }
