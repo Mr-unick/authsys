@@ -471,7 +471,7 @@ const DataTable = ({ url }) => {
             {tableData?.create && (
               <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold rounded-md font-semibold">
                 {
-                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} open={open}>
+                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} icon={'Add'} classname={'bg-[#4E49F2] text-white'} open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
                   </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
                 }

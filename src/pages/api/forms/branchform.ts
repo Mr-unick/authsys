@@ -2,23 +2,36 @@ import { Users } from "lucide-react";
 import { AppDataSource } from "../../../app/lib/data-source";
 import { GenerateForm } from "../../../utils/generateForm";
 import { UserRepository } from "../../../app/reposatory/userRepo";
+import { Branch } from "@/app/entity/Branch";
 
 
 export default async function handler(req, res){
 
     if( req.query.id != "undefined"){
 
-        const UsersRepo =  await UserRepository.onlyPermit(1);
+       
 
-        const user = await UsersRepo.where("users.id = :id", { id: req.query.id }).getOne(); 
+        const branch = await AppDataSource.getRepository(Branch).findOneBy({id: req.query.id}); 
         
-        const form = new GenerateForm('User Form');
+        const form = new GenerateForm('Edit Branch');
 
-        form.addField('name','text').value(user?.name).required();
-        form.addField('email','email').value(user?.email);
-        form.addField('number','text').value('7448080267').newRow();
-        form.addField('address','text').value('yavatmal, ghtanji dist');
-        form.addField('last name','text').value('lende');
+        if(!branch){
+            return res.status(404).json({message: 'Branch not found'});
+        }
+
+        form.addField('name', 'text').value(branch?.name).required();
+        form.addField('email', 'email').value(branch?.email).required();
+        form.addField('branch_code', 'text').value(branch?.branch_code).required();
+        form.addField('number', 'text').value(branch?.number).required();
+        form.addField('address', 'text').value(branch?.address).required();
+        form.addField('state', 'text').value(branch?.state).required();
+        form.addField('district', 'text').value(branch?.district).required();
+        form.addField('city', 'text').value(branch?.city).required();
+        form.addField('pincode', 'text').value(branch?.pincode).required();
+        form.addField('discription', 'textarea').value(branch?.discription);
+
+        form.submiturl('getBranchProps');
+        form.method('put');
      
     
         res.json(form.getForm());

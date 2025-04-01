@@ -10,6 +10,7 @@ import { VerifyToken } from "@/utils/VerifyToken";
 export default async function handler(req, res) {
     try {
         let user = await VerifyToken(req, res, 'area_of_operation');
+        
         const AreaOfOperationRepo = AppDataSource.getRepository(AreaOfOperation);
 
         const AreaOfOperationData = await AreaOfOperationRepo.find();

@@ -23,7 +23,6 @@ export default async function handler(req, res){
         form.addField('gender','select').value('male').options(['male','female','other']).newRow();
         form.addField('last name','text').value('lende');
      
-    
         res.json(form.getForm());
  
     }else{
