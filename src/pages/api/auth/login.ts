@@ -38,15 +38,13 @@ export default async function handler(req, res) {
         // userdd.role.permissions.map((permission) => {
         //     console.log(permission.permission)
         // })
-        if (userdd?.role.permissions ){
-            userdd?.role.permissions.map((permission) => {
-                console.log(permission.permission)
-            })
-        }
+
+        // if (userdd?.role.permissions ){
+        //     userdd?.role.permissions.map((permission) => {
+        //         console.log(permission.permission)
+        //     })
+        // }
         
-
-         
-
         // return res.status(500).json({
         //     message: 'Login unsuccessful',
 
