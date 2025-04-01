@@ -15,6 +15,12 @@ import {
 import { ToastContainer, toast } from 'react-toastify';
 import { useEffect, useState } from "react";
 import { CircleUserRoundIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "../../../components/components/ui/popover"
+
 
 export default function HomeLayout({ children }) {
   const router = useRouter();
@@ -63,7 +69,7 @@ export default function HomeLayout({ children }) {
 
 
   return (
-    <div className="w-screen  h-screen flex overflow-hidden bg-[#F4F4F4] ">
+    <div className="w-screen  h-screen flex overflow-hidden bg-[#F4F4F4] max-sm:bg-white ">
       <div className="w-[17%]  min-xl:w[20$] min-lg[20%]  min-sm:w-[20%] bg-[#0F1626] max-lg:hidden flex flex-col justify-start items-center">
         {/* <div className="w-[100%]  my-5 px-5 flex justify-start items-center gap-2 ">
           <Image src={"/icons8logo.svg"} alt="logo" width={30} height={30} />
@@ -97,9 +103,19 @@ export default function HomeLayout({ children }) {
             </Breadcrumb>
           )}
           <div className="">
-            <button onClick={logout}>
-              <CircleUserRoundIcon size={20} color="gray" />
-            </button>
+
+            <Popover>
+              <PopoverTrigger>  <CircleUserRoundIcon size={25} className="text-blue-200" /></PopoverTrigger>
+              <PopoverContent className="mr-3 max-sm:w-[9rem] flex flex-col gap-2">
+                <button className="w-full flex justify-center items-center gap-2 border border-gray-200 p-2 rounded-md" onClick={logout}>
+                  <p className="text-sm">Logout</p>
+                </button>
+                <button className="w-full flex justify-center items-center gap-2 border border-gray-200 p-2 rounded-md" >
+                  <p className="text-sm">Profile</p>
+                </button>
+              </PopoverContent>
+            </Popover>
+            
           </div>
         </div>
         {/* 
