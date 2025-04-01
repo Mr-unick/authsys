@@ -369,7 +369,7 @@ const DataTable = ({ url }) => {
                     {key.replace(/_/g, ' ')} {sortConfig.key === key && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </TH>
                 ))}
-                {(tableData?.update || tableData?.delete) && <TH>Actions</TH>}
+                {(tableData?.update || tableData?.delete) && <TH classname="">Actions</TH>}
 
               </tr>
             </thead>
@@ -436,7 +436,7 @@ const DataTable = ({ url }) => {
                           <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-blue-700 text-white`} open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-white hover:text-white hover:bg-green-500 text-green-600 shadow-none`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
                                 </Modal> : <Button className="bbg-[#4E49F2] text-white">
                                     <Link className="flex items-center gap-2"  href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
@@ -448,7 +448,7 @@ const DataTable = ({ url }) => {
                             </button>
                             {tableData?.delete && (
 
-                              <Modal title={`Delete`} icon='Delete' classname={`bg-red-600 text-white`} open={open}>
+                              <Modal title={`Delete`} icon='Delete' classname={`bg-white text-red-600 hover:bg-red-500 hover:text-white shadow-none`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
                               </Modal>
                               
@@ -469,7 +469,7 @@ const DataTable = ({ url }) => {
           tableData?.rows?.length == 0 && <div className="w-full h-[80vh] flex justify-center items-center flex-col gap-6">
             <h1 className="text-2xl font-bold">No data found</h1>
             {tableData?.create && (
-              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold">
+              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold rounded-md font-semibold">
                 {
                   tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />

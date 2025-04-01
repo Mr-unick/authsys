@@ -33,9 +33,9 @@ export const NavAccordion = ({ route,setOpen }) => {
   return (
     <Accordion type="multiple"  collapsible className="border-none">
       <AccordionItem value={`item-${title}`} className="border-b-0">
-        <AccordionTrigger className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-indigo-300 hover:bg-indigo-600/10 rounded-lg transition-all duration-200">
+        <AccordionTrigger className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-indigo-300 hover:bg-indigo-600/10 rounded-lg transition-all duration-200 ">
           <span className="text-gray-400">{icon}</span>
-          <span className="flex-1 text-sm">{title}</span>
+          <span className="flex-1 text-sm hover:no-underline">{title}</span>
         
         </AccordionTrigger>
         <AccordionContent className="pt-1 pb-2">
@@ -43,11 +43,12 @@ export const NavAccordion = ({ route,setOpen }) => {
             {nestedRoutes.map((nestedRoute, index) => {
               const nestedIcon = getIconForRoute(nestedRoute.title);
               return (
-                <button onClick={() => {setOpen && setOpen(false)}} className="w-full">
+                <button onClick={() => {setOpen && setOpen(false)}} className="w-full hover:no-underline">
                   <NavLink
                     key={`${nestedRoute.title}-${index}`}
                     href={nestedRoute.url}
                     icon={nestedIcon}
+                    className="hover:no-underline"
                   >
                     {nestedRoute.title}
                   </NavLink>

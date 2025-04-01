@@ -5,7 +5,7 @@ import { Button } from "../../components/components/ui/button";
 import { Input } from "../../components/components/ui/input";
 import { Checkbox } from "../../components/components/ui/checkbox";
 import { Label } from "../../components/components/ui/label";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Layers } from "lucide-react";
 import { useRouter } from 'next/navigation';
 
 export default function Page() {
@@ -85,13 +85,14 @@ export default function Page() {
       <div className="flex-1 flex items-center justify-center p-8 lg:p-12">
         <div className="w-full max-w-md mx-auto space-y-8">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
-            <span className="text-2xl font-medium text-gray-900">COMPANY NAME</span>
+          <div className="flex items-center gap-2  max-sm:px-0">
+            <Layers className="h-8 w-8 text-[#4E49F2]" />
+            <h1 className="text-2xl font-bold text-[#4E49F2]">AppName</h1>
           </div>
 
           <div className="space-y-2">
-            <h1 className="text-3xl font-semibold text-gray-900">Welcome back</h1>
-            <p className="text-gray-600">Please enter your details to sign in</p>
+            <h1 className="text-3xl max-sm:text-2xl font-semibold text-gray-900">Welcome back</h1>
+            <p className="text-gray-600 max-sm:text-sm">Please enter your details to sign in</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-6">
@@ -139,7 +140,7 @@ export default function Page() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Checkbox id="remember" className="border-gray-300" />
                 <Label htmlFor="remember" className="text-sm text-gray-600">
@@ -149,22 +150,22 @@ export default function Page() {
               <a href="#" className="text-sm font-medium text-purple-600 hover:text-purple-800">
                 Forgot password?
               </a>
-            </div>
+            </div> */}
 
             <div className="space-y-4">
               <Button
                 type="submit"
-                className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-base"
+                className="w-full h-12 bg-[#4E49F2] hover:bg-blue-700 text-base mt-4"
               >
                 Sign in
               </Button>
 
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+                  {/* <div className="w-full border-t border-gray-200"></div> */}
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2  text-gray-500">Or continue with</span>
                 </div>
               </div>
             </div>

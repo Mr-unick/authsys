@@ -18,7 +18,7 @@ export default async function handler(req, res) {
 
      
 
-     let stages = await AppDataSource.getRepository(LeadStages).createQueryBuilder('stages').limit(10).getMany();
+     let stages = await AppDataSource.getRepository(LeadStages).createQueryBuilder('stages').select(['stages.id', 'id']).addSelect(['stages.stage_name', 'stage_name']).addSelect(['stages.colour', 'colour']).addSelect(['stages.discription', 'discription']).limit(10).getMany();
 
   
 

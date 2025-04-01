@@ -46,10 +46,10 @@ export const NavLink = ({ href, children, icon }) => {
   const isActive = router.pathname === href;
 
   return (
-    <Link href={href}>
+    <Link href={href} className="hover:no-underline">
       <div className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${isActive
-        ? 'bg-indigo-600 text-white font-medium'
-        : 'text-gray-300 hover:bg-indigo-600/10 hover:text-indigo-300'
+        ? 'bg-indigo- 600 text-white font-medium'
+        : 'text-gray-300 hover:bg-indigo-600/10 hover:text-indigo-300 hover:no-underline'
         }`}>
         <span className={`${isActive ? 'text-white' : 'text-gray-400'}`}>
           {icon}
@@ -67,7 +67,7 @@ export default function SideBar({ setOpen }) {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`https://authsys-client.vercel.app/api/getSidebarProps`)
+    axios.get(`authsys-client.vercel.app/api/getSidebarProps`)
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data);
@@ -102,10 +102,11 @@ export default function SideBar({ setOpen }) {
             <NavAccordion key={`${data.title}-${index}`} route={data} setOpen={setOpen} />
           ) : (
             <div key={`${data.title}-${index}`} className="my-1">
-                <button onClick={() => {setOpen && setOpen(false)}} className="w-full">
+              <button onClick={() => { setOpen && setOpen(false) }} className="w-full">
                 <NavLink
                   href={data.url}
                   icon={getIconForRoute(data.title)}
+                  className="hover:no-underline"
 
                 >
                   {data.title}

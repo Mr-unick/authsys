@@ -80,7 +80,7 @@ export default async function handler(req, res) {
       permissionRequired: 'view_business',
       nestedRoutes: [
         {
-          title: "Roles And Permissions",
+          title: "Roles",
           url: "/buisnessettings/rolesadnpermissions/roles",
           permissionRequired: "view_roles",
         },

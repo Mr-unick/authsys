@@ -17,7 +17,7 @@ export default async function handler(req, res) {
             role: 'Buisness Admin',
             policy: 'admin',
             permissions: [
-                'view_dashboard', 'update_settings', 'view_leadstages', 'view_freshleads', "view_branches", "update_branches", "create_branches", "delete_branches", 'view_users', 'view_area_of_operation', "view_leads", 'update_business', 'view_business', 'view_roles','edit_roles','update_roles','create_roles','delete_roles','view_comments','create_comments','update_comments','delete_comments','view_activities','create_activities','update_activities','delete_activities' , 'create_users', 'delete_users','view_roles','edit_roles','update_roles','create_roles','delete_roles','update_users'
+                'view_dashboard', 'update_settings', 'view_leadstages', 'view_freshleads', "view_branches", "update_branches", "create_branches", "delete_branches", 'view_users', 'view_area_of_operation', "view_leads", 'update_business', 'view_business', 'view_roles', 'edit_roles', 'update_roles', 'create_roles', 'delete_roles', 'view_comments', 'create_comments', 'update_comments', 'delete_comments', 'view_activities', 'create_activities', 'update_activities', 'delete_activities', 'create_users', 'delete_users', 'view_roles', 'edit_roles', 'update_roles', 'create_roles', 'delete_roles', 'update_users', 'create_leadstages','update_leadstages','delete_leadstages'
             ]
         };
 
