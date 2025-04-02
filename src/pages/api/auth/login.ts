@@ -11,46 +11,41 @@ export default async function handler(req, res) {
 
 
     try {
-        const user = {
-            id: '1',
-            buisness_id: 1,
-            username: 'John Doe',
-            email: 'john@example.com',
-            role: 'Buisness Admin',
-            policy: 'admin',
-            permissions: [
-                'view_dashboard', 'update_settings', 'view_leadstages', 'view_freshleads', "view_branches", "update_branches", "create_branches", "delete_branches", 'view_users', "view_leads", 'update_business', 'view_business', 'view_roles', 'edit_roles', 'update_roles', 'create_roles', 'delete_roles', 'view_comments', 'create_comments', 'update_comments', 'delete_comments', 'view_activities', 'create_activities', 'update_activities', 'delete_activities', 'create_users', 'delete_users', 'view_roles', 'edit_roles', 'update_roles', 'create_roles', 'delete_roles', 'update_users', 'create_leadstages', 'update_leadstages', 'delete_leadstages', 'create_area_of_operation'
-            ]
-        };
+        const { email, password } = req.body;
 
-        let userdd = await AppDataSource.getRepository(Users).createQueryBuilder('users')
+        console.log(req.body)
+
+
+        let user = await AppDataSource.getRepository(Users)
+            .createQueryBuilder('users')
             .leftJoinAndSelect('users.role', 'role')
-            .leftJoinAndSelect('role.permissions', 'permissions')
-            .where('users.id = :id', { id: 1 })
+            .where('users.email = :email', { email: email })
             .getOne();
 
-        if (!userdd) {
-            return res.status(500).json({
-                message: 'Login unsuccessful',
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'user not found',
             });
         }
 
-        // userdd.role.permissions.map((permission) => {
-        //     console.log(permission.permission)
-        // })
+        let permissions = (await AppDataSource.getRepository(Users)
+            .createQueryBuilder('users')
+            .leftJoin('users.role', 'role')
+            .leftJoin('role.permissions', 'permissions')
+            .select('permissions.permission', 'permission')
+            .where('users.id = :id', { id: 1 })
+            .getRawMany()).map(p => p.permission); // Extract only permission values
 
-        // if (userdd?.role.permissions ){
-        //     userdd?.role.permissions.map((permission) => {
-        //         console.log(permission.permission)
-        //     })
-        // }
-        
-        // return res.status(500).json({
-        //     message: 'Login unsuccessful',
 
-        // });
+        let newuser = {
+            ...user,
+            role: user?.role.name,
+            permissions: permissions
 
-        const token = jwt.sign(user, 'your_secret_key', { expiresIn: '24h' });
+        }
+
+        const token = jwt.sign(newuser, 'your_secret_key', { expiresIn: '24h' });
 
         const serializedCookie = serialize('token', token, {
             httpOnly: true,

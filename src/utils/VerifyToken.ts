@@ -37,6 +37,8 @@ export const VerifyToken =async (req,res,policy : string | null)=>{
     return  res.json(response);
   }
 
+  console.log(payload)
+
  return payload
  
 }

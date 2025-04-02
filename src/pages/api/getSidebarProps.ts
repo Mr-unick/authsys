@@ -25,7 +25,7 @@ export default async function handler(req, res) {
 
   const secretKey = new TextEncoder().encode('your_secret_key');
   const { payload } = await jwtVerify(token, secretKey);
-  
+
   let data = [
     {
       title: "Dashboard",
@@ -36,20 +36,19 @@ export default async function handler(req, res) {
     {
       title: "Notifications",
       url: "/notifications",
-      permissionRequired: "view_dashboard",
+      permissionRequired: "view_notifications",
 
     },
     {
       title: "Activity",
       url: "/activity",
-      permissionRequired: "view_dashboard",
-
+      permissionRequired: "view_activity",
     },
     {
       title: "Leads",
       url: "/#",
       permissionRequired: "view_leads",
-      nestedRoutes: [ 
+      nestedRoutes: [
         {
           title: "New Leads",
           url: "/leads/newleads",
@@ -119,8 +118,6 @@ export default async function handler(req, res) {
 
   data = data.filter(nav => {
     const hasNavPermission = haspermission(payload, nav.permissionRequired);
-
-
     // return false if user dont have permission 
 
     if (!hasNavPermission) {
