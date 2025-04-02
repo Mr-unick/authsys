@@ -57,7 +57,7 @@ const Dashboard = () => {
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
   return (
-    <div className="min-h-screen bg-gray-100  space-y-4 px-2 pb-24 max-sm:pb-36 ">
+    <div className="min-h-screen bg-gray-100 max-sm:bg-white space-y-4 px-2 pb-24 max-sm:pb-36 ">
       {/* Top row metrics */}
       <div className="grid grid-cols-5 gap-4 max-sm:grid-cols-2">
        

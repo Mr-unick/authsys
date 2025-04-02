@@ -18,6 +18,7 @@ import Modal from "../modal";
 import FormComponent from "../forms/form";
 import { ToolTipComponent } from "../tooltip";
 import { Button } from "../../../components/components/ui/button";
+import { Comments } from "../../../../const";
 
 
 
@@ -25,7 +26,7 @@ import { Button } from "../../../components/components/ui/button";
 
 
 
-export default function LeadDetails({data}) {
+export default function LeadDetails({ data }) {
   // const data = {
   //   "id": 1,
   //   "name": "Nikhil Lende",
@@ -71,8 +72,6 @@ export default function LeadDetails({data}) {
   //   }]
   // };
 
-
-
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
@@ -81,20 +80,16 @@ export default function LeadDetails({data}) {
     });
   };
 
+  console.log(data,'from lead details')
+
   return (
     <div className="overflow-y-scroll px-2 max-sm:px-0 h-full ">
       <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col">
         <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] overflow-y-scroll ">
           {/* Personal Information */}
+
           <div className="space-y-3 ">
-            <h3 className="text-xl text-gray-900 mb-5">{data?.name}  
-             
-              <button className="mx-2"> <Modal title={<Edit size={16} />}>
-              <FormComponent id={data?.id} formdata={{ formurl: 'leadform' }} />
-            </Modal></button>
-
-
-            </h3>
+            <h3 className="text-2xl text-gray-900 mb-5">{data?.name}</h3>
 
             <div className="grid grid-cols-2 gap-y-4">
               <div className="flex gap-2 items-center text-gray-600">
@@ -126,13 +121,14 @@ export default function LeadDetails({data}) {
           <div className="space-y-3">
             <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
               {/* <ToolTipComponent msg={'Add Collaborator'}> */}
-                <button className=" flex items-center gap-2 bg-blue-500 text-white px-4 py-1 rounded-md">Collaborators <Modal title={<Plus size={16} />}>
+              <button className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
+                <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-600 p-0 shadow-none hover:bg-blue-600'} icon='Add'>
                   <FormComponent formdata={{ formurl: 'addcollboratorform' }} />
                 </Modal></button>
               {/* </ToolTipComponent> */}
             </h3>
             <div className="grid grid-cols-2 gap-y-4">
-              
+
               <div className="flex gap-2 items-center text-gray-600">
                 <Briefcase size={16} />
                 <span>Collborators</span>
@@ -210,26 +206,34 @@ export default function LeadDetails({data}) {
             <h3 className="text-sm text-gray-900 mb-3">Notes</h3>
             <p className="text-gray-700">{data?.notes}</p>
           </div>
+
+          <div className="hidden max-sm:block  mr-4">
+            <h3 className="text-sm text-gray-900 mb-3">Comments</h3>
+           
+              <CommentsSection comments={Comments} />
+           
+          </div>
+
           <div className="">
             <h3 className="text-sm text-gray-900 mb-3 flex items-start">
               {/* <ToolTipComponent msg={'Change Stage'}> */}
-              <button className=" flex items-center gap-2 bg-green-500 text-white px-4 py-1 rounded-md">  Stage History <Modal title={<Plus size={16} />}>
+              <button className=" flex items-center gap-2 bg-green-600 text-white px-4  rounded-md">  Stage History <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-green-600 p-0 shadow-none hover:bg-green-600'} icon='Add'>
                 <FormComponent id={data?.id} formdata={{ formurl: 'changestageform' }} />
               </Modal></button>
-                {/* </ToolTipComponent> */}
+              {/* </ToolTipComponent> */}
             </h3>
             {
               data?.stageChangeHistory?.length > 0 && (
                 <LeadTimeline data={data?.stageChangeHistory} />
               )
             }
-          
+
           </div>
         </div>
         <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
-          <CommentsSection comments={data?.comments} />
+          <CommentsSection comments={Comments} />
         </div>
-      
+
       </div>
 
     </div>

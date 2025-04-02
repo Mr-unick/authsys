@@ -11,8 +11,11 @@ import CommentCard from '../cards/commentcard';
 import { Comments } from '../../../../const';
 
 const CommentsSection = ({comments}) => {
+
+    console.log(comments,'from comments section')
    
     const [newComment, setNewComment] = useState('');
+    const [Comments, setComments] = useState(comments);
     const [username, setUsername] = useState('');
     const [attachment, setAttachment] = useState(null);
     const fileInputRef = useRef(null);
@@ -61,27 +64,27 @@ const CommentsSection = ({comments}) => {
     // Format timestamp
  
     return (
-        <div className="flex flex-col max-h-[95%] ">
-            {/* Comments Container (Scrollable) */}
-            <div className="flex-grow overflow-y-scroll p-4 space-y-4 max-h-[35rem]">
-                {comments?.length === 0 ? (
-                    <div className="text-center text-gray-500 py-10 h-[35rem]">
+        <div className="flex flex-col max-h-[95%]  ">
+        
+            <div className="flex-grow overflow-y-scroll max-sm:overflow-y-hidden p-4 max-sm:p-0 space-y-4 h-[35rem] max-sm:-h-[10rem]">
+                {comments?.length == 0? 
+                    <div className="text-center text-gray-500 py-10 lg:max-h-[35rem] max-sm:max-h-[5rem] bg-red-300">
                         <p>No comments yet</p>
                     </div>
-                ) : (
+                : 
 
-                        <div className=" h-[35rem]">
-                           { comments?.map((comment) => (
-                            <CommentCard comment={comment} />
-                            ))}
-                        </div>
+                <div className="max-h-[35rem]  max-sm:max-h-[20rem] space-y-4">
+                    { comments?.map((comment) => {
+                    return <CommentCard comment={comment} />
+                    })}
+                </div>
                    
-                )}
+                }
             </div>
 
             {/* Sticky Comment Input */}
-            <div className="sticky bottom-0  p-4 ">
-                <div className="flex items-start space-x-2 border rounded-md p-2">  
+            <div className="sticky bottom-4  p-4  max-sm:px-0 ">
+                <div className="flex items-start space-x-2 border rounded-md p-2 bg-white">  
                     {/* Comment Input */}
                     <div className="flex-grow relative">
                         <textarea

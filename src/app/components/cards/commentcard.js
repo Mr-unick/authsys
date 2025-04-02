@@ -2,19 +2,21 @@ import { formatDateTime } from "@/utils/utility";
 import { User, FileText, Download } from 'lucide-react';
 
 export default function CommentCard({ comment }) {
+
+    console.log(comment,'from comment card')
     return (
         <div
             key={comment.id}
             className="bg-white border-gray-200 border-[1px]  rounded-md p-4 shadow-xs hover:shadow-sm transition-shadow duration-300 "
         >
             <div className="flex items-start space-x-4">
-              
+              <h1>Hello</h1>
                 <div className="flex-grow">
                     <div className="flex justify-between items-center mb-1">
                         <div className="flex items-center space-x-2">
                             <h3 className="font-medium text-gray-900 text-sm font-normal">{comment?.user}</h3>
                             <span className="text-xs text-gray-400">
-                                {formatDateTime(comment?.createdAt)} 
+                                {/* {formatDateTime(comment?.createdAt)}  */}
                             </span>
                         </div>
                     </div>
