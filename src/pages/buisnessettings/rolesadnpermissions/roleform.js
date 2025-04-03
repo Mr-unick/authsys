@@ -14,8 +14,7 @@ import axios from 'axios';
 
 const BRANCHES = [
   { id: '1', name: 'Main Office', location: 'Headquarters' },
-  { id: '2', name: 'Downtown Branch', location: 'City Center' },
-  { id: '3', name: 'West Branch', location: 'West District' }
+
 ];
 
 const RolePermissionsForm = () => {
@@ -102,19 +101,19 @@ const RolePermissionsForm = () => {
     handlefetchPermissions();
   },[])
 
-  console.log(policyProps,'this is policy props');
+
   
 
   return (
     <div className="flex items-center justify-center overflow-y-scroll mb-14">
       <div className="w-full overflow-y-scroll">
-        <div className="bg-gradient-to-r px-8">
+        <div className="bg-gradient-to-r px-8 max-sm:px-4">
           <h1 className="text-xl font-bold text-black flex items-center">
             Create New Role
           </h1>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-8 py-5 space-y-6">
+        <form onSubmit={handleSubmit} className="px-8 py-5 space-y-6 max-sm:px-4">
           {/* Role Name Input */}
           <div className="space-y-2">
             <label className="block font-semibold text-sm font-medium text-gray-700 flex items-center">
@@ -125,7 +124,7 @@ const RolePermissionsForm = () => {
               value={roleName}
               onChange={(e) => setRoleName(e.target.value)}
               placeholder="Enter role name"
-              className="w-1/3 px-4 py-2 border border-gray-300 rounded-md outline-none"
+              className="w-1/3 px-4 py-2 border border-gray-300 rounded-md outline-none max-sm:w-full"
               required
             />
           </div>
@@ -137,11 +136,11 @@ const RolePermissionsForm = () => {
             </label>
             <div 
               onClick={() => setBranchDropdownOpen(!branchDropdownOpen)}
-              className="w-1/3 px-4 py-2 border border-gray-300 rounded-md flex items-center justify-between cursor-pointer bg-white transition-all"
+              className="w-1/3 px-4 py-2 border border-gray-300 rounded-md flex items-center justify-between cursor-pointer bg-white transition-all max-sm:w-[100%]"
             >
               {selectedBranch ? 
-                <div className="flex items-center">
-                  <span className="font-medium">{selectedBranch.name}</span>
+                <div className="flex items-center max-sm:w-full">
+                  <span className="font-medium ">{selectedBranch.name}</span>
                   <span className="text-gray-500 ml-2 text-sm">({selectedBranch.location})</span>
                 </div> : 
                 <span className="text-gray-400 bg-gray-50">Select a branch</span>
@@ -149,7 +148,7 @@ const RolePermissionsForm = () => {
               {branchDropdownOpen ? <ChevronUp /> : <ChevronDown />}
             </div>
             {branchDropdownOpen && (
-              <div className="absolute z-10 w-1/3 bg-white border border-gray-300 rounded-md mt-1 shadow-lg">
+              <div className="absolute z-10 w-1/3 bg-white border border-gray-300 rounded-md mt-1 shadow-lg max-sm:w-[100%]">
                 {BRANCHES.map(branch => (
                   <div 
                     key={branch.id}

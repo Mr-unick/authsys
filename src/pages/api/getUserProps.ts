@@ -18,20 +18,32 @@ import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function handler(req, res) {
 
-  let user = await VerifyToken(req, res,'users');
+  let user = await VerifyToken(req, res, 'users');
 
-  const UsersRepo = UserRepository.onlyPermit(1);
+  const UsersRepo = UserRepository.onlyPermit(user.buisness);
 
   if (req.method == "GET") {
 
     try {
 
-    
-      const UsersData = await AppDataSource.getRepository(Users).find({
-        relations: [
-          "role", 'business', "role.permissions"
-        ]
-      });
+      let UsersData;
+
+      if (user?.business != null) {
+
+        UsersData = await AppDataSource.getRepository(Users)
+        .createQueryBuilder('users').leftJoinAndSelect('users.role', 'role')
+        .leftJoinAndSelect('role.permissions', 'permissions')
+        .leftJoinAndSelect('users.business', 'business')
+        .where('users.buisnesId = :businessId', { businessId: user?.business })
+        .getMany();
+
+      } else {
+        UsersData = await AppDataSource.getRepository(Users).find({
+          relations: [
+            "role", 'business', "role.permissions"
+          ]
+        })
+      }
 
       const roles = await AppDataSource.getRepository(Roles).find();
 
@@ -44,14 +56,14 @@ export default async function handler(req, res) {
       //     status: 200
       //   });
       // }
-
+     
 
       const tablerows = UsersData.map(data => {
         return {
           id: data.id,
           name: data.name,
           role: data.role.name,
-          
+
         }
       })
 
@@ -62,7 +74,7 @@ export default async function handler(req, res) {
 
       const response: ResponseInstance = {
         message: "Request successful",
-        data: tabledata.policy(user,'users').addform('userform').gettable(),
+        data: tabledata.policy(user, 'users').addform('userform').gettable(),
         status: 200,
       };
 
@@ -70,7 +82,7 @@ export default async function handler(req, res) {
     } catch (e) {
       const response: ResponseInstance = {
         message: "Something Went Wrong",
-        data: [],
+        data: [e.message],
         status: 500,
       };
 

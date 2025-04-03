@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   let user = await VerifyToken(req, res, 'roles');
 
-  const RolesRepo = RolesRepository.onlyPermit(1);
+  const RolesRepo = RolesRepository.onlyPermit(user?.business);
 
   if (req.method == "GET") {
     try {

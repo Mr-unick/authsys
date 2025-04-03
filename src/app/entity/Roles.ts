@@ -32,11 +32,11 @@ export class Roles {
   @JoinColumn({ name: 'branchId', referencedColumnName: 'id' })
   branch: typeof Branch;
 
-  
-  @ManyToMany(type => Permissions, permissions => permissions.role, { eager: false }  )
+
+  @ManyToMany(type => Permissions, permissions => permissions.role, { eager: false })
   @JoinTable({
     name: "role_has_permissions",
-    joinColumn:  {
+    joinColumn: {
       name: "role_id",
       referencedColumnName: "id"
     },
@@ -46,5 +46,5 @@ export class Roles {
     }
   })
   permissions: Permissions[];
-  
+
 }

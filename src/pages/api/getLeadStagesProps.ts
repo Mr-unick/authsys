@@ -16,11 +16,29 @@ export default async function handler(req, res) {
  if(req.method == "GET"){
    try {
 
-     
+     let stages;
 
-     let stages = await AppDataSource.getRepository(LeadStages).createQueryBuilder('stages').select(['stages.id', 'id']).addSelect(['stages.stage_name', 'stage_name']).addSelect(['stages.colour', 'colour']).addSelect(['stages.discription', 'discription']).limit(10).getMany();
+    if(user?.business){
+      stages = await AppDataSource.getRepository(LeadStages)
+        .createQueryBuilder('stages').select(['stages.id', 'id'])
+        .addSelect(['stages.stage_name', 'stage_name'])
+        .addSelect(['stages.colour', 'colour'])
+        .addSelect(['stages.discription', 'discription'])
+        .where('stages.buisnessId = :businessId', { businessId: user?.business })
+        .limit(10)
+        .getMany();
+    }else{
+      stages = await AppDataSource.getRepository(LeadStages)
+        .createQueryBuilder('stages').select(['stages.id', 'id'])
+        .addSelect(['stages.stage_name', 'stage_name'])
+        .addSelect(['stages.colour', 'colour'])
+        .addSelect(['stages.discription', 'discription'])
+        .limit(10)
+        .getMany();
+    }
 
-  
+   
+
 
      let tabledata = new GenerateTable({
        name: "Lead Stages",

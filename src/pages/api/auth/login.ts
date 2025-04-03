@@ -19,6 +19,7 @@ export default async function handler(req, res) {
         let user = await AppDataSource.getRepository(Users)
             .createQueryBuilder('users')
             .leftJoinAndSelect('users.role', 'role')
+            .leftJoinAndSelect('users.business', 'business')
             .where('users.email = :email', { email: email })
             .getOne();
 
@@ -34,16 +35,23 @@ export default async function handler(req, res) {
             .leftJoin('users.role', 'role')
             .leftJoin('role.permissions', 'permissions')
             .select('permissions.permission', 'permission')
-            .where('users.id = :id', { id: 1 })
-            .getRawMany()).map(p => p.permission); // Extract only permission values
+            .where('users.id = :id', { id: user?.id })
+            .getRawMany()).map(p => p.permission);
+          
+        let buisness = (await AppDataSource.getRepository(Users).createQueryBuilder('users').leftJoin('users.business', 'business').where('users.id = :id', { id: user?.id }).getRawMany()).map(p => p.users_buisnesId)[0];     
 
-
+      
         let newuser = {
             ...user,
             role: user?.role.name,
+            business: buisness,
             permissions: permissions
 
         }
+
+
+        
+        
 
         const token = jwt.sign(newuser, 'your_secret_key', { expiresIn: '24h' });
 

@@ -43,7 +43,7 @@ export class Branch{
     discription:string
 
     @ManyToOne(()=>Business,(buisness)=>buisness.branches)
-    @JoinColumn()
+    @JoinColumn({name:'buisnessId',referencedColumnName:'id'})
     buisness:typeof Business
 
     @OneToMany(() => Roles, (roles) => roles.branch, { nullable: true })

@@ -3,12 +3,21 @@ import { AppDataSource } from "../../../app/lib/data-source";
 import { GenerateForm } from "../../../utils/generateForm";
 import { UserRepository } from "../../../app/reposatory/userRepo";
 import { Roles } from "../../../app/entity/Roles";
+import { VerifyToken } from "@/utils/VerifyToken";
 
 
 export default async function handler(req, res) {
 
-    let roles = await AppDataSource.getRepository(Roles).find();
+    let user = await VerifyToken(req,res,null);
 
+    if(!user){
+        return res.status(401).json({
+            message: 'Unauthorized',
+            status: 401
+        });
+    }
+
+    let roles = await AppDataSource.getRepository(Roles).createQueryBuilder('roles').where('roles.buisnesId = :businessId', { businessId: user?.business }).getMany();
     let roleOptions = roles.map(role => ({ id: role.id, name: role.name }));
 
 

@@ -15,10 +15,20 @@ export default async function handler(req, res) {
   if (req.method == "GET") {
 
     try {
+      let BuisnesData;
 
-      const BuisnesData = await BusinesRepo
-        .createQueryBuilder("business")
-        .getMany();
+      if(user?.business){
+        BuisnesData = await BusinesRepo
+          .createQueryBuilder("business")
+          .where('business.id = :id', { id: user?.business })
+          .getMany();
+      }else{
+        BuisnesData = await BusinesRepo
+          .createQueryBuilder("business")
+          .getMany();
+      }
+
+      
 
       const tablerows = BuisnesData.map(data => {
         return {

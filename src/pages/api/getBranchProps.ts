@@ -17,7 +17,12 @@ export default async function handler(req, res) {
         try {
             const BranchRepo = AppDataSource.getRepository(Branch);
 
-            const BranchData = await BranchRepo.find();
+            let BranchData ;
+            if(user?.business){
+                BranchData = await BranchRepo.createQueryBuilder('branch').where('branch.buisnessId = :business', { business: user?.business }).getMany();
+            }else{
+                BranchData = await BranchRepo.find();
+            }
 
             const tableData = new GenerateTable({
                 name: "Branches",
