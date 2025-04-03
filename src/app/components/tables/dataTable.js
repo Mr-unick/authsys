@@ -51,6 +51,7 @@ const DataTable = ({ url }) => {
   const [selectAll, setSelectAll] = useState(false);
   const [open, setOpen] = useState(false)
   const [res, setRes] = useState(null)
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { asPath } = router;
 
@@ -201,6 +202,7 @@ const DataTable = ({ url }) => {
 
   
   const handleFetchdata = useCallback(() => {
+    setLoading(true);
     axios
       .get(`${ROOT_URL}api/${url}`)
       .then((res) => res.data)
@@ -226,6 +228,7 @@ const DataTable = ({ url }) => {
 
       });
     setChange(false);
+    setLoading(false);
   }, [url, change, router]);
 
   
@@ -260,6 +263,7 @@ const DataTable = ({ url }) => {
       </div>
     </Modal>
   }
+  if (loading) return <div className='flex justify-center items-center h-full'>Loading...</div>;
 
   // Get final data to display
   const displayData = sortedData();
@@ -438,9 +442,9 @@ const DataTable = ({ url }) => {
                           <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-white hover:text-white hover:bg-green-500 text-green-600 shadow-none`} open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-green-500 text-white hover:text-white hover:bg-green-500  shadow-none`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
-                                </Modal> : <Button className="bbg-[#4E49F2] text-white">
+                                </Modal> : <Button className="bg-[#4E49F2] text-white">
                                     <Link className="flex items-center gap-2"  href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
                                    
                                       <FilePen size={22} /><p className="max-sm:hidden">Edit</p>
@@ -450,9 +454,9 @@ const DataTable = ({ url }) => {
                             </button>
                             {tableData?.delete && (
 
-                              <Modal title={`Delete`} icon='Delete' classname={`bg-white text-red-600 hover:bg-red-500 hover:text-white shadow-none`} open={open}>
-                                  <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
-                              </Modal>
+                              <div className="flex items-center gap-2">
+                                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-500 hover:text-white text-sm  ml-2  flex items-center gap-2'} > <p className='max-sm:hidden'>Delete </p><Trash size={22} /></PopupModal>
+                              </div>
                               
                             )}
                           </div>

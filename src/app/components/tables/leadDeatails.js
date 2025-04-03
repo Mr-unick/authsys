@@ -121,10 +121,11 @@ export default function LeadDetails({ data }) {
           <div className="space-y-3">
             <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
               {/* <ToolTipComponent msg={'Add Collaborator'}> */}
-              <button className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
+              <div className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
                 <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-600 p-0 shadow-none hover:bg-blue-600'} icon='Add'>
                   <FormComponent formdata={{ formurl: 'addcollboratorform' }} />
-                </Modal></button>
+                </Modal>
+              </div>
               {/* </ToolTipComponent> */}
             </h3>
             <div className="grid grid-cols-2 gap-y-4">
@@ -148,7 +149,11 @@ export default function LeadDetails({ data }) {
           {/* Follow-up Information */}
 
           <div className="space-y-3">
-            <h3 className="text-sm text-gray-900 mb-2">Follow-up Details</h3>
+            <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
+              <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-400 p-0 shadow-none hover:bg-blue-400 '} icon='Add'>
+                <FormComponent formdata={{ formurl: 'addfollowupform' }} />
+              </Modal>
+            </div>
             <div className="grid grid-cols-2 gap-y-4">
               <div className="flex gap-2 items-center text-gray-600">
                 <Calendar size={16} />

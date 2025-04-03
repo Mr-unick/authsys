@@ -9,15 +9,19 @@ import {
 import ConfirmDelete from "./modals/confirmdelete";
 import ConfirmAssign from "./modals/confirmassign";
 import { Button } from "../../components/components/ui/button";
+import { useState } from "react";
 
 export default function PopupModal({ modaltype ,children ,classname}) {
 
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <Button
                     variant="outline"
                     className={classname}
+                    onClick={() => setOpen(true)}
                 >
                     <span className="text-sm flex items-center gap-2">{children}</span>
                 </Button>
@@ -26,8 +30,8 @@ export default function PopupModal({ modaltype ,children ,classname}) {
             <DialogContent className="max-h-fit max-w-fit rounded-md ">
 
                 {
-                    modaltype == 'confirmdelete' ? <ConfirmDelete itemName={'ss'} /> :
-                        modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} />
+                    modaltype == 'confirmdelete' ? <ConfirmDelete itemName={'ss'} setOpen={setOpen} /> :
+                        modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} setOpen={setOpen} />
 
                 }
 
