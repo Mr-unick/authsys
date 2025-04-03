@@ -17,6 +17,7 @@ export class GenerateTable {
       delete: false,
       view: false,
       create: false,
+      assign: false,
       createform: {},
       updateform: {},
       formtype: 'modal',
@@ -52,6 +53,7 @@ export class GenerateTable {
     this.newtable.create = haspermission(user, `create_${policy}`);
     this.newtable.delete = haspermission(user, `delete_${policy}`);
     this.newtable.view = haspermission(user, `view_${policy}`);
+    this.newtable.assign = haspermission(user, `assign_${policy}`);
 
     return this;
   }

@@ -18,6 +18,7 @@ export type ResponseInstance = {
     formtype:string
     rows: Array<object>;
     columns: Array<string>;
+    assign: boolean;
   };
 
  

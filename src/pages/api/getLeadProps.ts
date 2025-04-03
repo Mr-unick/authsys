@@ -71,34 +71,22 @@ export default async function handler(req, res) {
     const leadRepository = AppDataSource.getRepository(Leads);
     let lead;
 
-    if (req.query.id) {
-      lead = await leadRepository.find({
-        where: { id: req.query.id },
-        relations: [
-          "users",
-          "history.changed_by",
-          "history.lead",
-          "history.stage",
-          "stage",
-        ],
-      });
-    } else {
-      lead = await leadRepository.find({
-        relations: [
-          "users",
-          "history.changed_by",
-          "history.lead",
-          "history.stage",
-          "stage",
-        ],
-      });
-    }
+      lead = await leadRepository.createQueryBuilder('leads')
+      .leftJoin('leads.users', 'users')
+      .leftJoin('leads.history', 'history')
+      .leftJoin('history.changed_by', 'changed_by')
+      .leftJoin('leads.stage', 'stage')
+      .where(qb => {
+          const subQuery = qb.subQuery()
+            .select("1")
+            .from("lead_users", "lu")
+            .where("lu.lead_id = leads.id")
+            .getQuery();
+          return `EXISTS (${subQuery})`;
+        })
+      .getMany();
+   
 
-    if (req.query.id) {
-      res.json(lead[0]);
-    } else {
-
-      console.log(lead);
         
           let leads  = lead.map((data)=>{
 
@@ -132,9 +120,6 @@ export default async function handler(req, res) {
 
           }) 
 
-         
-          
-
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
@@ -151,4 +136,4 @@ export default async function handler(req, res) {
   }
 
  
-}
+
