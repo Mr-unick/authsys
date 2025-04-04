@@ -169,12 +169,39 @@ export default function generateDashboard(user:any){
             },
             performance: {
                 title: 'Performance',
+                chartConfig: {
+                    assigned: {
+                        label: "assigned",
+                        color: "#60a5fa",
+                    },
+                    conversions: {
+                        label: "conversions",
+                        color: "#60a5fa",
+                    },
+                },
                 data: [
-                    { month: "Sam", assigned: 186, conversions: 80 },
-                    { month: "John", assigned: 86, conversions: 20 },
-                    { month: "jane", assigned: 16, conversions: 8 },
-                    { month: "Nick", assigned: 126, conversions: 100 },
-                    { month: "Peter", assigned: 86, conversions: 30 },
+                    {
+                        column: "Nikhil",
+                        assigned: {
+                            value: 20,
+                            color: "#2563eb"
+                        },
+                        conversions: {
+                            value: 8,
+                            color: "#8884d8"
+                        }
+                    },
+                    {
+                        column: "Suv",
+                        assigned: {
+                            value: 10,
+                            color: "#2563eb"
+                        },
+                        conversions: {
+                            value: 8,
+                            color: "#8884d8"
+                        }
+                    }
                 ]
             }, salespersons: [
                 { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
