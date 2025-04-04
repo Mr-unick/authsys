@@ -5,6 +5,7 @@
 
 export default function generateDashboard(user:any){
     let dashboardProps : any;
+
     if(user?.role=='Admin'){
         dashboardProps = {
             yearchart : {
@@ -140,9 +141,12 @@ export default function generateDashboard(user:any){
                         }
                     }
                 ]
-            }, salespersons: [
-                { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
-            ]
+            }, salespersons: {
+                title : 'Sales Persons',
+                data : [
+                    { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
+                ]
+            }
         } 
     } else {
         dashboardProps = {
@@ -203,27 +207,19 @@ export default function generateDashboard(user:any){
                         }
                     }
                 ]
-            }, salespersons: [
-                { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
-            ],
-            notifications: [
-                {
-                    title: 'New Lead',
-                    message: 'New lead assigned to you',
-                    time: '10 minutes ago'
-                },
-                {
-                    title: 'New Lead',
-                    message: 'New lead assigned to you',
-                    time: '10 minutes ago'
-                },
-                {
-                    title: 'New Lead',
-                    message: 'New lead assigned to you',
-                    time: '10 minutes ago'
-                }
-
-            ]
+            },
+            notifications: {
+                title : 'Notifications',
+                data : [
+                    { id: 1, title: 'New Lead', message: 'New lead assigned to you', time: '10 minutes ago' }
+                ]
+            },
+            newleads : {    
+                title : 'New Leads',
+                data : [
+                    { id: 1, title: 'New Lead', message: 'New lead assigned to you', time: '10 minutes ago' }
+                ]
+            }
         }
     }
 
