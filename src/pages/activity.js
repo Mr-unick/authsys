@@ -91,7 +91,7 @@ const ActivityTab = () => {
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-lg px-4 py-4 max-w-screen ">
+        <div className="bg-white rounded-lg  px-4 py-4 max-w-screen ">
             <div className="mb-4">
                
                 <div className="flex space-x-2 overflow-x-auto pb-2">

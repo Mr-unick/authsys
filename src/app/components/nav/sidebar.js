@@ -80,6 +80,8 @@ export default function SideBar({ setOpen }) {
       });
   }, []);
 
+
+
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -97,7 +99,7 @@ export default function SideBar({ setOpen }) {
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-2 max-sm:px-0">
+      <div className="flex-1 overflow-y-auto px-2 max-sm:px-0 max-h-[80%]">
         {sideBarData && sideBarData.map((data, index) => (
           data.nestedRoutes ? (
             <NavAccordion key={`${data.title}-${index}`} route={data} setOpen={setOpen} />

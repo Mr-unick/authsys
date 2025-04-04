@@ -1,3 +1,4 @@
+import { color } from "motion/dist/react"
 
 export const ROOT_URL = "/"
 export const ROOT_URL2 = "http://localhost:3000"
@@ -449,26 +450,129 @@ export const AUTH_SECREAT = "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"
 // ('freshleads', 'assign_freshleads', 'assign');
 
 export const chartDataYear = [
-  { month: "January", desktop: 186, mobile: 100 },
-  { month: "February", desktop: 305, mobile: 120 },
-  { month: "March", desktop: 237, mobile: 95 },
-  { month: "April", desktop: 73, mobile: 60 },
-  { month: "May", desktop: 209, mobile: 140 },
-  { month: "June", desktop: 214, mobile: 130 },
-  { month: "July", desktop: 174, mobile: 110 },
-  { month: "August", desktop: 114, mobile: 80 },
-  { month: "September", desktop: 154, mobile: 90 },
-  { month: "November", desktop: 24, mobile: 20 },
-  { month: "December", desktop: 214, mobile: 150 },
+  { column: "January", desktop:{
+    value: 186,
+    color: "#2563eb"
+  }, mobile: {
+    value: 100,
+    color: "#8884d8"
+  } },  
+  { column: "February", desktop: {
+    value: 305,
+    color: "#2563eb"
+  }, mobile: {
+    value: 120,
+    color: "#8884d8"
+  } },
+  { column: "March", desktop: {
+    value: 237,
+    color: "#2563eb"
+  }, mobile: {
+    value: 95,
+    color: "#8884d8"
+  } },
+  { column: "April", desktop: {
+    value: 73,
+    color: "#2563eb"
+  }, mobile: {
+    value: 60,
+    color: "#8884d8"
+  } },
+  { column: "May", desktop: {
+    value: 209,
+    color: "#2563eb"
+  }, mobile: {
+    value: 140,
+    color: "#8884d8"
+  } },
+  { column: "June", desktop: {
+    value: 214,
+    color: "#2563eb"
+  }, mobile: {
+    value: 130,
+    color: "#8884d8"
+  } },
+  { column: "July", desktop: {
+    value: 174,
+    color: "#2563eb"
+  }, mobile: {
+    value: 110,
+    color: "#8884d8"
+  } },
+  { column: "August", desktop: {
+    value: 114,
+    color: "#2563eb"
+  }, mobile: {
+    value: 80,
+    color: "#8884d8"
+  } },
+  { column: "September", desktop: {
+    value: 154,
+    color: "#2563eb"
+  }, mobile: {
+    value: 90,
+    color: "#8884d8"
+  } },
+  { column: "November", desktop: {
+    value: 24,
+    color: "#2563eb"
+  }, mobile: {
+    value: 20,
+    color: "#8884d8"
+  } },
+  { column: "December", desktop: {
+    value: 214,
+    color: "#2563eb"
+  }, mobile: {
+    value: 150,
+    color: "#8884d8"
+  } },
 ];
 
 
 export const chartDataMonth = [
-  { month: "Sam", assigned: 186, conversions: 80 },
-  { month: "John", assigned: 86, conversions: 20 },
-  { month: "jane", assigned: 16, conversions: 8 },
-  { month: "Nick", assigned: 126, conversions: 100 },
-  { month: "Peter", assigned: 86, conversions: 30 },
+  {
+    column: "Sam", 
+  assigned:{
+    value: 186,
+    color: "#2563eb"
+  }, 
+  conversions: {
+    value: 80,
+    color: "#8884d8"
+  } },
+  { column: "John", assigned: {
+    value: 86,
+    color: "#2563eb"
+  }, conversions:{
+    value: 20,
+    color: "#8884d8"
+  } },
+
+  {
+    column: "jane", assigned: {
+    value:20,
+    color: "#2563eb"
+  }, conversions: {
+    value: 8,
+    color: "#8884d8"
+  } },
+  {
+    column: "Nick", assigned: {
+    value: 126,
+    color: "#2563eb"
+  }, conversions: {
+    value: 100,
+    color: "#8884d8"
+  } },
+  {
+    column: "Peter", assigned: {
+    value: 86,
+    color: "#2563eb"
+  }, conversions: {
+    value: 30,
+    color: "#8884d8"
+  } },
 ];
 
 export const userData = [

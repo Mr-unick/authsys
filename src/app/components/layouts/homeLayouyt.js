@@ -71,10 +71,6 @@ export default function HomeLayout({ children }) {
   return (
     <div className="w-screen  h-screen flex overflow-hidden bg-[#F4F4F4] max-sm:bg-white ">
       <div className="w-[17%]  min-xl:w[20$] min-lg[20%]  min-sm:w-[20%] bg-[#0F1626] max-lg:hidden flex flex-col justify-start items-center">
-        {/* <div className="w-[100%]  my-5 px-5 flex justify-start items-center gap-2 ">
-          <Image src={"/icons8logo.svg"} alt="logo" width={30} height={30} />
-          <p className="text-l text-gray-100">COMPANY LOGO</p>
-        </div> */}
         <SideBar />
       </div>
       <div className="w-[83%] min-xl:w[80$] min-lg[80%] min-md:w[80%] max-lg:w-[100%] max-sm:w-[100%] relative ">
@@ -105,7 +101,17 @@ export default function HomeLayout({ children }) {
           <div className="">
 
             <Popover>
-              <PopoverTrigger>  <CircleUserRoundIcon size={25} className="text-blue-200" /></PopoverTrigger>
+              <PopoverTrigger className="flex justify-center items-center "> 
+                {/* <CircleUserRoundIcon size={26} className="text-gray-600" /> */}
+                <div className="flex flex-col max-sm:hidden h-10 text-end justify-center items-end mx-2 text-gray-600">
+                  <p className="text-sm ">Admin</p>
+                  <p className="text-sm">Nikhil Lende</p>
+                  
+                </div>
+                <img src={"https://images.pexels.com/photos/8367793/pexels-photo-8367793.jpeg"} 
+                className="rounded-full object-cover h-10 w-10 max-sm:h-6 max-sm:w-6" alt="logo" width={10} height={10} />
+               
+              </PopoverTrigger>
               <PopoverContent className="mr-3 max-sm:w-[9rem] flex flex-col gap-2">
                 <button className="w-full flex justify-center items-center gap-2 border border-gray-200 p-2 rounded-md" onClick={logout}>
                   <p className="text-sm">Logout</p>
@@ -118,14 +124,6 @@ export default function HomeLayout({ children }) {
             
           </div>
         </div>
-        {/* 
-        <div className="hidden flex-col  max-md:flex px-10 max-sm:px-3 mb-5 ">
-          <p className="font-semibold text-lg">Dashboard</p>
-          <p>Good Morning Mr. Nikhil !</p>
-        </div> */}
-
-
-
         <div className="w-full h-full  px-10 max-sm:px-1 overflow-y-scroll max-h-fit max-sm:h-full ">{children}</div>
       </div>
     </div>

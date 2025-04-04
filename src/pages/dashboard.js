@@ -24,8 +24,9 @@ import { PieChartComponent } from "../app/components/charts/donutchart";
 import { TrendingUp } from "lucide-react";
 import { chartDataMonth, chartDataYear, userData } from "../../const";
 import UserTable from "../app/components/tables/userTable";
+import ActivityTab from "./activity";
 
-const Dashboard = () => {
+const Dashboard = ({data}) => {
   const yearlyData = [
     { month: "Jan", value: 65 },
     { month: "Feb", value: 75 },
@@ -56,13 +57,15 @@ const Dashboard = () => {
 
   const COLORS = ["#0088FE", "#00C49F", "#FFBB28"];
 
+  console.log(data);
+
   return (
     <div className="min-h-screen bg-gray-100 max-sm:bg-white space-y-4 px-2 pb-24 max-sm:pb-36 ">
       {/* Top row metrics */}
-      <div className="grid grid-cols-5 gap-4 max-sm:grid-cols-2">
+      <div className="grid grid-cols-7 gap-4 max-sm:grid-cols-2">
        
        {
-        [1,2,3,4,5,6].map((item)=>{
+        [1,2,3,4,5,6,7].map((item)=>{
 
           return (
             <Card className="h-12 max-sm:h-10 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
@@ -86,54 +89,74 @@ const Dashboard = () => {
 
       {/* Charts grid */}
       <div className="grid grid-cols-12 gap-4">
-        {/* Line Chart */}
-        <Card className="col-span-8 max-sm:col-span-12">
-          <CardHeader>
-            <CardTitle>Yearly Trend</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BarCharMonthly data={chartDataYear} />
-          </CardContent>
-        </Card>
+     {
+          data?.yearchart && <Card className="col-span-8 max-sm:col-span-12">
+            <CardHeader>
+              <CardTitle>Yearly Trend</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BarCharMonthly data={data?.yearchart?.data} chartConfig={data?.yearchart?.chartConfig} />
+            </CardContent>
+          </Card>
+     }
+
+        {
+          data?.notifications && <Card className="col-span-8 max-sm:col-span-12 ">
+            <CardContent className="overflow-y-scroll flex flex-col p-2  h-[30rem]">
+              <ActivityTab/>
+            </CardContent>
+          </Card>
+        }
+        
 
         {/* Pie Charts and Donut */}
-        <Card className="col-span-4 max-sm:col-span-12">
-          <CardHeader>
-            <CardTitle>Lead Source</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <PieChartComponent radius={80} />
-            <CardFooter className="flex-col gap-2 text-sm">
-              <div className="flex items-center gap-2 font-medium leading-none">
-                Trending up by 5.2% this month{" "}
-                <TrendingUp className="h-4 w-4" />
-              </div>
-              <div className="leading-none text-muted-foreground">
-                Showing total visitors for the last 6 months
-              </div>
-            </CardFooter>
-          </CardContent>
-        </Card>
+        {
+          data?.leadsource && <Card className="col-span-4 max-sm:col-span-12">
+            <CardHeader>
+              <CardTitle>Lead Source</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <PieChartComponent radius={80} />
+              <CardFooter className="flex-col gap-2 text-sm">
+                <div className="flex items-center gap-2 font-medium leading-none">
+                  Trending up by 5.2% this month{" "}
+                  <TrendingUp className="h-4 w-4" />
+                </div>
+                <div className="leading-none text-muted-foreground">
+                  Showing total visitors for the last 6 months
+                </div>
+              </CardFooter>
+            </CardContent>
+          </Card>
+        }
+       
+       {
+          data?.salespersons && <Card className="col-span-6 max-sm:col-span-12 ">
+            <CardHeader>
+              <CardTitle>Sales Persons</CardTitle>
+            </CardHeader>
+            <CardContent className="overflow-y-scroll flex flex-col p-2  h-[20rem]">
+              <UserTable userData={data?.salespersons} />
+            </CardContent>
+          </Card>
+       }
 
-        <Card className="col-span-6 max-sm:col-span-12 ">
-          <CardHeader>
-            <CardTitle>Sales Persons</CardTitle>
-          </CardHeader>
-          <CardContent className="overflow-y-scroll flex flex-col p-2  h-[20rem]">
-            <UserTable userData={userData} />
-          </CardContent>
-        </Card>
+       
 
         {/* Bar Chart */}
 
-        <Card className="col-span-6 max-sm:col-span-12">
-          <CardHeader>
-            <CardTitle>Performance</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <BarCharMonthly data={chartDataMonth} />
-          </CardContent>
-        </Card>
+        {
+          data?.performance && <Card className="col-span-6 max-sm:col-span-12">
+            <CardHeader>
+              <CardTitle>{data?.performance?.title}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <BarCharMonthly data={data?.performance?.data} chartConfig={data?.performance?.chartConfig} />
+            </CardContent>
+          </Card>
+        }
+
+        
       </div>
     </div>
   );
