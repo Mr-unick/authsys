@@ -10,7 +10,7 @@ export default function Index(){
   const[loading,setLoading] = useState(false);
   const[dashboardprops,setDashboardProps] = useState(null);
   const getdashboardprops =async ()=>{
-    let res = await axios.get('http://localhost:3000/api/getDashboardProps')
+    let res = await axios.get('api/getDashboardProps')
     console.log(res.data);
     setDashboardProps(res.data.data);
   }
