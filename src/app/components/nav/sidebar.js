@@ -68,7 +68,7 @@ export default function SideBar({ setOpen }) {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`${process.env.BASEURL}api/getSidebarProps`)
+    axios.get(`https://authsys-client.vercel.app/api/getSidebarProps`)
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data);
