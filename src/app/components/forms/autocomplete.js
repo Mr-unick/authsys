@@ -15,6 +15,7 @@ const AutocompleteComponent = ({
     const [input, setInput] = useState("");
     const [results, setResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
+    const[selectedItem,setSelectedItem] = useState(null)
 
     // Fetch results from API
     const fetchResults = async (query) => {
@@ -50,6 +51,7 @@ const AutocompleteComponent = ({
 
     const handleSelect = (item) => {
         onSelect(item);
+        setSelectedItem
         setShowDropdown(false);
     };
 

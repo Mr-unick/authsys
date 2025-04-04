@@ -72,7 +72,7 @@ export default async function handler(req, res) {
     let lead;
 
       lead = await leadRepository.createQueryBuilder('leads')
-      .leftJoin('leads.users', 'users')
+      .leftJoinAndSelect('leads.users', 'users')
       .leftJoin('leads.history', 'history')
       .leftJoin('history.changed_by', 'changed_by')
       .leftJoin('leads.stage', 'stage')
@@ -81,9 +81,11 @@ export default async function handler(req, res) {
             .select("1")
             .from("lead_users", "lu")
             .where("lu.lead_id = leads.id")
+            .andWhere("lu.user_id = :userId", { userId: user.id })
             .getQuery();
           return `EXISTS (${subQuery})`;
         })
+      .andWhere("leads.businessId = :businessId", { businessId: user.business })
       .getMany();
    
 

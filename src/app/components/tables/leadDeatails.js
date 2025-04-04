@@ -160,8 +160,6 @@ export default function LeadDetails({ data }) {
                 <span>Next Follow-up</span>
               </div>
               <p className="text-gray-900">{"2020"}</p>
-
-
             </div>
           </div>
           <div className=" rounded-lg">

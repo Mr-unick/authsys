@@ -39,13 +39,13 @@ export class Leads {
   @Column()
   pincode: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   address: string;
 
-  @Column({ nullable: true ,default:'active'})
+  @Column({ nullable: true, default: 'active' })
   status: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   second_phone: string;
 
   @Column({ nullable: true })
@@ -58,10 +58,10 @@ export class Leads {
   updated_at: Date;
 
   @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
-  @JoinTable({ 
-    name: 'lead_users', 
+  @JoinTable({
+    name: 'lead_users',
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
-    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' } 
+    inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' }
   })
   users: Users[];
 
@@ -69,11 +69,11 @@ export class Leads {
   history: StageChangeHistory[];
 
   @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
-  @JoinColumn() 
-  stage:typeof LeadStages;
+  @JoinColumn()
+  stage: typeof LeadStages;
 
   @ManyToOne(() => Business, business => business.id)
-  business:typeof Business;
+  business: typeof Business;
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
   comments: typeof Comment

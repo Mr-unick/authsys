@@ -84,28 +84,28 @@ export default async function handler(req, res) {
       nestedRoutes: [
         {
           title: "Roles",
-          url: `${url}/buisnessettings/rolesadnpermissions/roles`,
+          url: `${url}buisnessettings/rolesadnpermissions/roles`,
           permissionRequired: "view_roles",
         },
         {
           title: "Buisnes Details",
-          url: `${url}/buisnessettings/buisness/buisness`,
+          url: `${url}buisnessettings/buisness/buisness`,
           permissionRequired: 'view_business',
         },
 
         {
           title: "Area Of Operation",
-          url: `${url}/buisnessettings/areaofsales/areaofsales`,
+          url: `${url}buisnessettings/areaofsales/areaofsales`,
           permissionRequired: "view_area_of_operation",
         },
         {
           title: "Lead Stages",
-          url: `${url}/buisnessettings/leadstages/leadstages`,
+          url: `${url}buisnessettings/leadstages/leadstages`,
           permissionRequired: "view_leadstages",
         },
         {
           title: "Branches",
-          url: `${url}/buisnessettings/branches/branches`,
+          url: `${url}buisnessettings/branches/branches`,
           permissionRequired: "view_branches",
         },
       ],

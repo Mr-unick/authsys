@@ -1,23 +1,42 @@
+import { useState } from "react";
 import AutocompleteComponent from "../forms/autocomplete";
+import { Loader2 } from "lucide-react";
 
 
 
 
 
 
-export default function ConfirmAssign({ itemName }) {
+export default function ConfirmAssign({ itemName, setOpen ,handleAssign  }) {
 
+const [selectedUser,setSelectedUser] = useState([])
 
     const handleSelectUser = (user) => {
-        console.log("Selected user:", user);
+        setSelectedUser([...selectedUser,user])
     };
 
+    console.log("Selected user:", selectedUser);
 
+    const handleAssignLeads = () => {
+        handleAssign(selectedUser)
+    };
+
+  
 
     return <div className="flex-1 flex flex-col  w-[20rem]  rounded-md justify-between">
         <p className="text-gray-800 my-6 ">
             Assign Selected leads to?
         </p>
+
+       <div className="flex flex-row gap-2 mb-5">
+            {
+                selectedUser.map((user) => (
+                    <div key={user.id} className="flex items-center justify-between bg-blue-600 text-white rounded-md px-2 py-1 w-fit text-sm">
+                        <span>@{user.name}</span>
+                    </div>
+                ))
+            }
+       </div>
 
         <AutocompleteComponent
             apiEndpoint="/api/user/searchuser"
@@ -27,7 +46,7 @@ export default function ConfirmAssign({ itemName }) {
             //     return lastWord?.startsWith("@") ? lastWord.slice(1) : "";
             // }}
             renderItem={(user) => (
-                <span>@{user.username} ({user.name})</span>
+                <span>{user.username} {user.name}</span>
             )}
             onSelect={handleSelectUser}
         />
@@ -41,7 +60,7 @@ export default function ConfirmAssign({ itemName }) {
                 Cancel
             </button>
             <button
-                onClick={() => setOpen(false)}
+                onClick={() => handleAssignLeads()}
                 type="button"
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
             >
