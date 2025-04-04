@@ -179,7 +179,7 @@ export default function generateDashboard(user:any){
             }, salespersons: [
                 { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
             ],
-            notification: [
+            notifications: [
                 {
                     title: 'New Lead',
                     message: 'New lead assigned to you',
