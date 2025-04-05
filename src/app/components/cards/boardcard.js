@@ -1,4 +1,4 @@
-import { MessageSquare, Bell, Phone, Clock } from "lucide-react";
+import { MessageSquare, Bell, Phone, Clock, Mail } from "lucide-react";
 import DrawerComponent from "../drawer";
 import Link from "next/link";
 // target="_blank"
@@ -7,11 +7,11 @@ const BoardCard = ({ data }) => {
   const {
     id,
     name,
-    number,
+    phone,
     messageCount,
     hasReminder,
     status,
-    lastContactTime,
+    lastContactTime, email
   } = data;
   return (
     <Link href={`/leads/details/${id}`} target="_blank">
@@ -23,16 +23,16 @@ const BoardCard = ({ data }) => {
             </h3>
             <div className="flex items-center gap-2 text-gray-600">
               <Phone size={14} />
-              <span className="text-sm">{number}</span>
+              <span className="text-sm">{phone}</span>
             </div>
           </div>
           <span
             className={`
     inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-    ${status === "active" ? "bg-green-500 text-white" : "bg-red-500 text-white"}
+    ${status  ? "bg-green-500 text-white" : "bg-red-500 text-white"}
   `}
           >
-            {status}
+            {status ? "Active" : "Inactive"}
           </span>
         </div>
 
@@ -40,10 +40,17 @@ const BoardCard = ({ data }) => {
 
         <div className="flex items-center justify-between  mt-3">
           <div className="flex items-center gap-3 w-[100%]  justify-between">
-            <div className="flex items-center gap-1.5 text-gray-500">
-              <Clock size={14} />
-              <span className="text-xs">{lastContactTime}</span>
-            </div>
+            {
+              lastContactTime ? <div className="flex items-center gap-1.5 text-gray-500">
+                <Clock size={14} />
+                <span className="text-xs">{lastContactTime}</span>
+              </div> : <div className="flex items-center gap-1.5 text-gray-500">
+                <Mail size={14} />
+                  <span className="text-xs">{email}</span>
+              </div>
+            }
+           
+
             {hasReminder ? (
               <Bell size={16} className="text-blue-500" />
             ) : (

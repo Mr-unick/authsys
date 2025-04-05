@@ -4,6 +4,7 @@ import { ROOT_URL } from '../../../../const';
 import LeadDetails from '../../../app/components/tables/leadDeatails';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { Loader2 } from 'lucide-react';
 
 export default function page(){
   
@@ -25,7 +26,9 @@ export default function page(){
     getLeadDetails(id);
   }, [id]);
 
-  if (loading) return <div className='flex justify-center items-center h-full'>Loading...</div>;
+  if (loading) return <div className='flex justify-center items-center h-screen '>
+    <Loader2 className='animate-spin' size={20} />
+  </div>;
 
   
   return (

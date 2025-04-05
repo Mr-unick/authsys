@@ -73,6 +73,7 @@ export class Leads {
   stage: typeof LeadStages;
 
   @ManyToOne(() => Business, business => business.id)
+  @JoinColumn({ name: 'buisnesId' })
   business: typeof Business;
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })

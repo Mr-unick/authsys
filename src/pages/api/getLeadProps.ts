@@ -75,8 +75,10 @@ export default async function handler(req, res) {
       .leftJoinAndSelect('leads.users', 'users')
       .leftJoin('leads.history', 'history')
       .leftJoin('history.changed_by', 'changed_by')
-      .leftJoin('leads.stage', 'stage')
-      .where(qb => {
+      .leftJoinAndSelect('leads.stage', 'stage')
+      .leftJoin('leads.business', 'business')
+        .where('business.id = :businessid', { businessid: user.business })
+      .andWhere(qb => {
           const subQuery = qb.subQuery()
             .select("1")
             .from("lead_users", "lu")
@@ -85,11 +87,10 @@ export default async function handler(req, res) {
             .getQuery();
           return `EXISTS (${subQuery})`;
         })
-      .andWhere("leads.businessId = :businessId", { businessId: user.business })
+     // .andWhere("leads.businesId = :businessId", { businessId: user.business })
       .getMany();
    
 
-        
           let leads  = lead.map((data)=>{
 
             let collaborators = data?.users?.map((collborator) => {
@@ -112,6 +113,7 @@ export default async function handler(req, res) {
               phone:data?.phone || '-',
               second_phone:data?.second_phone || '-',
               status:true || '-',
+              stage:data?.stage?.stage_name || '-',
               collborators:collaborators || '-',
               headcollborator:data.headcollborator || 'Nikhil Lende',
               nextfollowup:data?.nextfollowup || '-',

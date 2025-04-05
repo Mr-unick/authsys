@@ -10,31 +10,31 @@ import { GenerateTable } from "../../utils/generateTable";
 import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function handler(req, res) {
-
-    let user = await VerifyToken(req, res, 'freshleads');
+    let user = await VerifyToken(req, res, 'leads');
 
     if (req.method == "GET") {
         const leadRepository = AppDataSource.getRepository(Leads);
         let lead;
 
         lead = await leadRepository.createQueryBuilder('leads')
-            .leftJoin('leads.users', 'users')
+            .leftJoinAndSelect('leads.users', 'users')
             .leftJoin('leads.history', 'history')
             .leftJoin('history.changed_by', 'changed_by')
-            .leftJoin('leads.stage', 'stage')
+            .leftJoinAndSelect('leads.stage', 'stage')
             .leftJoin('leads.business', 'business')
             .where('business.id = :businessid', { businessid: user.business })
             .andWhere(qb => {
                 const subQuery = qb.subQuery()
-                    .select("lu.lead_id")
+                    .select("1")
                     .from("lead_users", "lu")
                     .where("lu.lead_id = leads.id")
+                    .andWhere("lu.user_id = :userId", { userId: user.id })
                     .getQuery();
-                return `NOT EXISTS (${subQuery})`;
+                return `EXISTS (${subQuery})`;
             })
             .getMany();
 
-
+            console.log(lead, '--------------------------------');
 
         let leads = lead.map((data) => {
 
@@ -57,25 +57,38 @@ export default async function handler(req, res) {
                 address: data?.address || '-',
                 phone: data?.phone || '-',
                 second_phone: data?.second_phone || '-',
-                status: true || '-',
+                status: data?.status ,
+                stage: data?.stage.stage_name,
                 collborators: collaborators || '-',
                 headcollborator: data.headcollborator || 'Nikhil Lende',
                 nextfollowup: data?.nextfollowup || '-',
-                lead_source: data?.source || '-',
-                note: data?.note || '-'
+                lead_source: data?.lead_source || '-',
+                note: data?.notes || '-'
 
             }
 
         })
 
-        const tabledata = new GenerateTable({
-            name: "Leads",
-            data: leads,
-        }).policy(user, 'freshleads').addform('leadform').gettable();
+        let stages = (await AppDataSource.getRepository(LeadStages)
+            .createQueryBuilder('stage')
+            .select('stage.stage_name', 'stage_name')
+            .addSelect('stage.colour', 'colour')
+            .leftJoin('stage.business', 'business')
+            .where('business.id = :businessid', { businessid: user.business })
+            .getRawMany()).map(q => q);
+
+
+        
+        let data = {
+            stages: stages,
+            leads: leads
+        }
+
+        
 
         const response: ResponseInstance = {
             message: "Request successful",
-            data: tabledata,
+            data: data,
             status: 200,
         };
 
