@@ -13,7 +13,7 @@ export default function BoardLeads() {
 
     setLoading(true);
       axios
-        .get(`http://localhost:3000/api/getBoardLeadProps`)
+        .get(`https://authsys-client.vercel.app/api/getBoardLeadProps`)
         .then((res) => res.data)
         .then((res) => {
           setstages(res.data.stages);
