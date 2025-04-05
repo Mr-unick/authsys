@@ -46,7 +46,7 @@ const LeadTimeline = ({data}) => {
               <div className="space-y-1 text-sm">
                 <div className="flex items-center gap-1">
                  
-                  <span className="text-gray-900">{change?.changedBy}</span>
+                  <span className="text-gray-900">{change?.changedBy?.name}</span>
                   <span className="text-gray-600">
                ,  {change?.reason}
                 </span>

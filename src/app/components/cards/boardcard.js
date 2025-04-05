@@ -14,7 +14,7 @@ const BoardCard = ({ data }) => {
     lastContactTime, email
   } = data;
   return (
-    <Link href={`/leads/details/${id}`} target="_blank">
+    <Link href={`/leads/details/${id}`} >
       <div className="bg-white rounded-lg p-4 shadow hover:shadow-md transition-all duration-200 border-[1px] border-gray-200">
         <div className="flex items-start justify-between mb-3 ">
           <div>

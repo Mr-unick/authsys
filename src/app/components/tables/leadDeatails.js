@@ -120,13 +120,17 @@ export default function LeadDetails({ data }) {
           {/* Professional Information */}
           <div className="space-y-3">
             <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
-              {/* <ToolTipComponent msg={'Add Collaborator'}> */}
-              <div className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
+             
+              {/* <div className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
                 <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-600 p-0 shadow-none hover:bg-blue-600'} icon='Add'>
                   <FormComponent formdata={{ formurl: 'addcollboratorform' }} />
                 </Modal>
-              </div>
-              {/* </ToolTipComponent> */}
+              </div> */}
+
+              <h3 className="text-sm text-gray-900 mb-3">
+                Collborators
+              </h3>
+              
             </h3>
             <div className="grid grid-cols-2 gap-y-4">
 
@@ -135,10 +139,10 @@ export default function LeadDetails({ data }) {
                 <span>Collborators</span>
               </div>
               {
-                data?.collborators?.length > 0 ? <div className="flex gap-2">
-                  {data?.collborators?.map((item) => (
-                    <div key={item.id} className="bg-gray-100 px-2 py-1 rounded-md">
-                      {item.name}
+                data?.collaborators?.length > 0 ? <div className="flex gap-2">
+                  {data?.collaborators?.map((item) => (
+                    <div key={item.id} className="bg-blue-400 text-white px-2 py-1 rounded-md text-xs">
+                      @{item.name}
                     </div>
                   ))}
                 </div> : <p className="text-gray-900">No collborators</p>
@@ -149,11 +153,14 @@ export default function LeadDetails({ data }) {
           {/* Follow-up Information */}
 
           <div className="space-y-3">
-            <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
+            {/* <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
               <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-400 p-0 shadow-none hover:bg-blue-400 '} icon='Add'>
                 <FormComponent formdata={{ formurl: 'addfollowupform' }} />
               </Modal>
-            </div>
+            </div> */}
+            <h3 className="text-sm text-gray-900 mb-3">
+              Follow-up
+            </h3>
             <div className="grid grid-cols-2 gap-y-4">
               <div className="flex gap-2 items-center text-gray-600">
                 <Calendar size={16} />
@@ -219,11 +226,11 @@ export default function LeadDetails({ data }) {
 
           <div className="">
             <h3 className="text-sm text-gray-900 mb-3 flex items-start">
-              {/* <ToolTipComponent msg={'Change Stage'}> */}
+            
               <button className=" flex items-center gap-2 bg-green-600 text-white px-4  rounded-md">  Stage History <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-green-600 p-0 shadow-none hover:bg-green-600'} icon='Add'>
                 <FormComponent id={data?.id} formdata={{ formurl: 'changestageform' }} />
               </Modal></button>
-              {/* </ToolTipComponent> */}
+            
             </h3>
             {
               data?.stageChangeHistory?.length > 0 && (

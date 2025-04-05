@@ -26,14 +26,15 @@ export default function page(){
     getLeadDetails(id);
   }, [id]);
 
-  if (loading) return <div className='flex justify-center items-center h-screen '>
-    <Loader2 className='animate-spin' size={20} />
-  </div>;
-
-  
+ 
   return (
     <div className=' bg-white  rounded-md h-full overflow-y-scroll border max-sm:mx-2'>
-      <LeadDetails data={leadDetails}/>
+      {
+        loading ? <div className='flex justify-center items-center h-screen '>
+          <Loader2 className='animate-spin' size={20} />
+        </div>  : <LeadDetails data={leadDetails} />
+      } 
+    
     </div>
   );
 };
