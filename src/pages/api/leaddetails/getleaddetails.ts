@@ -101,10 +101,10 @@ export default async function handler(req, res) {
             data: leaddetails
         }
 
-        return res.json(response);
+       res.json(response);
 
     } catch (error) {
-        return res.status(500).json({
+      res.status(500).json({
             message: "Internal server error",
             data: error.message
         })
