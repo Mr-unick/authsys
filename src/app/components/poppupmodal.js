@@ -25,7 +25,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
 
       setLoading(true)
       
-      let response = await axios.post('/api/leaddetails/assignleads',{
+        let response = await axios.post('https://authsys-client.vercel.app/api/leaddetails/assignleads',{
             leads : data,
             salespersons : selectedUser.map(user => user.id)
         })
@@ -33,7 +33,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
       if(response.status == 200){
         setOpen(false)
       //  window.location.reload()
-        toast.success('Leads assigned successfully')
+        toast.success(response.data.message)
 
       }else{
         toast.error('Leads assigned failed')
