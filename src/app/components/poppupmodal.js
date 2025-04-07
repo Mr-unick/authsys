@@ -25,7 +25,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
 
       setLoading(true)
       
-        let response = await axios.post('https://authsys-client.vercel.app/api/leaddetails/assignleads',{
+        let response = await axios.post('/api/leaddetails/assignleads',{
             leads : data,
             salespersons : selectedUser.map(user => user.id)
         })

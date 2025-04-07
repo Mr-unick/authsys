@@ -77,7 +77,7 @@ export default async function assignLeads(req, res) {
     } catch (error) {
         const response: ResponseInstance = {
             message: 'Leads assigned failed',
-            data: [],
+            data: [error.message],
             status: 500
         }
         return res.json(response);
