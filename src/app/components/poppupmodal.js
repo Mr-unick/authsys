@@ -34,7 +34,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
         setOpen(false)
       
         toast.success(response.data.message)
-         window.location.reload()
+       //  window.location.reload()
 
       }else{
         toast.error('Leads assigned failed')
