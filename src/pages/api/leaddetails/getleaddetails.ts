@@ -4,7 +4,9 @@ import { LeadStages } from "@/app/entity/LeadStages";
 import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
+import { haspermission } from "@/utils/authroization";
 import { ResponseInstance } from "@/utils/instances";
+import { VerifyToken } from "@/utils/VerifyToken";
 import { color } from "motion/dist/react";
 
 
@@ -13,17 +15,18 @@ import { color } from "motion/dist/react";
 
 
 export default async function handler(req, res) {
+
+    const user = await VerifyToken(req, res, 'leaddetails');
+  
     try {
         const leadid = req.query.id;
-        console.log(leadid, 'from getleaddetails')
-
         const lead = await AppDataSource.getRepository(Leads)
             .createQueryBuilder('leads')
             .leftJoinAndSelect('leads.users', 'users')
             .leftJoinAndSelect('leads.stage', 'stage')
             .leftJoinAndSelect('leads.history', 'history')
             .leftJoinAndSelect('history.changed_by', 'changed_by')
-            .leftJoin('history.stage', 'history_stage')  
+            .leftJoin('history.stage', 'history_stage')
             .addSelect('history_stage.stage_name')
             .addSelect('history_stage.colour')
             .leftJoin('leads.business', 'business')
@@ -45,9 +48,9 @@ export default async function handler(req, res) {
             .where('leads.id = :id', { id: leadid })
             .getRawOne()).stage_stage_name;
 
-     
-     let   history = lead?.history.map((item) => {
-        // let stage = item.history_stage.stage_name;
+
+        let history = lead?.history.map((item) => {
+            // let stage = item.history_stage.stage_name;
             return {
                 stage: item.stage,
                 changedAt: item.changed_at,
@@ -84,6 +87,17 @@ export default async function handler(req, res) {
             //         createdAt: item.created_at
             //     }
             //  })
+            addcollborator: haspermission(user, 'assign_collborators'),
+            deletecollborator: haspermission(user, 'delete_collborators'),
+            viewcollborator: haspermission(user, 'view_collborators'),
+            addcomment: haspermission(user, 'add_comment'),
+            deletecomment: haspermission(user, 'delete_comment'),
+            editcomment: haspermission(user, 'edit_comment'),
+            viewcomment: haspermission(user, 'view_comment'),
+            changestage: haspermission(user, 'add_stage'),
+            deletestage: haspermission(user, 'delete_stage'),
+            editstage: haspermission(user, 'edit_stage'),
+            viewstage: haspermission(user, 'view_stage'),
         }
 
         if (!lead) {
@@ -101,10 +115,10 @@ export default async function handler(req, res) {
             data: leaddetails
         }
 
-       res.json(response);
+        res.json(response);
 
     } catch (error) {
-      res.status(500).json({
+        res.status(500).json({
             message: "Internal server error",
             data: error.message
         })

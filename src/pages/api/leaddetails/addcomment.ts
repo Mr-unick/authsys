@@ -9,7 +9,7 @@ import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function addComment(req, res) {
     try {
-        let user = await VerifyToken(req, res, 'users');
+        let user = await VerifyToken(req, res,null);
         const { stage, reason } = req.body;
         const leadId = req.query.id;
 
@@ -27,7 +27,7 @@ export default async function addComment(req, res) {
         newcomment.comment = stage;
         newcomment.lead = leadId;
         newcomment.user = user.id;
-     //   newcomment.created_at= new Date();
+     // newcomment.created_at= new Date();
         
 
         await AppDataSource.getRepository(Comment).save(newcomment);

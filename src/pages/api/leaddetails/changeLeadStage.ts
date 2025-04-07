@@ -10,7 +10,8 @@ import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function changeLeadStage(req, res) {
     try {
-        let user = await VerifyToken(req, res, 'users');
+        let user = await VerifyToken(req, res, 'stage');
+
         const {  stage, reason } = req.body;
         const leadId  = req.query.id;
 

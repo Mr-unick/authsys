@@ -3,7 +3,7 @@ import { User, FileText, Download } from 'lucide-react';
 
 export default function CommentCard({ comment }) {
 
-    console.log(comment,'from comment card')
+
     return (
         <div
             key={comment.id}

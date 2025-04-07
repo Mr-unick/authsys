@@ -10,6 +10,7 @@ import {
   Bell,
   Edit,
   Plus,
+  UserPlus,
 } from "lucide-react";
 import LeadTimeline from "../charts/leadTimeline";
 
@@ -19,6 +20,7 @@ import FormComponent from "../forms/form";
 import { ToolTipComponent } from "../tooltip";
 import { Button } from "../../../components/components/ui/button";
 import { Comments } from "../../../../const";
+import PopupModal from "../poppupmodal";
 
 
 
@@ -80,7 +82,7 @@ export default function LeadDetails({ data }) {
     });
   };
 
-  console.log(data,'from lead details')
+ 
 
   return (
     <div className="overflow-y-scroll px-2 max-sm:px-0 h-full ">
@@ -118,46 +120,48 @@ export default function LeadDetails({ data }) {
           </div>
 
           {/* Professional Information */}
-          <div className="space-y-3">
-            <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
-             
-              {/* <div className=" flex items-center gap-2 text-white px-4  rounded-md bg-blue-600">Collaborators
-                <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-600 p-0 shadow-none hover:bg-blue-600'} icon='Add'>
-                  <FormComponent formdata={{ formurl: 'addcollboratorform' }} />
-                </Modal>
-              </div> */}
+          {
+            data?.viewcollborator && <div className="space-y-3">
+              <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
 
-              <h3 className="text-sm text-gray-900 mb-3">
-                Collborators
+
+                {
+                  data?.addcollborator ? <div className="flex items-center gap-2">
+                    <PopupModal modaltype={'addcollaborators'} data={[data.id]} classname={'bg-blue-400 text-white hover:bg-blue-700 text-sm    flex items-center gap-2 w-[10rem]'} ><p className='max-sm:hidden'>Collborators </p><UserPlus size={22} /></PopupModal>
+                  </div> :  <h3 className="text-sm text-gray-900 mb-3">
+                  Collborators
+                </h3>
+                }
+
               </h3>
-              
-            </h3>
-            <div className="grid grid-cols-2 gap-y-4">
+              <div className="grid grid-cols-2 gap-y-4">
 
-              <div className="flex gap-2 items-center text-gray-600">
-                <Briefcase size={16} />
-                <span>Collborators</span>
+                <div className="flex gap-2 items-center text-gray-600">
+                  <Briefcase size={16} />
+                  <span>Collborators</span>
+                </div>
+                {
+                  data?.collaborators?.length > 0 ? <div className="flex gap-2">
+                    {data?.collaborators?.map((item) => (
+                      <div key={item.id} className="bg-blue-400 text-white px-2 py-1 rounded-md text-xs">
+                        @{item.name}
+                      </div>
+                    ))}
+                  </div> : <p className="text-gray-900">No collborators</p>
+                }
               </div>
-              {
-                data?.collaborators?.length > 0 ? <div className="flex gap-2">
-                  {data?.collaborators?.map((item) => (
-                    <div key={item.id} className="bg-blue-400 text-white px-2 py-1 rounded-md text-xs">
-                      @{item.name}
-                    </div>
-                  ))}
-                </div> : <p className="text-gray-900">No collborators</p>
-              }
             </div>
-          </div>
+          }
+         
 
           {/* Follow-up Information */}
 
           <div className="space-y-3">
-            {/* <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
+            <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
               <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-400 p-0 shadow-none hover:bg-blue-400 '} icon='Add'>
                 <FormComponent formdata={{ formurl: 'addfollowupform' }} />
               </Modal>
-            </div> */}
+            </div>
             <h3 className="text-sm text-gray-900 mb-3">
               Follow-up
             </h3>
@@ -169,6 +173,7 @@ export default function LeadDetails({ data }) {
               <p className="text-gray-900">{"2020"}</p>
             </div>
           </div>
+
           <div className=" rounded-lg">
             <h3 className="text-sm text-gray-900 mb-3">
               Additional Information
@@ -191,6 +196,7 @@ export default function LeadDetails({ data }) {
               >
                 {data?.leadStatus}
               </div>
+
               <div className="flex gap-2 items-center text-gray-600">
                 <Briefcase size={16} />
                 <span>Stage</span>
@@ -217,32 +223,45 @@ export default function LeadDetails({ data }) {
             <p className="text-gray-700">{data?.notes}</p>
           </div>
 
-          <div className="hidden max-sm:block  mr-4">
-            <h3 className="text-sm text-gray-900 mb-3">Comments</h3>
-           
-              <CommentsSection comments={Comments} />
-           
-          </div>
+         {
+            data?.viewcomment  && <div className="hidden max-sm:block  mr-4">
+              <h3 className="text-sm text-gray-900 mb-3">Comments</h3>
 
-          <div className="">
-            <h3 className="text-sm text-gray-900 mb-3 flex items-start">
-            
-              <button className=" flex items-center gap-2 bg-green-600 text-white px-4  rounded-md">  Stage History <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-green-600 p-0 shadow-none hover:bg-green-600'} icon='Add'>
-                <FormComponent id={data?.id} formdata={{ formurl: 'changestageform' }} />
-              </Modal></button>
-            
-            </h3>
-            {
-              data?.stageChangeHistory?.length > 0 && (
-                <LeadTimeline data={data?.stageChangeHistory} />
-              )
-            }
+              <CommentsSection comments={Comments} addcomment={data?.addcomment} />
 
+            </div>
+         }
+          {
+            data?.viewstage && <div className="">
+              <h3 className="text-sm text-gray-900 mb-3 flex items-start">
+
+                {
+                  data?.changestage ? <button className=" flex items-center gap-2 bg-green-600 text-white px-4  rounded-md">  Stage History <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-green-600 p-0 shadow-none hover:bg-green-600'} icon='Add'>
+                    <FormComponent id={data?.id} formdata={{ formurl: 'changestageform' }} />
+                  </Modal>
+                  </button> : <h3 className="text-sm text-gray-900 mb-3">Stage History</h3>
+                }
+
+             
+          
+              </h3>
+              {
+                data?.stageChangeHistory?.length > 0 && (
+                  <LeadTimeline data={data?.stageChangeHistory} />
+                )
+              }
+
+            </div>
+          }
+          
+        </div>
+
+        {
+          data?.viewcomment && <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
+            <CommentsSection comments={Comments} />
           </div>
-        </div>
-        <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
-          <CommentsSection comments={Comments} />
-        </div>
+        }
+       
 
       </div>
 

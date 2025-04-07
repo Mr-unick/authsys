@@ -107,11 +107,7 @@ const RolePermissionsForm = () => {
   return (
     <div className="flex items-center justify-center overflow-y-scroll mb-14">
       <div className="w-full overflow-y-scroll">
-        <div className="bg-gradient-to-r px-8 max-sm:px-4">
-          <h1 className="text-xl font-bold text-black flex items-center">
-            Create New Role
-          </h1>
-        </div>
+       
 
         <form onSubmit={handleSubmit} className="px-8 py-5 space-y-6 max-sm:px-4">
           {/* Role Name Input */}

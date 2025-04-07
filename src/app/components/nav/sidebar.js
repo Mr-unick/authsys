@@ -68,7 +68,7 @@ export default function SideBar({ setOpen }) {
 
   useEffect(() => {
     setLoading(true);
-    axios.get(`/api/getSidebarProps`)
+    axios.get(`https://authsys-client.vercel.app/api/getSidebarProps`)
       .then((res) => res.data)
       .then((res) => {
         setSideBarData(res.data);
@@ -80,8 +80,6 @@ export default function SideBar({ setOpen }) {
       });
   }, []);
 
-  //  git config--global user.email "lendenikhil9121@gmail.com"
-  //  git config--global user.name "JymVG42AWqbxw4k"
 
   if (loading) {
     return (

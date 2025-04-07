@@ -15,7 +15,7 @@ export const VerifyToken =async (req,res,policy : string | null)=>{
         status: 401
       }
 
-   return  res.json(response);
+    return  res.json(response);
     }
 
   const secretKey = new TextEncoder().encode('your_secret_key');
@@ -27,6 +27,8 @@ export const VerifyToken =async (req,res,policy : string | null)=>{
     return payload
   }
 
+  console.log(payload, policy, isauth)
+
   if (isauth !== true && policy){
       const response: ResponseInstance = {
         message: "Unauthorised from ",
@@ -34,10 +36,10 @@ export const VerifyToken =async (req,res,policy : string | null)=>{
         status: 401,
       };
 
-    return  res.json(response);
+    return res.json(response);
   }
 
-  console.log(payload)
+  
 
  return payload
  

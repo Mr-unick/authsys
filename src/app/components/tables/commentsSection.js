@@ -10,9 +10,9 @@ import {
 import CommentCard from '../cards/commentcard';
 import { Comments } from '../../../../const';
 
-const CommentsSection = ({comments}) => {
+const CommentsSection = ({comments ,addcomment}) => {
 
-    console.log(comments,'from comments section')
+ 
    
     const [newComment, setNewComment] = useState('');
     const [Comments, setComments] = useState(comments);
@@ -117,32 +117,36 @@ const CommentsSection = ({comments}) => {
                     </div>
 
                     {/* File Upload Buttons */}
-                    <div className="flex space-x-2">
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            onChange={handleFileUpload}
-                            accept="image/*,application/pdf"
-                            className="hidden"
-                        />
-                        <button
-                            onClick={() => fileInputRef.current?.click()}
-                            className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
-                        >
-                            <Paperclip size={20} className="text-gray-600" />
-                        </button>
 
-                        {/* Send Button */}
-                        <button
-                            onClick={handleAddComment}
-                            disabled={!newComment.trim() }
-                            className="p-2 bg-blue-500 text-white rounded-lg 
+                    {
+                        addcomment && <div className="flex space-x-2">
+                            <input
+                                type="file"
+                                ref={fileInputRef}
+                                onChange={handleFileUpload}
+                                accept="image/*,application/pdf"
+                                className="hidden"
+                            />
+                            <button
+                                onClick={() => fileInputRef.current?.click()}
+                                className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition"
+                            >
+                                <Paperclip size={20} className="text-gray-600" />
+                            </button>
+
+                            {/* Send Button */}
+                            <button
+                                onClick={handleAddComment}
+                                disabled={!newComment.trim()}
+                                className="p-2 bg-blue-500 text-white rounded-lg 
                          disabled:bg-gray-300 hover:bg-blue-600 
                          transition flex items-center"
-                        >
-                            <Send size={20} />
-                        </button>
-                    </div>
+                            >
+                                <Send size={20} />
+                            </button>
+                        </div>
+                    }
+                  
                 </div>
             </div>
         </div>

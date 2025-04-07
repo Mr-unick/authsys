@@ -7,28 +7,28 @@ import { Loader2 } from "lucide-react";
 
 
 
-export default function ConfirmAssign({  setOpen ,handleAssign  }) {
+export default function Addcollborator({ setOpen, handleaddcollaborators }) {
 
-const [selectedUser,setSelectedUser] = useState([])
+    const [selectedUser, setSelectedUser] = useState([])
 
     const handleSelectUser = (user) => {
-        setSelectedUser([...selectedUser,user])
+        setSelectedUser([...selectedUser, user])
     };
 
     console.log("Selected user:", selectedUser);
 
-    const handleAssignLeads = () => {
-        handleAssign(selectedUser)
+    const handleadd = () => {
+        handleaddcollaborators(selectedUser)
     };
 
-  
+
 
     return <div className="flex-1 flex flex-col  w-[20rem]  rounded-md justify-between">
         <p className="text-gray-800 my-6 ">
-            Assign Selected leads to?
+           Add Collaborators
         </p>
 
-       <div className="flex flex-row gap-2 mb-5">
+        <div className="flex flex-row gap-2 mb-5">
             {
                 selectedUser.map((user) => (
                     <div key={user.id} className="flex items-center justify-between bg-blue-600 text-white rounded-md px-2 py-1 w-fit text-sm">
@@ -36,15 +36,12 @@ const [selectedUser,setSelectedUser] = useState([])
                     </div>
                 ))
             }
-       </div>
+        </div>
 
         <AutocompleteComponent
             apiEndpoint="/api/user/searchuser"
             placeholder="Search..."
-            // extractQuery={(input) => {
-            //     const lastWord = input.split(" ").pop();
-            //     return lastWord?.startsWith("@") ? lastWord.slice(1) : "";
-            // }}
+          
             renderItem={(user) => (
                 <span>{user.username} {user.name}</span>
             )}
@@ -60,11 +57,11 @@ const [selectedUser,setSelectedUser] = useState([])
                 Cancel
             </button>
             <button
-                onClick={() => handleAssignLeads()}
+                onClick={() => handleadd()}
                 type="button"
                 className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
             >
-               Assign
+              Add
             </button>
         </div>
     </div>

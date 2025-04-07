@@ -12,7 +12,7 @@ type UserInstance = {
 
  //   const haspermission = user.permissions.find((permission)=>permission == gatePermission);
 
- return user.permissions.includes(requiredPermission);
+ return user?.permissions?.includes(requiredPermission);
     
 }
 

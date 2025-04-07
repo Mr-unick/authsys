@@ -1,4 +1,5 @@
 import { Leads } from "@/app/entity/Leads";
+import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 import { ResponseInstance } from "@/utils/instances";
@@ -23,13 +24,25 @@ export default async function assignLeads(req, res) {
 
         // Process each lead sequentially
         for (const leadId of leads) {
+
             const lead = await AppDataSource.getRepository(Leads).findOne({
                 where: { id: leadId }
             });
 
-            if (!lead) {
+            if (lead == null) {
                 return res.status(404).json({ message: `Lead with ID ${leadId} not found` });
             }
+            
+
+            let initialHistory = new StageChangeHistory;
+            initialHistory.stage = lead.stage || 1
+            initialHistory.lead = leadId
+            initialHistory.changed_by = user.id
+            initialHistory.changed_at = new Date()
+            initialHistory.reason = 'Initial Assignment'
+
+
+            await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
 
             // Process each salesperson sequentially
             for (const userId of salespersons) {
@@ -46,6 +59,7 @@ export default async function assignLeads(req, res) {
                 }
 
                 // Check if user is already assigned to this lead
+                
                 if (!lead.users.some(u => u.id === user.id)) {
                     lead.users.push(user);
                 }
@@ -54,10 +68,10 @@ export default async function assignLeads(req, res) {
             await AppDataSource.getRepository(Leads).save(lead);
         }
 
-        const response : ResponseInstance ={
-            message : 'Leads assigned successfully',
-            data : [],
-            status : 200
+        const response: ResponseInstance = {
+            message: 'Leads assigned successfully',
+            data: [],
+            status: 200
         }
         return res.json(response);
     } catch (error) {

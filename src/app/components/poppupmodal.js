@@ -12,14 +12,19 @@ import { Button } from "../../components/components/ui/button";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import Addcollborator from "./modals/addcollaborator";
 
 export default function PopupModal({ modaltype ,children ,classname ,data}) {
+    const router = useRouter();
 
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const handleAssign =async (selectedUser) => {
+
       setLoading(true)
+      
       let response = await axios.post('/api/leaddetails/assignleads',{
             leads : data,
             salespersons : selectedUser.map(user => user.id)
@@ -27,7 +32,9 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
        
       if(response.status == 200){
         setOpen(false)
+        window.location.reload()
         toast.success('Leads assigned successfully')
+
       }else{
         toast.error('Leads assigned failed')
       }
@@ -40,6 +47,28 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
         setLoading(false)
       //  setOpen(false)
     }
+
+    const handleaddcollaborators = async (selectedUser) => {
+        setLoading(true)
+
+        console.log("Selected user:",selectedUser);
+
+        let response = await axios.post('/api/leaddetails/addcollaborators', {
+            leads: data,
+            salespersons: selectedUser?.map(user => user?.id)
+        })
+
+        if (response.status == 200) {
+            setOpen(false)
+            window.location.reload()
+            toast.success('Collaborators added successfully')
+           
+        } else {
+            toast.error('Leads assigned failed')
+        }
+        setLoading(false)
+    }
+    
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
@@ -61,16 +90,17 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
                 </div> : <>
                         {
                             modaltype == 'confirmdelete' ? <ConfirmDelete itemName={'ss'} setOpen={setOpen} handleDelete={handleDelete} /> :
-                                modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} setOpen={setOpen} handleAssign={handleAssign} />
+                            modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} setOpen={setOpen} handleAssign={handleAssign} />
+                        }
+
+                        {
+                            modaltype == 'addcollaborators' && <Addcollborator itemName={'ss'} setOpen={setOpen} handleaddcollaborators={handleaddcollaborators} />
                         }
                 </>
                  }
-    
-            
 
-                
 
-            </DialogContent>
+        </DialogContent>
         </Dialog>
     );
 }
