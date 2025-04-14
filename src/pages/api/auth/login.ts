@@ -66,10 +66,10 @@ export default async function handler(req, res) {
 
         res.setHeader('Set-Cookie', serializedCookie);
 
-        sessionStorage.setItem('user',JSON.stringify({
-            name : newuser.name,
-            role : newuser.role
-        }))
+        // sessionStorage.setItem('user',JSON.stringify({
+        //     name : newuser.name,
+        //     role : newuser.role
+        // }))
 
         return res.json({
             message: 'Login successful',
