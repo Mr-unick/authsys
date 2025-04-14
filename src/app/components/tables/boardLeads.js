@@ -47,13 +47,14 @@ export default function BoardLeads() {
             </div>
             <div className="overflow-y-auto h-[calc(100vh-8rem)] flex flex-col gap-4 max-sm:h-fit pb-10 max-sm:pb-4">
               {
-                leads.map((data, index) => {
+              leads.map((data, index) => {
                   let newdata = (data.stage === stage.stage_name) && data;
                   if (!newdata) {
                     return;
                   }
                   return <BoardCard key={index} data={newdata} />
-                })}
+              })
+              }
             </div>
           </div>
         ))}

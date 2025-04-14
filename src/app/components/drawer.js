@@ -1,34 +1,21 @@
-import { Children } from "react"
-import { Button } from "../../components/components/ui/button"
+
 import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-    DrawerTrigger,
-  } from "../../components/components/ui/drawer"
+  Sheet,
+  SheetContent,
+
+  SheetTrigger,
+} from '../../components/components/ui/sheet'
 
 
 
-  export default function DrawerComponent({children }){
-    return <Drawer >
-    <DrawerTrigger  >{children}</DrawerTrigger>
-    <DrawerContent className="h-[95vh]" side={'left'}>
-      <DrawerHeader>
-        <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-        <DrawerDescription>This action cannot be undone.</DrawerDescription>
-      </DrawerHeader>
-      <DrawerFooter>
-        {/* <Button classname='w-10'>Submit</Button> */}
-        <DrawerClose>
-          <Button variant="outline">Cancel</Button>
-        </DrawerClose>
-      </DrawerFooter>
-    </DrawerContent>
-  </Drawer>
+  export default function DrawerComponent({children ,side }){
+    return <Sheet modal={false}>
+      <SheetTrigger>{children}</SheetTrigger>
+      <SheetContent className="min-w-[40%]" side={side ? side : 'right'}>
+       {/* <LeadDeatailspage/> */}hh
+      </SheetContent>
+    </Sheet>
+
   
   }
   

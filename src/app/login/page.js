@@ -5,14 +5,16 @@ import { Button } from "../../components/components/ui/button";
 import { Input } from "../../components/components/ui/input";
 import { Checkbox } from "../../components/components/ui/checkbox";
 import { Label } from "../../components/components/ui/label";
-import { EyeIcon, EyeOffIcon, Layers } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Layers, Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { toast } from 'react-toastify';
 
 export default function Page() {
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loader,setLoader]=useState(false);
   const router = useRouter();
 
   const isLoggedIn = async () => {
@@ -42,6 +44,7 @@ export default function Page() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      setLoader(true)
       const response = await fetch('api/auth/login', {
         method: 'POST',
         headers: {
@@ -50,13 +53,23 @@ export default function Page() {
         body: JSON.stringify({ email, password })
       });
 
-      if (response.ok) {
+      console.log(response)
+
+      if (response.status == 200) {
+
         router.push('/');
-      } else {
-        console.error('Login failed');
-      }
+        setLoader(false)
+      } 
+
+      if (response.status == 404) {
+
+        toast.error('User Not Found')
+        setLoader(false)
+      } 
+
     } catch (error) {
       console.error('Login error:', error);
+      setLoader(false)
     }
   };
 
@@ -157,7 +170,9 @@ export default function Page() {
                 type="submit"
                 className="w-full h-12 bg-[#4E49F2] hover:bg-blue-700 text-base mt-4"
               >
-                Sign in
+               {
+                  loader ? <Loader2 className="animate-spin" /> : "Sign in"
+               }
               </Button>
 
               <div className="relative">

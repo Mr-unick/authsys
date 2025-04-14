@@ -67,6 +67,8 @@ export default function HomeLayout({ children }) {
     };
   })
 
+  
+
 
   return (
     <div className="w-screen  h-screen flex overflow-hidden bg-[#F4F4F4] max-sm:bg-white ">

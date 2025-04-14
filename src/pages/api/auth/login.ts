@@ -27,6 +27,7 @@ export default async function handler(req, res) {
         if (!user) {
             return res.status(404).json({
                 message: 'user not found',
+                status:404
             });
         }
 
@@ -65,8 +66,14 @@ export default async function handler(req, res) {
 
         res.setHeader('Set-Cookie', serializedCookie);
 
-        return res.status(200).json({
+        sessionStorage.setItem('user',JSON.stringify({
+            name : newuser.name,
+            role : newuser.role
+        }))
+
+        return res.json({
             message: 'Login successful',
+            status : 200
         });
 
     } catch (error) {

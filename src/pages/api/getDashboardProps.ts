@@ -6,23 +6,24 @@ import { VerifyToken } from "@/utils/VerifyToken";
 
 
 
-export default async function getDashboardProps(req,res) {
-    
-let user = await VerifyToken(req,res,null)
+export default async function getDashboardProps(req, res) {
 
- try {
+    let user = await VerifyToken(req, res, null)
 
-    let dashboardProps : any;
-    dashboardProps = generateDashboard(user);
-    
-    const response : ResponseInstance = {
-        message : 'Dashboard props fetched successfully',
-        data : dashboardProps,
-        status : 200
+    try {
+
+        let dashboardProps: any;
+        dashboardProps = await generateDashboard(user);
+
+
+        const response: ResponseInstance = {
+            message: 'Dashboard props fetched successfully',
+            data: dashboardProps,
+            status: 200
+        }
+
+        res.json(response);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
     }
-
-     res.json(response);
- } catch (error) {
-    res.status(500).json({ error: error.message });
- }
 }

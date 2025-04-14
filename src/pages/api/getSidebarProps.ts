@@ -26,46 +26,43 @@ export default async function handler(req, res) {
   const secretKey = new TextEncoder().encode('your_secret_key');
   const { payload } = await jwtVerify(token, secretKey);
 
-  const url = process.env.BASEURL;
-
-  
 
   let data = [
     {
       title: "Dashboard",
-      url: `${url}/`,
+      url: `/`,
       permissionRequired: "view_dashboard",
 
     },
     {
       title: "Notifications",
-      url: `${url}/notifications`,
+      url: `/notifications`,
       permissionRequired: "view_notifications",
 
     },
     {
       title: "Activity",
-      url: `${url}/activity`,
+      url: `/activity`,
       permissionRequired: "view_activity",
     },
     {
       title: "Leads",
-      url: `${url}/#`,
+      url: `/#`,
       permissionRequired: "view_leads",
       nestedRoutes: [
         {
           title: "New Leads",
-          url: `${url}/leads/newleads`,
+          url: `/leads/newleads`,
           permissionRequired: "view_freshleads",
         },
         {
           title: "Board Leads",
-          url: `${url}/leads/boardleads`,
+          url: `/leads/boardleads`,
           permissionRequired: "view_leads",
         },
         {
           title: "Table Leads",
-          url: `${url}/leads/tableleads`,
+          url: `/leads/tableleads`,
           permissionRequired: "view_leads",
         },
       ],
@@ -73,7 +70,7 @@ export default async function handler(req, res) {
     },
     {
       title: "Mange Users",
-      url: `${url}/user/users`,
+      url: `/user/users`,
       permissionRequired: "view_users",
 
     },
@@ -84,28 +81,28 @@ export default async function handler(req, res) {
       nestedRoutes: [
         {
           title: "Roles",
-          url: `${url}buisnessettings/rolesadnpermissions/roles`,
+          url: `buisnessettings/rolesadnpermissions/roles`,
           permissionRequired: "view_roles",
         },
         {
           title: "Buisnes Details",
-          url: `${url}buisnessettings/buisness/buisness`,
+          url: `buisnessettings/buisness/buisness`,
           permissionRequired: 'view_business',
         },
 
         {
           title: "Area Of Operation",
-          url: `${url}buisnessettings/areaofsales/areaofsales`,
+          url: `buisnessettings/areaofsales/areaofsales`,
           permissionRequired: "view_area_of_operation",
         },
         {
           title: "Lead Stages",
-          url: `${url}buisnessettings/leadstages/leadstages`,
+          url: `buisnessettings/leadstages/leadstages`,
           permissionRequired: "view_leadstages",
         },
         {
           title: "Branches",
-          url: `${url}buisnessettings/branches/branches`,
+          url: `buisnessettings/branches/branches`,
           permissionRequired: "view_branches",
         },
       ],
@@ -113,7 +110,7 @@ export default async function handler(req, res) {
     },
     {
       title: "Settings",
-      url: `${url}/settings`,
+      url: `/settings`,
       permissionRequired: "update_settings",
     },
 

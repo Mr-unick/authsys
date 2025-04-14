@@ -21,6 +21,7 @@ import {
   BriefcaseBusiness
 } from "lucide-react";
 import { NavAccordion } from "../accrodian";
+import { usePathname } from "next/navigation";
 
 
 // Icon mapping based on route titles
@@ -43,8 +44,10 @@ const getIconForRoute = (title) => {
 
 export const NavLink = ({ href, children, icon }) => {
   const router = useRouter();
-  const isActive = router.pathname === href;
+  const pathname = usePathname();
 
+  const isActive = router.pathname === href;
+  console.log(isActive, 'this is ', 'http://localhost:3000'+ pathname, href)
 
   return (
     <Link href={href} className="">
@@ -121,7 +124,7 @@ export default function SideBar({ setOpen }) {
 
       <div className="px-4 mt-auto">
         <div className="border-t border-gray-800 pt-4 mt-4">
-          <NavLink href="/help" icon={<HelpCircle size={18} />}>
+          <NavLink href="#" icon={<HelpCircle size={18} />}>
             Help & Support
           </NavLink>
         </div>

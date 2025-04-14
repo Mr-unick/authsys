@@ -1,10 +1,31 @@
+import { Users } from "@/app/entity/Users";
+import { AppDataSource } from "@/app/lib/data-source";
 
 
 
 
 
-export default function generateDashboard(user:any){
+export default async function generateDashboard(user:any){
     let dashboardProps : any;
+
+    const salesPersons = await AppDataSource.getRepository(Users)
+        .createQueryBuilder('user')
+        .leftJoinAndSelect('user.leads', 'leads')
+        .where('user.buisnesId = :id', { id: user.business })
+        .getMany();
+
+    const salesPersonsData = salesPersons.map(data => {
+        return {
+            id : data?.id,
+            username: data?.name,
+            assignedLeads: data?.leads?.length,
+            conversionPercentage: data?.leads?.length,
+            profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com'
+        }
+    })
+
+
+        
 
     if(user?.role=='Admin'){
         dashboardProps = {
@@ -53,9 +74,7 @@ export default function generateDashboard(user:any){
                     { month: "Nick", assigned: 126, conversions: 100 },
                     { month: "Peter", assigned: 86, conversions: 30 },
                 ]
-            },salespersons : [
-                { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
-            ]
+            }, salespersons: salesPersonsData
         }
     } else if (user?.role =='Buisness Admin'){
         dashboardProps = {
@@ -143,9 +162,7 @@ export default function generateDashboard(user:any){
                 ]
             }, salespersons: {
                 title : 'Sales Persons',
-                data : [
-                    { id: 1, username: 'johndoe', profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com', assignedLeads: 24, conversionPercentage: 33 }
-                ]
+                data: salesPersonsData
             }
         } 
     } else {
