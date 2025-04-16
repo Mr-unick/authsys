@@ -18,9 +18,10 @@ export default function BoardLeads() {
       .then((res) => {
         setstages(res.data.stages);
         setLeads(res.data.leads);
+        setLoading(false);
+      }).catch((e)=>{
+        setLoading(false);
       });
-
-    setLoading(false);
     return;
   }, []);
 
@@ -30,8 +31,8 @@ export default function BoardLeads() {
   }, []);
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">
-      <div className="animate-spin "><Loader2 /></div>
+    return <div className="flex justify-center items-center h-[80vh] w-full">
+      <Loader2 size={35} className="animate-spin " />
     </div>
   }
 

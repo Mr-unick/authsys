@@ -2,7 +2,7 @@
 
 import { Button } from "../../../components/components/ui/button";
 import axios from "axios";
-import { FilePen, FileSpreadsheet, Plus, Search, Sheet, Trash, UserPlus } from "lucide-react";
+import { FilePen, FileSpreadsheet, Loader2, Plus, Search, Sheet, Trash, UserPlus } from "lucide-react";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Select,
@@ -222,13 +222,14 @@ const DataTable = ({ url }) => {
         setRows(res?.data?.rows);
         setFilteredRows(res?.data?.rows);
         setRes(res)
+     setLoading(false)
       })
       .catch(error => {
         console.error("Failed to fetch data:", error);
-
+        setLoading(false);
       });
     setChange(false);
-    setLoading(false);
+   
   }, [url, change, router]);
 
 
@@ -264,15 +265,18 @@ const DataTable = ({ url }) => {
   //   </Modal>
   // }
 
-  if (loading) return <div className='flex justify-center items-center h-full'>Loading...</div>;
+  if (loading) { return <div className='flex justify-center items-center h-[80vh] w-full'>
+    <Loader2 className="animate-spin" size={35}/>
+  </div>; }
 
   // Get final data to display
   const displayData = sortedData();
 
   return (
     <div className="w-full font-pretty max-sm:px-2 pb-16">
-      {/* Table actions and filters */}
+      {
 
+      }
       {
         tableData?.rows?.length > 0 && <div className="mb-5 flex justify-between">
           <div className="flex gap-3">
