@@ -65,7 +65,11 @@ export default async function assignLeads(req, res) {
                 }
             }
 
-            await AppDataSource.getRepository(Leads).save(lead);
+         //   await AppDataSource.getRepository(Leads).save(lead);
+           await AppDataSource.getRepository(Leads).createQueryBuilder()
+                .insert()
+                .values(lead)
+                .execute();
         }
 
         const response: ResponseInstance = {
