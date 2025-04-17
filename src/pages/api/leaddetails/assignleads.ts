@@ -32,7 +32,7 @@ export default async function assignLeads(req, res) {
             if (lead == null) {
                 return res.status(404).json({ message: `Lead with ID ${leadId} not found` });
             }
-            
+
 
             let initialHistory = new StageChangeHistory;
             initialHistory.stage = lead.stage || 1
@@ -59,7 +59,7 @@ export default async function assignLeads(req, res) {
                 }
 
                 // Check if user is already assigned to this lead
-                
+
                 if (!lead.users.some(u => u.id === user.id)) {
                     lead.users.push(user);
                 }
@@ -80,6 +80,7 @@ export default async function assignLeads(req, res) {
             data: [error.message],
             status: 500
         }
+        console.log(error)
         return res.json(response);
     }
 }

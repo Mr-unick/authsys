@@ -6,7 +6,7 @@ const UserTable = ({userData}) => {
 
   return (
     <div className="w-full overflow-y-scroll flex flex-col p-2">
-      {userData.map((user) => (
+      {userData?.map((user) => (
         <a 
           key={user.id} 
           href="#" 
