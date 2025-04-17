@@ -77,19 +77,43 @@ export default async function handler(req, res) {
       .leftJoin('history.changed_by', 'changed_by')
       .leftJoinAndSelect('leads.stage', 'stage')
       .leftJoin('leads.business', 'business')
-        .where('business.id = :businessid', { businessid: user.business })
-      .andWhere(qb => {
-          const subQuery = qb.subQuery()
-            .select("1")
-            .from("lead_users", "lu")
-            .where("lu.lead_id = leads.id")
-            .andWhere("lu.user_id = :userId", { userId: user.id })
-            .getQuery();
-          return `EXISTS (${subQuery})`;
-        })
-     // .andWhere("leads.businesId = :businessId", { businessId: user.business })
-      .getMany();
-   
+      .where('business.id = :businessid', { businessid: user.business })
+    //   .andWhere(qb => {
+    //       const subQuery = qb.subQuery()
+    //         .select("1")
+    //         .from("lead_users", "lu")
+    //         .where("lu.lead_id = leads.id")
+    //         .andWhere("lu.user_id = :userId", { userId: user.id })
+    //         .getQuery();
+    //       return `EXISTS (${subQuery})`;
+    //     })
+    //  // .andWhere("leads.businesId = :businessId", { businessId: user.business })
+    //   .getMany();
+    if (user.role === 'Buisness Admin') {
+
+      lead = await lead.andWhere(qb => {
+        const subQuery = qb.subQuery()
+          .select("1")
+          .from("lead_users", "lu")
+          .where("lu.lead_id = leads.id")
+          .getQuery();
+        return `EXISTS (${subQuery})`;
+      });
+    } else {
+      lead = await lead.andWhere(qb => {
+        const subQuery = qb.subQuery()
+          .select("1")
+          .from("lead_users", "lu")
+          .where("lu.lead_id = leads.id")
+          .andWhere("lu.user_id = :userId", { userId: user.id })
+          .getQuery();
+        return `EXISTS (${subQuery})`;
+      });
+
+    }
+
+    lead = await lead.getMany();
+
 
           let leads  = lead.map((data)=>{
 

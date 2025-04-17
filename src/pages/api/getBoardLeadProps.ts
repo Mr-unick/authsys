@@ -13,17 +13,32 @@ export default async function handler(req, res) {
     let user = await VerifyToken(req, res, 'leads');
 
     if (req.method == "GET") {
+
         const leadRepository = AppDataSource.getRepository(Leads);
+
         let lead;
 
-        lead = await leadRepository.createQueryBuilder('leads')
+        lead =  leadRepository.createQueryBuilder('leads')
             .leftJoinAndSelect('leads.users', 'users')
             .leftJoin('leads.history', 'history')
             .leftJoin('history.changed_by', 'changed_by')
             .leftJoinAndSelect('leads.stage', 'stage')
             .leftJoin('leads.business', 'business')
             .where('business.id = :businessid', { businessid: user.business })
-            .andWhere(qb => {
+            
+         
+        if(user.role === 'Buisness Admin'){
+
+            lead = await lead.andWhere(qb => {
+                const subQuery = qb.subQuery()
+                    .select("1")
+                    .from("lead_users", "lu")
+                    .where("lu.lead_id = leads.id")
+                    .getQuery();
+                return `EXISTS (${subQuery})`;
+            });
+        }else{
+            lead = await lead.andWhere(qb => {
                 const subQuery = qb.subQuery()
                     .select("1")
                     .from("lead_users", "lu")
@@ -31,10 +46,11 @@ export default async function handler(req, res) {
                     .andWhere("lu.user_id = :userId", { userId: user.id })
                     .getQuery();
                 return `EXISTS (${subQuery})`;
-            })
-            .getMany();
+            });
+            
+        } 
 
-            console.log(lead, '--------------------------------');
+        lead = await lead.getMany();
 
         let leads = lead.map((data) => {
 
@@ -64,7 +80,6 @@ export default async function handler(req, res) {
                 nextfollowup: data?.nextfollowup || '-',
                 lead_source: data?.lead_source || '-',
                 note: data?.notes || '-'
-
             }
 
         })

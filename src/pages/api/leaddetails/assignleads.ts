@@ -65,11 +65,7 @@ export default async function assignLeads(req, res) {
                 }
             }
 
-         //   await AppDataSource.getRepository(Leads).save(lead);
-           await AppDataSource.getRepository(Leads).createQueryBuilder()
-                .insert()
-                .values(lead)
-                .execute();
+            await AppDataSource.getRepository(Leads).save(lead);
         }
 
         const response: ResponseInstance = {
@@ -81,10 +77,9 @@ export default async function assignLeads(req, res) {
     } catch (error) {
         const response: ResponseInstance = {
             message: 'Leads assigned failed',
-            data: [error],
+            data: [error.message],
             status: 500
         }
-        console.log(error)
         return res.json(response);
     }
 }
