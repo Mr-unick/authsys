@@ -10,7 +10,8 @@ export enum ActivityType {
     DELETE = 'Delete',
     UPDATE = 'Update',
     LOGIN = 'Login',
-    LOGOUT = 'Logout'
+    LOGOUT = 'Logout',
+    ASSIGN = 'Assign'
 }
 
 @Entity()
@@ -28,7 +29,7 @@ export class Activity {
     timestamp: Date;
 
     @ManyToOne(() => Users, user => user.activities, { onDelete: 'SET NULL', nullable: true })
-    user:typeof Users;
+    user: Users | null;
 
     @ManyToOne(() => Leads, lead => lead.activities, { onDelete: 'CASCADE', nullable: true })
     lead: Leads | null; 

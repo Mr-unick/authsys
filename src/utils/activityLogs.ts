@@ -6,14 +6,14 @@ import { AppDataSource } from "@/app/lib/data-source";
 
 
 
-export const activityLogs = async ({type,description,user,lead}:{type:ActivityType,description:string,user:Users,lead:Leads}) => {
+export const activityLog = async ({type,description,user,lead}:{type:ActivityType,description:string,user:Users,lead:Leads}) => {
 
 try {
-
+    
     const activity = new Activity();
     activity.type = type;
     activity.description = description;
-    // activity.user = await AppDataSource.getRepository(Users).findOne({where:{id:user.id}});
+    activity.user = user;
     activity.lead = lead;
 
     await AppDataSource.getRepository(Activity).save(activity);
