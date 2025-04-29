@@ -5,11 +5,9 @@ import { LoginLogoutLog } from './LoginLogoutLog';
 import { Roles } from './Roles';
 import { Notification } from './Notifications';
 import { StageChangeHistory } from './StageChangeHistory';
+import { Leads } from './Leads';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
-
-// Forward reference for Leads
-import type { Leads } from './Leads';
 
 @Entity('users')
 
@@ -36,8 +34,8 @@ export class Users {
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
   business: typeof Business;
 
-  @ManyToMany('Leads', (leads: any) => leads.users, { nullable: true })
-  leads: any[];
+  @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
+  leads: Leads[];
 
   @ManyToOne(type => Roles, role => role.users)
   @JoinColumn({ name: "roleId", referencedColumnName: 'id' })
