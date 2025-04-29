@@ -5,9 +5,11 @@ import { LoginLogoutLog } from './LoginLogoutLog';
 import { Roles } from './Roles';
 import { Notification } from './Notifications';
 import { StageChangeHistory } from './StageChangeHistory';
-import { Leads } from './Leads';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
+
+// Forward reference for Leads
+import type { Leads } from './Leads';
 
 @Entity('users')
 
@@ -20,33 +22,33 @@ export class Users {
 
   @Column()
   email: string;
-   
+
   @Column()
   password: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   created_at: Date;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   updated_at: Date;
 
   @ManyToOne(() => Business, business => business.id)
-  @JoinColumn({name:'buisnesId',referencedColumnName:'id'})
-  business:typeof Business;
+  @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
+  business: typeof Business;
 
-  @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
-  leads: Leads[];
+  @ManyToMany('Leads', (leads: any) => leads.users, { nullable: true })
+  leads: any[];
 
   @ManyToOne(type => Roles, role => role.users)
-  @JoinColumn({name:"roleId",referencedColumnName:'id'})
-  role:typeof Roles;
+  @JoinColumn({ name: "roleId", referencedColumnName: 'id' })
+  role: typeof Roles;
 
 
   // @OneToMany(() => Notification, notification => notification.user)
   // @JoinColumn()
   // notifications: Notification[];
 
-  @OneToMany(() => LoginLogoutLog, log => log.user,{nullable:true})
+  @OneToMany(() => LoginLogoutLog, log => log.user, { nullable: true })
   @JoinColumn()
   loginLogoutLogs: LoginLogoutLog[];
 
@@ -54,11 +56,11 @@ export class Users {
 
   @OneToMany(() => StageChangeHistory, history => history.changed_by, { nullable: true })
   // @JoinColumn({name:'id',referencedColumnName:'changed_by'})
-  history:typeof StageChangeHistory[];
+  history: typeof StageChangeHistory[];
 
 
-  @OneToMany(()=>Comment,comment=>comment.user,{nullable:true})
-  comment:typeof Comment
+  @OneToMany(() => Comment, comment => comment.user, { nullable: true })
+  comment: typeof Comment
 
 
   @OneToMany(() => Activity, activity => activity.user, { nullable: true })

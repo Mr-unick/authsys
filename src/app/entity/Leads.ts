@@ -5,9 +5,11 @@ import { Business } from './Business';
 import { AreaOfOperation } from './AreaOfOperation';
 import { StageChangeHistory } from './StageChangeHistory';
 import { LeadStages } from './LeadStages';
-import { Users } from './Users';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
+
+// Forward reference for Users
+import type { Users } from './Users';
 
 @Entity('leads')
 export class Leads {
@@ -57,13 +59,13 @@ export class Leads {
   @Column()
   updated_at: Date;
 
-  @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
+  @ManyToMany('Users', (users: any) => users.leads, { nullable: true })
   @JoinTable({
     name: 'lead_users',
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' }
   })
-  users: Users[];
+  users: any[];
 
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
   history: StageChangeHistory[];
