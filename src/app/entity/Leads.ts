@@ -63,7 +63,7 @@ export class Leads {
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' }
   })
-  users: Users[];
+  users: any[]
 
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
   history: StageChangeHistory[];

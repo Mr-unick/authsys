@@ -6,6 +6,7 @@ import { ResponseInstance } from "@/utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function assignLeads(req, res) {
+
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
@@ -45,6 +46,7 @@ export default async function assignLeads(req, res) {
             await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
 
             // Process each salesperson sequentially
+            
             for (const userId of salespersons) {
                 const user = await AppDataSource.getRepository(Users).findOne({
                     where: { id: userId }
