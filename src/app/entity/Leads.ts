@@ -57,7 +57,7 @@ export class Leads {
   @Column()
   updated_at: Date;
 
-  @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
+  @ManyToMany(() => require('./Users'), (users) => ()=>require('./Users').leads, { nullable: true })
   @JoinTable({
     name: 'lead_users',
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
