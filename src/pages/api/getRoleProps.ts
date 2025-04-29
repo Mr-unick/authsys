@@ -60,7 +60,7 @@ export default async function handler(req, res) {
 
     const { name , permissions ,branch} = req.body;
 
-    let buisnes = await AppDataSource.getRepository(Business).findOne({where:{id:1}});
+    let buisnes = await AppDataSource.getRepository(Business).findOne({where:{id:user.business}});
 
     let rolebranch;
 
@@ -86,6 +86,7 @@ export default async function handler(req, res) {
     newRole.name = name;
     newRole.permissions = permissionsList;
     newRole.created_at = new Date();
+    newRole.buisness = user.business;
 
     if (branch) {
       rolebranch = await AppDataSource.getRepository(Branch).findOne({ where: { id: branch } })
