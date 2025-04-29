@@ -57,13 +57,13 @@ export class Leads {
   @Column()
   updated_at: Date;
 
-  @ManyToMany(() => require('./Users'), (users) => ()=>require('./Users').leads, { nullable: true })
+  @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
   @JoinTable({
     name: 'lead_users',
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
     inverseJoinColumn: { name: 'user_id', referencedColumnName: 'id' }
   })
-  users: any[]
+  users: Users[];
 
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
   history: StageChangeHistory[];

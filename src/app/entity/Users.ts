@@ -34,8 +34,8 @@ export class Users {
   @JoinColumn({name:'buisnesId',referencedColumnName:'id'})
   business:typeof Business;
 
-  @ManyToMany(() => require('./Leads'), (leads) => ()=>require('./Leads').users, { nullable: true })
-  leads: any[]
+  @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
+  leads: Leads[];
 
   @ManyToOne(type => Roles, role => role.users)
   @JoinColumn({name:"roleId",referencedColumnName:'id'})
