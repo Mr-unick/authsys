@@ -1,84 +1,86 @@
-import { Leads } from "@/app/entity/index"
+import { Leads } from "@/app/entity/Leads";
 import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
-import { Users } from "@/app/entity/index";
+import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 import { ResponseInstance } from "@/utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function assignLeads(req, res) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
+
+    let user = await VerifyToken(req, res, null);
+    if (!user) {
+        return res.status(401).json({ message: 'Unauthorized' });
+    }
+
     try {
-        let user = await VerifyToken(req, res, null);
         const { leads, salespersons } = req.body;
 
         if (!leads || !salespersons || !Array.isArray(leads) || !Array.isArray(salespersons)) {
-            const response: ResponseInstance = {
-                message: "Invalid request body",
-                data: [],
-                status: 400
-            }
-            return res.status(400).json(response);
+            return res.status(400).json({ message: 'Invalid request body' });
         }
 
-        // Process each lead
+        // Process each lead sequentially
         for (const leadId of leads) {
+
             const lead = await AppDataSource.getRepository(Leads).findOne({
-                where: { id: leadId },
-                relations: ['users']
+                where: { id: leadId }
             });
 
-            if (!lead) {
-                const response: ResponseInstance = {
-                    message: `Lead with ID ${leadId} not found`,
-                    data: [],
-                    status: 404
-                }
-                return res.status(404).json(response);
+            if (lead == null) {
+                return res.status(404).json({ message: `Lead with ID ${leadId} not found` });
             }
 
-            // Create stage history for initial assignment
-            const initialHistory = new StageChangeHistory();
-            initialHistory.stage = lead.stage || 1;
-            initialHistory.lead = leadId;
-            initialHistory.changed_by = user.id;
-            initialHistory.changed_at = new Date();
-            initialHistory.reason = 'Initial Assignment';
+
+            let initialHistory = new StageChangeHistory;
+            initialHistory.stage = lead.stage || 1
+            initialHistory.lead = leadId
+            initialHistory.changed_by = user.id
+            initialHistory.changed_at = new Date()
+            initialHistory.reason = 'Initial Assignment'
+
+
             await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
 
-            // Get existing user IDs
-            const existingUserIds = lead.users?.map(user => user.id) || [];
+            // Process each salesperson sequentially
+            for (const userId of salespersons) {
+                const user = await AppDataSource.getRepository(Users).findOne({
+                    where: { id: userId }
+                });
 
-            // Find new users to add
-            const newUserIds = salespersons.filter(id => !existingUserIds.includes(id));
-
-            if (newUserIds.length === 0) {
-                const response: ResponseInstance = {
-                    message: "Users already assigned to lead",
-                    data: [],
-                    status: 200
+                if (!user) {
+                    return res.status(404).json({ message: `User with ID ${userId} not found` });
                 }
-                return res.json(response);
+
+                if (!lead.users) {
+                    lead.users = [];
+                }
+
+                // Check if user is already assigned to this lead
+
+                if (!lead.users.some(u => u.id === user.id)) {
+                    lead.users.push(user);
+                }
             }
 
-            // Get new users and add them to the lead
-            const newUsers = await AppDataSource.getRepository(Users).findByIds(newUserIds);
-            lead.users = [...(lead.users || []), ...newUsers];
             await AppDataSource.getRepository(Leads).save(lead);
         }
 
         const response: ResponseInstance = {
-            message: "Leads assigned successfully",
+            message: 'Leads assigned successfully',
             data: [],
             status: 200
         }
-        res.json(response);
+        return res.json(response);
     } catch (error) {
-        console.log(error);
         const response: ResponseInstance = {
-            message: "Something went wrong",
-            data: [],
+            message: 'Leads assigned failed',
+            data: [error.message],
             status: 500
         }
-        res.json(response);
+        return res.json(response);
     }
 }
 
