@@ -64,9 +64,9 @@ export default async function assignLeads(req, res) {
 
                    // lead.users.push(user);
 
-                    // const users = await AppDataSource.getRepository(Users).findBy({id: userId});
-                    // lead.users = [...lead.users, ...users];
-                    // await AppDataSource.getRepository(Leads).save(lead);
+                    const users = await AppDataSource.getRepository(Users).findBy({id: userId});
+                    lead.users = [...lead.users, ...users];
+                    await AppDataSource.getRepository(Leads).save(lead);
                 }
             }
  
