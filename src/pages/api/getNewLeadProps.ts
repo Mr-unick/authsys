@@ -17,6 +17,12 @@ export default async function handler(req, res) {
         const leadRepository = AppDataSource.getRepository(Leads);
         let lead;
 
+        let count = await leadRepository.find({
+            where:{
+                business:user.business
+            }
+        });
+
         lead = await leadRepository.createQueryBuilder('leads')
             .leftJoin('leads.users', 'users')
             .leftJoin('leads.history', 'history')
@@ -32,6 +38,7 @@ export default async function handler(req, res) {
                     .getQuery();
                 return `NOT EXISTS (${subQuery})`;
             })
+            .limit(11)
             .getMany();
 
 
@@ -77,6 +84,7 @@ export default async function handler(req, res) {
             message: "Request successful",
             data: tabledata,
             status: 200,
+            count:count.length
         };
 
         res.json(response)
