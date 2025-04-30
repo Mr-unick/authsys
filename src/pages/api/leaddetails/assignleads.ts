@@ -68,6 +68,7 @@ export default async function assignLeads(req, res) {
                     // lead.users = [...lead.users, ...users];
                     // await AppDataSource.getRepository(Leads).save(lead);
                 }
+                await AppDataSource.getRepository(Leads).save(lead);
             }
  
 
