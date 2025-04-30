@@ -69,11 +69,7 @@ export default async function assignLeads(req, res) {
                     // await AppDataSource.getRepository(Leads).save(lead);
                 }
             }
-  const users = await AppDataSource.getRepository(Users).findBy({id: In(salespersons)});
-                    lead.users = [...lead.users, ...users];
-                    await AppDataSource.getRepository(Leads).save(lead);
-          //  await AppDataSource.getRepository(Leads).save(lead);
-        }
+ 
 
         const response: ResponseInstance = {
             message: 'Leads assigned successfully',
