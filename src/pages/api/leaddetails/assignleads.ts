@@ -61,27 +61,20 @@ export default async function assignLeads(req, res) {
                 // Check if user is already assigned to this lead
 
                 if (!lead.users.some(u => u.id === user.id)) {
-<<<<<<< HEAD
-                    lead.users.push(user);
-=======
+
 
                     lead.users.push(user);
 
                     // const users = await AppDataSource.getRepository(Users).findBy({id: userId});
                     // lead.users = [...lead.users, ...users];
                     // await AppDataSource.getRepository(Leads).save(lead);
->>>>>>> fbd16e9b2f03ea7524086796c3bef2142e581b9b
+
                 }
                 await AppDataSource.getRepository(Leads).save(lead);
             }
-<<<<<<< HEAD
 
             await AppDataSource.getRepository(Leads).save(lead);
         }
-=======
- 
->>>>>>> fbd16e9b2f03ea7524086796c3bef2142e581b9b
-
         const response: ResponseInstance = {
             message: 'Leads assigned successfully',
             data: [],
