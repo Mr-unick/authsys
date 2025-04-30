@@ -34,15 +34,15 @@ export default async function assignLeads(req, res) {
             }
 
 
-            let initialHistory = new StageChangeHistory;
-            initialHistory.stage = lead.stage || 1
-            initialHistory.lead = leadId
-            initialHistory.changed_by = user.id
-            initialHistory.changed_at = new Date()
-            initialHistory.reason = 'Initial Assignment'
+            // let initialHistory = new StageChangeHistory;
+            // initialHistory.stage = lead.stage || 1
+            // initialHistory.lead = leadId
+            // initialHistory.changed_by = user.id
+            // initialHistory.changed_at = new Date()
+            // initialHistory.reason = 'Initial Assignment'
 
 
-            await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
+            // await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
 
             // Process each salesperson sequentially
             for (const userId of salespersons) {

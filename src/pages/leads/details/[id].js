@@ -21,7 +21,7 @@ export default function page(){
     setLeadDetails(response.data.data);
     setLoading(false);
   }
-
+// hello
   useEffect(() => {
     getLeadDetails(id);
   }, [id]);
