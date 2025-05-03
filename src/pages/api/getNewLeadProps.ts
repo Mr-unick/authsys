@@ -80,7 +80,7 @@ export default async function handler(req, res) {
             data: leads,
         }).policy(user, 'freshleads').addform('leadform').gettable();
 
-        const response: ResponseInstance = {
+        const response = {
             message: "Request successful",
             data: tabledata,
             status: 200,
