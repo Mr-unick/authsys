@@ -38,7 +38,7 @@ export default async function handler(req, res) {
                     .getQuery();
                 return `NOT EXISTS (${subQuery})`;
             })
-            .limit(11)
+            .limit(10)
             .getMany();
 
 
