@@ -3,9 +3,11 @@ import { GenerateTable } from "../../utils/generateTable";
 import { AppDataSource } from "../../app/lib/data-source";
 import { ResponseInstance } from "../../utils/instances";
 import { Business } from "../../app/entity/Business";
+import {Users} from "../../app/entity/Users"
 import { GenerateForm } from "../../utils/generateForm";
 import { title } from "process";
 import { VerifyToken } from "@/utils/VerifyToken";
+import { Roles } from "@/app/entity";
 
 
 export default async function handler(req, res) {
@@ -121,9 +123,37 @@ export default async function handler(req, res) {
       newbuisness.owner_email = owner_email;
       newbuisness.business_description = business_description;
 
+
       const buisnessRepo = AppDataSource.getRepository(Business);
 
       const buisness = await buisnessRepo.save(newbuisness);
+
+      
+      let newuser = new Users();
+
+      let role = await AppDataSource.getRepository(Roles).findOne({
+        where:{
+          name:'Buisness Admin'
+        }
+      });
+
+      
+      newuser.business = buisness;
+      newuser.email = owner_email
+      newuser.name = owner_name;
+      newuser.password = 'pass';
+
+
+      if(role !== null){
+        newuser.role =role
+      };
+
+
+      try{
+        await AppDataSource.getRepository(Users).save(newuser);
+      }catch(e){
+        console.log(e.message)
+      }
 
       const response: ResponseInstance = {
         message: "Buisness created successfully",

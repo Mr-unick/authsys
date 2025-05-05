@@ -8,6 +8,7 @@ import { LeadStages } from "../../app/entity/LeadStages";
 import { LeadsTableInstace, ResponseInstance } from "../../utils/instances";
 import { GenerateTable } from "../../utils/generateTable";
 import { VerifyToken } from "@/utils/VerifyToken";
+import MailService from "@/utils/mail/sendmail";
 
 export default async function handler(req, res) {
 
@@ -17,11 +18,10 @@ export default async function handler(req, res) {
         const leadRepository = AppDataSource.getRepository(Leads);
         let lead;
 
-        let count = await leadRepository.find({
-            where:{
-                business:user.business
-            }
-        });
+        let count = await leadRepository.createQueryBuilder('leads')
+                    .leftJoin('leads.business', 'business')
+                    .where('business.id = :businessid', { businessid: user.business })
+                    .getMany();
 
         lead = await leadRepository.createQueryBuilder('leads')
             .leftJoin('leads.users', 'users')
@@ -41,7 +41,7 @@ export default async function handler(req, res) {
             .limit(10)
             .getMany();
 
-
+       
 
         let leads = lead.map((data) => {
 

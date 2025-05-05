@@ -223,8 +223,10 @@ const DataTable = ({ url }) => {
         setRows(res?.data?.rows);
         setFilteredRows(res?.data?.rows);
         setRes(res)
-       
+       if(res?.count){
         SetPageArry(new Array(Math.ceil(res?.count / 10)).fill(0))
+       }
+        
         setLoading(false)
       })
       .catch(error => {

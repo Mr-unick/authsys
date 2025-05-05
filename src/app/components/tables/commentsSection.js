@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import CommentCard from '../cards/commentcard';
 import { Comments } from '../../../../const';
+import axios from 'axios';
 
 const CommentsSection = ({comments ,addcomment}) => {
 
@@ -18,11 +19,13 @@ const CommentsSection = ({comments ,addcomment}) => {
     const [Comments, setComments] = useState(comments);
     const [username, setUsername] = useState('');
     const [attachment, setAttachment] = useState(null);
+    const[newfile,setFile]=useState(null)
     const fileInputRef = useRef(null);
 
     // Handle file upload
     const handleFileUpload = (event) => {
         const file = event.target.files[0];
+        
         if (file) {
             const newAttachment = {
                 id: `${Date.now()}-${file.name}`,
@@ -33,6 +36,7 @@ const CommentsSection = ({comments ,addcomment}) => {
                     : URL.createObjectURL(file)
             };
             setAttachment(newAttachment);
+            setFile(file)
         }
     };
 
@@ -42,7 +46,7 @@ const CommentsSection = ({comments ,addcomment}) => {
     };
 
     // Add comment
-    const handleAddComment = () => {
+    const handleAddComment =async () => {
         if (newComment.trim()) {
 
             const newCommentObj = {
@@ -52,7 +56,17 @@ const CommentsSection = ({comments ,addcomment}) => {
                 attachment: attachment || undefined
             };
 
-            console.log(newCommentObj)
+            const formData = new FormData();
+            formData.append('file', newfile);
+
+            try{
+             let res =  await axios.post('/api/leaddetails/addcomment',formData);
+             console.log(res.data)
+
+            }catch(e){
+                console.log(e)
+            }
+
 
             setComments(prev => [newCommentObj, ...prev]);
             setNewComment('');
@@ -64,7 +78,7 @@ const CommentsSection = ({comments ,addcomment}) => {
     // Format timestamp
  
     return (
-        <div className="flex flex-col max-h-[95%]  ">
+        <div className="flex flex-col  bg-red-300 mb-16">
         
             <div className="flex-grow overflow-y-scroll max-sm:overflow-y-hidden p-4 max-sm:p-0 space-y-4 h-[35rem] max-sm:-h-[10rem]">
                 {comments?.length == 0? 
@@ -83,6 +97,8 @@ const CommentsSection = ({comments ,addcomment}) => {
             </div>
 
             {/* Sticky Comment Input */}
+
+            {/* addcomment &&  */}
             <div className="sticky bottom-4  p-4  max-sm:px-0 ">
                 <div className="flex items-start space-x-2 border rounded-md p-2 bg-white">  
                     {/* Comment Input */}
@@ -119,7 +135,8 @@ const CommentsSection = ({comments ,addcomment}) => {
                     {/* File Upload Buttons */}
 
                     {
-                        addcomment && <div className="flex space-x-2">
+                       
+                        <div className="flex space-x-2">
                             <input
                                 type="file"
                                 ref={fileInputRef}
