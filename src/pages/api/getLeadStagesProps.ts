@@ -13,6 +13,7 @@ import { Any } from "typeorm";
 
 export default async function handler(req, res) {
   let user = await VerifyToken(req, res, 'leadstages');
+
  if(req.method == "GET"){
    try {
 
@@ -77,8 +78,11 @@ export default async function handler(req, res) {
     const newStage = new LeadStages();
     newStage.stage_name = stage_name;
     newStage.colour = colour;
-    newStage.business = user.buisness_id;
+    newStage.business = user?.business;
+
+    console.log('businesss',user.buisness)
     newStage.discription = discription;
+    
 
     await AppDataSource.getRepository(LeadStages).save(newStage);
 
