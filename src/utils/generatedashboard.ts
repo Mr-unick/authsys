@@ -1,3 +1,4 @@
+import { Leads } from "@/app/entity";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 
@@ -77,6 +78,34 @@ export default async function generateDashboard(user:any){
             }, salespersons: salesPersonsData
         }
     } else if (user?.role =='Buisness Admin'){
+
+    const leadRepository = AppDataSource.getRepository(Leads);
+  
+
+   let  results =await leadRepository
+    .createQueryBuilder('lead')
+    .select("DATE_FORMAT(lead.created_at, '%M')", 'month') // '%M' = full month name
+    .addSelect('COUNT(*)', 'count')
+    .groupBy('month')
+    .getRawMany();
+
+
+  results = results.map((data)=>{
+    return {
+        column: data?.month, 
+        assigned: {
+            value:  Number(data.count),
+            color: "#2563eb"
+        }, 
+        conversions: {
+            value: 8,
+            color: "#8884d8"
+        }
+    }
+  });
+
+  console.log(results)
+
         dashboardProps = {
             yearchart: {
                 title: 'Yearly Trend',
@@ -90,19 +119,65 @@ export default async function generateDashboard(user:any){
                         color: "#60a5fa",
                     },
                 },
-                data: [
-                    {
-                        column: "jan", 
-                        assigned: {
-                            value: 20,
-                            color: "#2563eb"
-                        }, 
-                        conversions: {
-                            value: 8,
-                            color: "#8884d8"
-                        }
-                    }
-                ]
+                // data: [
+                //     {
+                //         column: "Jan", 
+                //         assigned: {
+                //             value: 20,
+                //             color: "#2563eb"
+                //         }, 
+                //         conversions: {
+                //             value: 8,
+                //             color: "#8884d8"
+                //         }
+                //     },
+                //     {
+                //         column: "Feb", 
+                //         assigned: {
+                //             value: 14,
+                //             color: "#2563eb"
+                //         }, 
+                //         conversions: {
+                //             value: 6,
+                //             color: "#8884d8"
+                //         }
+                //     },
+                //     {
+                //         column: "Mar", 
+                //         assigned: {
+                //             value: 30,
+                //             color: "#2563eb"
+                //         }, 
+                //         conversions: {
+                //             value: 18,
+                //             color: "#8884d8"
+                //         }
+                //     },
+                //     {
+                //         column: "Ape", 
+                //         assigned: {
+                //             value: 12,
+                //             color: "#2563eb"
+                //         }, 
+                //         conversions: {
+                //             value: 8,
+                //             color: "#8884d8"
+                //         }
+                //     },
+                //     {
+                //         column: "May", 
+                //         assigned: {
+                //             value: 25,
+                //             color: "#2563eb"
+                //         }, 
+                //         conversions: {
+                //             value: 13,
+                //             color: "#8884d8"
+                //         }
+                //     }
+                // ]
+
+                data:results
             },
             leadsource: {
                 title: 'Lead Source',

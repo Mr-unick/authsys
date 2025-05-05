@@ -482,7 +482,7 @@ const DataTable = ({ url }) => {
         }
 
         {
-          tableData?.rows?.length == 0 && <div className="w-full h-[80vh] flex justify-center items-center flex-col gap-6">
+          tableData?.rows?.length == 0 && <div className="w-full h-[85vh] flex justify-center items-center flex-col gap-6">
             <h1 className="text-2xl font-bold">No data found</h1>
             {tableData?.create && (
               <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold rounded-md font-semibold">
