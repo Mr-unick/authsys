@@ -17,7 +17,7 @@ export default function page(){
   const getLeadDetails = async (id) => {
     if (!id) return;
     setLoading(true);
-    const response = await axios.get(`http://localhost:3000/api/leaddetails/getleaddetails?id=${id}`);
+    const response = await axios.get(`https://authsys-client.vercel.app/api/leaddetails/getleaddetails?id=${id}`);
     setLeadDetails(response.data.data);
     setLoading(false);
   }
