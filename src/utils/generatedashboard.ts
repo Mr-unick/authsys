@@ -104,7 +104,6 @@ export default async function generateDashboard(user:any){
     }
   });
 
-  console.log(results)
 
         dashboardProps = {
             yearchart: {

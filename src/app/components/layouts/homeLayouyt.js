@@ -108,7 +108,6 @@ export default function HomeLayout({ children }) {
                 <div className="flex flex-col max-sm:hidden h-10 text-end justify-center items-end mx-2 text-gray-600">
                   <p className="text-sm ">Admin</p>
                   <p className="text-sm">Nikhil Lende</p>
-                  
                 </div>
                 <img src={"https://images.pexels.com/photos/8367793/pexels-photo-8367793.jpeg"} 
                 className="rounded-full object-cover h-10 w-10 max-sm:h-6 max-sm:w-6" alt="logo" width={10} height={10} />
