@@ -1,12 +1,15 @@
 import { Leads } from "@/app/entity";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
+import { mapLeadSourcesToChartData } from "./utility";
 
 
 
 
 
 export default async function generateDashboard(user:any){
+
+    const leadRepository = AppDataSource.getRepository(Leads);
     let dashboardProps : any;
 
     const salesPersons = await AppDataSource.getRepository(Users)
@@ -14,6 +17,18 @@ export default async function generateDashboard(user:any){
         .leftJoinAndSelect('user.leads', 'leads')
         .where('user.buisnesId = :id', { id: user.business })
         .getMany();
+    
+
+    let  leads = await leadRepository
+    .createQueryBuilder('lead')
+    .leftJoin('lead.business', 'business')
+    .where('business.id = :businessid', { businessid: user.business })
+    .select("DATE_FORMAT(lead.created_at, '%M')", 'month') 
+    .addSelect('lead.lead_source', 'source')
+    .addSelect('COUNT(*)', 'count');
+    
+
+    console.log(leads[0])
 
     const salesPersonsData = salesPersons.map(data => {
         return {
@@ -25,8 +40,6 @@ export default async function generateDashboard(user:any){
         }
     })
 
-
-        
 
     if(user?.role=='Admin'){
         dashboardProps = {
@@ -79,18 +92,46 @@ export default async function generateDashboard(user:any){
         }
     } else if (user?.role =='Buisness Admin'){
 
-    const leadRepository = AppDataSource.getRepository(Leads);
-  
 
-   let  results =await leadRepository
-    .createQueryBuilder('lead')
-    .select("DATE_FORMAT(lead.created_at, '%M')", 'month') // '%M' = full month name
-    .addSelect('COUNT(*)', 'count')
-    .groupBy('month')
-    .getRawMany();
+    const allMonths = [
+        'January', 'February', 'March', 'April', 'May', 'June',
+        'July', 'August', 'September', 'October', 'November', 'December'
+      ];
+
+    // 1. Group by Month
+const yearLeads = await leadRepository
+.createQueryBuilder('lead')
+.leftJoin('lead.business', 'business')
+.where('business.id = :businessid', { businessid: user.business })
+.select("DATE_FORMAT(lead.created_at, '%M')", 'month')
+.addSelect('COUNT(*)', 'count')
+.groupBy('month')
+.getRawMany();
+
+// 2. Group by Source
+const leadSource = await leadRepository
+.createQueryBuilder('lead')
+.leftJoin('lead.business', 'business')
+.where('business.id = :businessid', { businessid: user.business })
+.select('lead.lead_source', 'source')
+.addSelect('COUNT(*)', 'count')
+.groupBy('source')
+.getRawMany();
 
 
-  results = results.map((data)=>{
+    
+
+    const resultMap = new Map(yearLeads.map(r => [r.month, parseInt(r.count)]));
+
+    const finalResult = allMonths.map(month => ({
+        month,
+        count: resultMap.get(month) || 0,
+        conversions : resultMap.get(month)  ? 8 : 0
+      }));
+
+
+
+ let yearlyleads = finalResult.map((data)=>{
     return {
         column: data?.month, 
         assigned: {
@@ -98,7 +139,7 @@ export default async function generateDashboard(user:any){
             color: "#2563eb"
         }, 
         conversions: {
-            value: 8,
+            value: data.conversions,
             color: "#8884d8"
         }
     }
@@ -118,85 +159,13 @@ export default async function generateDashboard(user:any){
                         color: "#60a5fa",
                     },
                 },
-                // data: [
-                //     {
-                //         column: "Jan", 
-                //         assigned: {
-                //             value: 20,
-                //             color: "#2563eb"
-                //         }, 
-                //         conversions: {
-                //             value: 8,
-                //             color: "#8884d8"
-                //         }
-                //     },
-                //     {
-                //         column: "Feb", 
-                //         assigned: {
-                //             value: 14,
-                //             color: "#2563eb"
-                //         }, 
-                //         conversions: {
-                //             value: 6,
-                //             color: "#8884d8"
-                //         }
-                //     },
-                //     {
-                //         column: "Mar", 
-                //         assigned: {
-                //             value: 30,
-                //             color: "#2563eb"
-                //         }, 
-                //         conversions: {
-                //             value: 18,
-                //             color: "#8884d8"
-                //         }
-                //     },
-                //     {
-                //         column: "Ape", 
-                //         assigned: {
-                //             value: 12,
-                //             color: "#2563eb"
-                //         }, 
-                //         conversions: {
-                //             value: 8,
-                //             color: "#8884d8"
-                //         }
-                //     },
-                //     {
-                //         column: "May", 
-                //         assigned: {
-                //             value: 25,
-                //             color: "#2563eb"
-                //         }, 
-                //         conversions: {
-                //             value: 13,
-                //             color: "#8884d8"
-                //         }
-                //     }
-                // ]
+                
 
-                data:results
+                data:yearlyleads
             },
             leadsource: {
                 title: 'Lead Source',
-                data: {
-                    visitors: {
-                        label: "Visitors",
-                    },
-                    firefox: {
-                        label: "Firefox",
-                        color: "hsl(215, 100%, 50%)", // Royal Blue
-                    },
-                    edge: {
-                        label: "Edge",
-                        color: "hsl(210, 80%, 55%)", // Steel Blue
-                    },
-                    other: {
-                        label: "Other",
-                        color: "hsl(210, 40%, 60%)", // Light Steel Blue
-                    },
-                }
+                data: mapLeadSourcesToChartData(leadSource)
             },
             performance: {
                 title: 'Performance',

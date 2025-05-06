@@ -1,4 +1,4 @@
-import { ChevronRight, Home, BarChart2, Settings, Users, FileText, Calendar, Mail, HelpCircle, Folder, BriefcaseBusiness, Store, Map, Route, Split, ShieldQuestion, Table, LayoutDashboard, File } from "lucide-react";
+import { ChevronRight, Home, BarChart2, Settings, Users, FileText, Calendar, Mail, HelpCircle, Folder, BriefcaseBusiness, Store, Map, Route, Split, ShieldQuestion, Table, LayoutDashboard, File, NotebookText } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -10,7 +10,7 @@ import { NavLink } from "./nav/sidebar";
 const getIconForRoute = (title) => {
   const iconMap = {
     "New Leads": <File size={18} />,
-    "Leads": <BarChart2 size={18} />,
+    "Leads": <NotebookText size={18} />,
     "Board Leads": <LayoutDashboard size={18} />,
     "Table Leads": <Table size={18} />,
     "Roles And Permissions": <ShieldQuestion size={18} />,

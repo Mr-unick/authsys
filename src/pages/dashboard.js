@@ -88,7 +88,7 @@ const Dashboard = ({data}) => {
               <CardTitle>{data?.leadsource?.title}</CardTitle>
             </CardHeader>
             <CardContent>
-              <PieChartComponent radius={80} />
+              <PieChartComponent radius={80}  data={data?.leadsource?.data}/>
               <CardFooter className="flex-col gap-2 text-sm">
                 <div className="flex items-center gap-2 font-medium leading-none">
                   Trending up by 5.2% this month{" "}

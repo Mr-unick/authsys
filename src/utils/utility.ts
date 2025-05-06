@@ -29,6 +29,34 @@ export const formatDateTime = (timestamp) => {
   return formattedDate+','+timeString ;
 };
 
+
+export function mapLeadSourcesToChartData(sources) {
+  const colors = [
+    'hsl(240, 100%, 50%)',
+    'hsl(215, 100%, 50%)',
+    'hsl(210, 80%, 55%)',
+    'hsl(190, 70%, 50%)',
+    'hsl(170, 60%, 50%)',
+    'hsl(150, 50%, 50%)',
+    'hsl(130, 40%, 50%)',
+    'hsl(110, 30%, 50%)',
+    'hsl(90, 20%, 50%)',
+    'hsl(70, 10%, 50%)'
+  ];
+
+  const chartData = sources.map((source, index) => {
+   // const key = source.source.replace(/\s+/g, '_').toLowerCase(); // sanitize key
+    return {
+      label: source.source,
+      value: parseInt(source.count),
+      fill: colors[index % colors.length] // loop through colors if more sources
+    };
+  });
+
+  return chartData;
+}
+
+
   
 
   
