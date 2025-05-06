@@ -36,20 +36,20 @@ const Dashboard = ({data}) => {
       {/* Top row metrics */}
       <div className="grid grid-cols-7 gap-4 max-sm:grid-cols-2">
        
-       {
-        [1,2,3,4,5,6,7].map((item)=>{
+       { data?.leadstages &&
+        data?.leadstages.map((item)=>{
 
           return (
-            <Card className="h-12 max-sm:h-10 flex items-center overflow-hidden border-l-4 border-l-blue-500 shadow-sm hover:shadow transition-all duration-200">
+            <Card className={`h-12 max-sm:h-10 flex items-center overflow-hidden border-l-4 border-l-[${item.colour}] shadow-sm hover:shadow transition-all duration-200`}>
               <CardHeader className="py-2 px-4">
                 <CardTitle className="text-sm font-medium text-gray-500 flex items-center">
-                  <TrendingUp size={16} className="mr-1 text-blue-500" />
-                  New
+                  <TrendingUp size={16} className={`mr-1`} />
+                 {item?.stage}
                 </CardTitle>
               </CardHeader>
               <CardContent className="py-2 px-4 flex-1 flex justify-end">
                 <div className="text-2xl max-sm:text-sm font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                 {item}
+                 {item?.count}
                 </div>
               </CardContent>
             </Card>

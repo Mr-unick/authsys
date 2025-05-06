@@ -26,9 +26,43 @@ export default async function generateDashboard(user:any){
     .select("DATE_FORMAT(lead.created_at, '%M')", 'month') 
     .addSelect('lead.lead_source', 'source')
     .addSelect('COUNT(*)', 'count');
-    
 
-    console.log(leads[0])
+    
+    // 1. Group by Month
+const yearLeads = await leadRepository
+.createQueryBuilder('lead')
+.leftJoin('lead.business', 'business')
+.where('business.id = :businessid', { businessid: user.business })
+.select("DATE_FORMAT(lead.created_at, '%M')", 'month')
+.addSelect('COUNT(*)', 'count')
+.groupBy('month')
+.getRawMany();
+
+// 2. Group by Source
+const leadSource = await leadRepository
+.createQueryBuilder('lead')
+.leftJoin('lead.business', 'business')
+.where('business.id = :businessid', { businessid: user.business })
+.select('lead.lead_source', 'source')
+.addSelect('COUNT(*)', 'count')
+.groupBy('source')
+.getRawMany();
+
+// 2. Group by stage
+const leadStages = await leadRepository
+  .createQueryBuilder('lead')
+  .leftJoin('lead.business', 'business')
+  .leftJoin('lead.stage', 'stage')
+  .where('business.id = :businessid', { businessid: user.business })
+  .select('stage.stage_name', 'stage')
+  .addSelect('stage.colour','colour') 
+  .addSelect('COUNT(*)', 'count')
+  .groupBy('stage.stage_name')
+  .addGroupBy('stage.colour')
+  .getRawMany();
+
+
+    console.log(leadStages)
 
     const salesPersonsData = salesPersons.map(data => {
         return {
@@ -98,25 +132,6 @@ export default async function generateDashboard(user:any){
         'July', 'August', 'September', 'October', 'November', 'December'
       ];
 
-    // 1. Group by Month
-const yearLeads = await leadRepository
-.createQueryBuilder('lead')
-.leftJoin('lead.business', 'business')
-.where('business.id = :businessid', { businessid: user.business })
-.select("DATE_FORMAT(lead.created_at, '%M')", 'month')
-.addSelect('COUNT(*)', 'count')
-.groupBy('month')
-.getRawMany();
-
-// 2. Group by Source
-const leadSource = await leadRepository
-.createQueryBuilder('lead')
-.leftJoin('lead.business', 'business')
-.where('business.id = :businessid', { businessid: user.business })
-.select('lead.lead_source', 'source')
-.addSelect('COUNT(*)', 'count')
-.groupBy('source')
-.getRawMany();
 
 
     
@@ -147,6 +162,7 @@ const leadSource = await leadRepository
 
 
         dashboardProps = {
+            leadstages : leadStages,
             yearchart: {
                 title: 'Yearly Trend',
                 chartConfig: {
