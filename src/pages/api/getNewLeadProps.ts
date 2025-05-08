@@ -82,7 +82,9 @@ export default async function handler(req, res) {
 
         const response = {
             message: "Request successful",
-            data: tabledata,
+            data: {
+                ...tabledata,upload:true
+            },
             status: 200,
             count:count.length
         };

@@ -15,7 +15,11 @@ export default function Addcollborator({ setOpen, handleaddcollaborators }) {
         setSelectedUser([...selectedUser, user])
     };
 
-    console.log("Selected user:", selectedUser);
+    const removeSelectUser = (user) => {
+        setSelectedUser(selectedUser.filter(userdata=>userdata.id !== user.id))
+    };
+
+   // console.log("Selected user:", selectedUser);
 
     const handleadd = () => {
         handleaddcollaborators(selectedUser)
@@ -32,7 +36,7 @@ export default function Addcollborator({ setOpen, handleaddcollaborators }) {
             {
                 selectedUser.map((user) => (
                     <div key={user.id} className="flex items-center justify-between bg-blue-600 text-white rounded-md px-2 py-1 w-fit text-sm">
-                        <span>@{user.name}</span>
+                        <span>@{user.name} <button onClick={(user)=>{removeSelectUser(user)}}>X</button></span>
                     </div>
                 ))
             }
@@ -43,7 +47,7 @@ export default function Addcollborator({ setOpen, handleaddcollaborators }) {
             placeholder="Search..."
           
             renderItem={(user) => (
-                <span>{user.username} {user.name}</span>
+                <span>{user.username} {user.name} </span>
             )}
             onSelect={handleSelectUser}
         />

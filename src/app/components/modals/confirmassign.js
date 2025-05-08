@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AutocompleteComponent from "../forms/autocomplete";
 import { Loader2 } from "lucide-react";
 
@@ -15,12 +15,21 @@ const [selectedUser,setSelectedUser] = useState([])
         setSelectedUser([...selectedUser,user])
     };
 
-    console.log("Selected user:", selectedUser);
+    const removeSelectUser = (user) => {
+        console.log('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+        setSelectedUser(selectedUser.filter(userdata=>userdata.id !== user.id))
+    };
+
+   // console.log("Selected user:", selectedUser);
 
     const handleAssignLeads = () => {
         handleAssign(selectedUser)
     };
 
+    // useEffect(()=>{
+    //     console.log('ssssssssssssssssssssssssssssssssssss')
+    //     setSelectedUser(selectedUser)
+    // },[selectedUser])
   
 
     return <div className="flex-1 flex flex-col  w-[20rem]  rounded-md justify-between">
@@ -32,7 +41,7 @@ const [selectedUser,setSelectedUser] = useState([])
             {
                 selectedUser.map((user) => (
                     <div key={user.id} className="flex items-center justify-between bg-blue-600 text-white rounded-md px-2 py-1 w-fit text-sm">
-                        <span>@{user.name}</span>
+                        <span>@{user.name} <button onClick={()=>{removeSelectUser(user)}}>X</button></span>
                     </div>
                 ))
             }

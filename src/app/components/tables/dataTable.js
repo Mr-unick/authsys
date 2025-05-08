@@ -35,6 +35,7 @@ import { toast } from "react-toastify";
 import { redirect } from "next/navigation";
 import { haspermission } from "@/utils/authroization";
 import PopupModal from "../poppupmodal";
+import UploadLeads from "../modals/uploadleads";
 
 
 
@@ -52,7 +53,7 @@ const DataTable = ({ url }) => {
   const [open, setOpen] = useState(false)
   const [res, setRes] = useState(null)
   const [loading, setLoading] = useState(false);
-  const [pagearray , SetPageArry]=useState([1]);
+  const [pagearray, SetPageArry] = useState([1]);
   const router = useRouter();
   const { asPath } = router;
 
@@ -223,10 +224,10 @@ const DataTable = ({ url }) => {
         setRows(res?.data?.rows);
         setFilteredRows(res?.data?.rows);
         setRes(res)
-       if(res?.count){
-        SetPageArry(new Array(Math.ceil(res?.count / 10)).fill(0))
-       }
-        
+        if (res?.count) {
+          SetPageArry(new Array(Math.ceil(res?.count / 10)).fill(0))
+        }
+
         setLoading(false)
       })
       .catch(error => {
@@ -234,7 +235,7 @@ const DataTable = ({ url }) => {
         setLoading(false);
       });
     setChange(false);
-   
+
   }, [url, change, router]);
 
 
@@ -269,9 +270,11 @@ const DataTable = ({ url }) => {
   //   </Modal>
   // }
 
-  if (loading) { return <div className='flex justify-center items-center h-[80vh] w-full'>
-    <Loader2 className="animate-spin" size={35}/>
-  </div>; }
+  if (loading) {
+    return <div className='flex justify-center items-center h-[80vh] w-full'>
+      <Loader2 className="animate-spin" size={35} />
+    </div>;
+  }
 
   // Get final data to display
   const displayData = sortedData();
@@ -328,9 +331,10 @@ const DataTable = ({ url }) => {
               </div>
             )}
 
+
             <Button
               onClick={handleExport}
-              className="font-semibold bg-green-500 hover:bg-green-500 hover:text-white text-gray-50"
+              className="font-semibold bg-green-500 hover:bg-green-500 hover:text-white text-gray-50 h-full"
               variant="outline"
             >
               <>
@@ -345,8 +349,7 @@ const DataTable = ({ url }) => {
             </Button>
 
             {tableData?.create && (
-              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] rounded-md hover:bg-[#4E49F2] text-white font-semibold">
-
+              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] rounded-md hover:bg-[#4E49F2] text-white font-semibold ">
                 {
                   tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} icon='Add' open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
@@ -354,9 +357,14 @@ const DataTable = ({ url }) => {
                   </Link>
                 }
               </button>
-
-
             )}
+
+            {tableData?.upload && (
+              <UploadLeads/>
+            )}
+
+
+
           </div>
         </div>
       }
@@ -484,22 +492,32 @@ const DataTable = ({ url }) => {
         {
           tableData?.rows?.length == 0 && <div className="w-full h-[85vh] flex justify-center items-center flex-col gap-6">
             <h1 className="text-2xl font-bold">No data found</h1>
-            {tableData?.create && (
-              <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold rounded-md font-semibold">
-                {
-                  tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} icon={'Add'} classname={'bg-[#4E49F2] text-white'} open={open}>
-                    <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
-                  </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
-                }
-              </button>
-
-
-            )}
+            <div className="flex gap-4">
+              {tableData?.create && (
+                <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] hover:bg-[#4E49F2] text-white font-semibold rounded-md font-semibold">
+                  {
+                    tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} icon={'Add'} classname={'bg-[#4E49F2] text-white'} open={open}>
+                      <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
+                    </Modal> : <Link href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
+                  }
+                </button>
+              )}
+              {tableData?.upload && (
+                <button onClick={() => tableData?.formtype == 'modal' && setOpen(true)} className="bg-[#4E49F2] rounded-md hover:bg-[#4E49F2] text-white font-semibold">
+                  {
+                    tableData?.formtype == 'modal' ? <Modal title={`Upload ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} icon='upload' open={open}>
+                      <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
+                    </Modal> : <Link className="text-sm px-3 flex gap-2" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add     {tableData?.name}</p><Plus size={18} strokeWidth={3} />
+                    </Link>
+                  }
+                </button>
+              )}
+            </div>
           </div>
         }
 
         {/* Pagination */}
-       
+
         {
           res?.count >= 10 && <div className="w-full bg-white flex justify-between items-center p-2 px-4 ">
             <div className="text-sm text-gray-500 w-1/3">
@@ -513,18 +531,18 @@ const DataTable = ({ url }) => {
                   <PaginationPrevious href="#" />
                 </PaginationItem>
                 {
-                  
-                  pagearray.slice(0, 5).map((page,key)=>{
+
+                  pagearray.slice(0, 5).map((page, key) => {
                     return <PaginationItem>
-                    <PaginationLink href="#">{key+1}</PaginationLink>
-                  </PaginationItem>
+                      <PaginationLink href="#">{key + 1}</PaginationLink>
+                    </PaginationItem>
                   })
                 }
-                
+
                 {
                   pagearray.length > 5 && <PaginationItem>
-                  <PaginationEllipsis />
-                </PaginationItem>
+                    <PaginationEllipsis />
+                  </PaginationItem>
                 }
                 <PaginationItem>
                   <PaginationNext href="#" />

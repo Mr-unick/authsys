@@ -21,22 +21,22 @@ export class Leads {
   @Column()
   email: string;
 
-  @Column()
+  @Column({nullable:true})
   phone: string;
 
-  @Column()
+  @Column({nullable:true})
   city: string;
 
-  @Column()
+  @Column({nullable:true})
   state: string;
 
-  @Column()
+  @Column({nullable:true ,default:"india"})
   country: string;
 
-  @Column()
+  @Column({nullable:true})
   notes: string;
 
-  @Column()
+  @Column({nullable:true})
   pincode: string;
 
   @Column({ nullable: true })
