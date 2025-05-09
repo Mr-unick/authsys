@@ -33,5 +33,6 @@ export async function middleware(request) {
 }
 
 export const config = {
-    matcher: ['/((?!login|_next|api/auth/login).*)'],
-};
+    matcher: ['/((?!_next|api/).*)'], // only skips static and API routes
+  };
+  
