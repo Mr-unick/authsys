@@ -8,22 +8,23 @@ export async function middleware(request) {
 
     const response = NextResponse.next();
 
-    response.headers.set('X-Custom-Header', 'My custom header value');
+   
 
+    const { pathname } = request.nextUrl
 
-    if (request.url == '/api/auth/login') {
-        return response;
+    // Allow login API route through
+    if (pathname === '/api/auth/login') {
+      return NextResponse.next()
     }
-
-    if (!token) {
-        return NextResponse.redirect(new URL('/login', request.url));
+  
+    // Redirect to login if token is missing
+    if (!token && pathname !== '/login') {
+      return NextResponse.redirect(new URL('/login', request.url))
     }
-
-
-    if (token && request.url == '/login') {
-
-        return NextResponse.redirect(new URL('/', request.url));
-
+  
+    // Redirect to homepage if user is logged in and tries to access login
+    if (token && pathname === '/login') {
+      return NextResponse.redirect(new URL('/', request.url))
     }
 
 
