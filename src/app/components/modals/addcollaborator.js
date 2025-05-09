@@ -36,7 +36,7 @@ export default function Addcollborator({ setOpen, handleaddcollaborators }) {
             {
                 selectedUser.map((user) => (
                     <div key={user.id} className="flex items-center justify-between bg-blue-600 text-white rounded-md px-2 py-1 w-fit text-sm">
-                        <span>@{user.name} <button onClick={(user)=>{removeSelectUser(user)}}>X</button></span>
+                        <span>@{user.name} <button onClick={()=>{removeSelectUser(user)}}>X</button></span>
                     </div>
                 ))
             }

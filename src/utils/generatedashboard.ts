@@ -120,16 +120,6 @@ const leadStages = await leadRepository
         }
     } else if (user?.role =='Buisness Admin'){
 
-
-    
-
-
-
-    
-
-    
-
-
         dashboardProps = {
             leadstages : leadStages,
             yearchart: {
@@ -196,26 +186,6 @@ const leadStages = await leadRepository
     } else {
         dashboardProps = {
            
-            leadsource: {
-                title: 'Leads',
-                data: {
-                    visitors: {
-                        label: "PendingLeads",
-                    },
-                    firefox: {
-                        label: "Firefox",
-                        color: "hsl(215, 100%, 50%)", 
-                    },
-                    edge: {
-                        label: "Edge",
-                        color: "hsl(210, 80%, 55%)", 
-                    },
-                    other: {
-                        label: "Other",
-                        color: "hsl(210, 40%, 60%)",
-                    },
-                }
-            },
             performance: {
                 title: 'Performance',
                 chartConfig: {

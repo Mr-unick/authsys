@@ -74,13 +74,13 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button
-                    variant="outline"
+                <button
+                
                     className={classname}
                     onClick={() => setOpen(true)}
                 >
-                    <span className="text-sm flex items-center gap-2">{children}</span>
-                </Button>
+                <span className="text-sm flex items-center gap-2">{children}</span>
+                </button>
 
             </DialogTrigger>
             <DialogContent className="max-h-fit max-w-fit rounded-md ">

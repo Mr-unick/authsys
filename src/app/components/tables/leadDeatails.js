@@ -85,9 +85,9 @@ export default function LeadDetails({ data }) {
  
 
   return (
-    <div className="overflow-y-scroll px-2 max-sm:px-0 h-full ">
-      <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col">
-        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] overflow-y-scroll ">
+    <div className=" px-2 max-sm:px-0 h-full  ">
+      <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col ">
+        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem]  ">
           {/* Personal Information */}
 
           <div className="space-y-3 ">
@@ -122,15 +122,11 @@ export default function LeadDetails({ data }) {
           {/* Professional Information */}
           {
             data?.viewcollborator && <div className="space-y-3">
-              <h3 className="text-md text-gray-900 mb-2 flex iteams-center ">
-
+              <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  py-2">
+                <p>Collborators</p>
 
                 {
-                  data?.addcollborator ? <div className="flex items-center gap-2">
-                    <PopupModal modaltype={'addcollaborators'} data={[data.id]} classname={'bg-blue-400 text-white hover:bg-blue-700 text-sm    flex items-center gap-2 w-[10rem]'} ><p className='max-sm:hidden'>Collborators </p><UserPlus size={22} /></PopupModal>
-                  </div> :  <h3 className="text-sm text-gray-900 mb-3">
-                  Collborators
-                </h3>
+                  data?.addcollborator && <PopupModal modaltype={'addcollaborators'} data={[data.id]} classname={' text-sm text-blue-600 flex gap-2 shodow-none outline-none hover:bg-white p-0 focus-none'} ><p className='max-sm:hidden'>Add Collborators </p><Plus size={18} /></PopupModal>
                 }
 
               </h3>
@@ -157,14 +153,19 @@ export default function LeadDetails({ data }) {
           {/* Follow-up Information */}
 
           <div className="space-y-3">
-            <div className=" flex items-center gap-2 text-white px-4   rounded-md bg-blue-400 max-w-[9rem]">Follow-up
-              <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-blue-400 p-0 shadow-none hover:bg-blue-400 '} icon='Add'>
+            
+            <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center ">
+              Follow-up
+              <div className=" flex items-center gap-2 text-blue-600   rounded-md  max-w-[9rem]">
+              <Modal title={'Add Follow-up'} classname={' p-0 shadow-none bg-white text-blue-600 hover:bg-white '} >
                 <FormComponent formdata={{ formurl: 'addfollowupform' }} />
               </Modal>
+              <Plus size={18} />
             </div>
-            <h3 className="text-sm text-gray-900 mb-3">
-              Follow-up
             </h3>
+
+
+
             <div className="grid grid-cols-2 gap-y-4">
               <div className="flex gap-2 items-center text-gray-600">
                 <Calendar size={16} />
@@ -233,16 +234,17 @@ export default function LeadDetails({ data }) {
          }
           {
             data?.viewstage && <div className="">
-              <h3 className="text-sm text-gray-900 mb-3 flex items-start">
-
+              <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center ">
+              Stage History
                 {
-                  data?.changestage ? <button className=" flex items-center gap-2 bg-green-600 text-white px-4  rounded-md">  Stage History <Modal title={''} classname={'bg-[#4E49F2] text-white  bg-green-600 p-0 shadow-none hover:bg-green-600'} icon='Add'>
+                  data?.changestage && 
+                  <div className=" flex items-center gap-2  text-blue-600  rounded-md "> 
+                  <Modal title={'Add Stage History'} classname={'bg-white text-blue-600 p-0 shadow-none hover:bg-white'}>
                     <FormComponent id={data?.id} formdata={{ formurl: 'changestageform' }} />
                   </Modal>
-                  </button> : <h3 className="text-sm text-gray-900 mb-3">Stage History</h3>
+                  <Plus size={18} />
+                  </div> 
                 }
-
-             
           
               </h3>
               {

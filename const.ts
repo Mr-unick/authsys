@@ -620,6 +620,37 @@ export const userData = [
       "timestamp": "2025-03-25T09:10:00Z",
       "text": "Interesting perspective! Thanks for sharing.",
       "attachment": null
+    },
+    {
+      "id": 1,
+      "user": "John Doe",
+      "timestamp": "2025-03-27T12:30:00Z",
+      "text": "This is a great post! I really enjoyed reading it.",
+      "attachment": {
+        "type": "image",
+        "preview": "https://images.pexels.com/photos/349758/hummingbird-bird-birds-349758.jpeg"
+      }
+    },
+    
+    {
+      "id": 2,
+      "user": "Jane Smith",
+      "timestamp": "2025-03-26T14:45:00Z",
+      "text": "I have some feedback on this topic. Let me know when you're available.",
+      "attachment": {
+        "type": "file",
+        "file": {
+          "name": "document.pdf",
+          'url':'https://portal.abuad.edu.ng/lecturer/documents/1554208765DATA_AND_INFORMATION.pdf'
+        }
+      }
+    },
+    {
+      "id": 3,
+      "user": "Mark Johnson",
+      "timestamp": "2025-03-25T09:10:00Z",
+      "text": "Interesting perspective! Thanks for sharing.",
+      "attachment": null
     }
   ]
 

@@ -78,7 +78,7 @@ const CommentsSection = ({comments ,addcomment}) => {
     // Format timestamp
  
     return (
-        <div className="flex flex-col  bg-red-300 mb-16">
+        <div className="flex flex-col mb-16">
         
             <div className="flex-grow overflow-y-scroll max-sm:overflow-y-hidden p-4 max-sm:p-0 space-y-4 h-[35rem] max-sm:-h-[10rem]">
                 {comments?.length == 0? 
@@ -87,7 +87,7 @@ const CommentsSection = ({comments ,addcomment}) => {
                     </div>
                 : 
 
-                <div className="max-h-[35rem]  max-sm:max-h-[20rem] space-y-4">
+                <div className="max-h-[30rem]  max-sm:max-h-[20rem] space-y-4 overflow-y-scroll ">
                     { comments?.map((comment) => {
                     return <CommentCard comment={comment} />
                     })}
@@ -99,7 +99,7 @@ const CommentsSection = ({comments ,addcomment}) => {
             {/* Sticky Comment Input */}
 
             {/* addcomment &&  */}
-            <div className="sticky bottom-4  p-4  max-sm:px-0 ">
+            <div className="sticky bottom-20  p-4  max-sm:px-0 ">
                 <div className="flex items-start space-x-2 border rounded-md p-2 bg-white">  
                     {/* Comment Input */}
                     <div className="flex-grow relative">
