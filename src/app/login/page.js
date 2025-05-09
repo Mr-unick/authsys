@@ -8,6 +8,7 @@ import { Label } from "../../components/components/ui/label";
 import { EyeIcon, EyeOffIcon, Layers, Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-toastify';
+import axios from 'axios'
 
 export default function Page() {
   const [mounted, setMounted] = useState(false);
@@ -45,28 +46,18 @@ export default function Page() {
     e.preventDefault();
     try {
       setLoader(true)
-      const response = await fetch('api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password })
-      });
+      const response = await axios.post('/api/auth/login', { email : email, password :password });
 
-      console.log(response)
-
-      if (response.status == 200) {
-
+    
+      if (response.data.status == 200) {
         router.push('/');
         setLoader(false)
-      } 
-
-      if (response.status == 404) {
-
-        toast.error('User Not Found')
+      } else{
+        toast.error(response.data.message)
         setLoader(false)
-      } 
+      }
 
+    
     } catch (error) {
       console.error('Login error:', error);
       setLoader(false)

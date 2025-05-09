@@ -8,6 +8,7 @@ import { GenerateForm } from "../../utils/generateForm";
 import { title } from "process";
 import { VerifyToken } from "@/utils/VerifyToken";
 import { Roles } from "@/app/entity";
+import bcrypt from "bcrypt";
 
 
 export default async function handler(req, res) {
@@ -141,8 +142,13 @@ export default async function handler(req, res) {
       newuser.business = buisness;
       newuser.email = owner_email
       newuser.name = owner_name;
-      newuser.password = 'pass';
 
+      
+
+      
+      const hash = bcrypt.hashSync('pass', 10)
+
+      newuser.password = hash;
 
       if(role !== null){
         newuser.role =role

@@ -6,15 +6,13 @@ import { AppDataSource } from '@/app/lib/data-source';
 import { Users } from '@/app/entity/Users';
 import { Permissions } from '@/app/entity/Permissions';
 import { Roles } from '@/app/entity/Roles';
+import bcrypt from "bcrypt";
 
 export default async function handler(req, res) {
 
 
     try {
         const { email, password } = req.body;
-
-        console.log(req.body)
-
 
         let user = await AppDataSource.getRepository(Users)
             .createQueryBuilder('users')
@@ -23,14 +21,27 @@ export default async function handler(req, res) {
             .where('users.email = :email', { email: email })
             .getOne();
 
+        console.log(user , req.body,'this is user')
 
         if (!user) {
-            return res.status(404).json({
-                message: 'user not found',
+            return res.json({
+                message: 'User not found',
                 status:404
             });
         }
 
+       let comparepass =  bcrypt.compareSync(password, user.password);
+
+       console.log(!comparepass)
+
+       if (!comparepass) {
+        return res.json({
+            message: 'Incorrect Password',
+            status:401
+        });
+        }
+
+       
         let permissions = (await AppDataSource.getRepository(Users)
             .createQueryBuilder('users')
             .leftJoin('users.role', 'role')
@@ -50,9 +61,6 @@ export default async function handler(req, res) {
 
         }
 
-
-        
-        
 
         const token = jwt.sign(newuser, 'your_secret_key', { expiresIn: '24h' });
 

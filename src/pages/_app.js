@@ -8,6 +8,7 @@ import { SessionProvider } from "next-auth/react";
 import { ToastContainer } from "react-toastify";
 import axios from "axios";
 import { ROOT_URL } from "../../const";
+import '../app/globals.css'
 
 
 

@@ -60,83 +60,12 @@ const leadStages = await leadRepository
   .groupBy('stage.stage_name')
   .addGroupBy('stage.colour')
   .getRawMany();
+  const allMonths = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
 
-
-    console.log(leadStages)
-
-    const salesPersonsData = salesPersons.map(data => {
-        return {
-            id : data?.id,
-            username: data?.name,
-            assignedLeads: data?.leads?.length,
-            conversionPercentage: data?.leads?.length,
-            profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com'
-        }
-    })
-
-
-    if(user?.role=='Admin'){
-        dashboardProps = {
-            yearchart : {
-                title : 'Yearly Trend',
-                data: [
-                    { month: "January", desktop: 186, mobile: 100 },
-                    { month: "February", desktop: 305, mobile: 120 },
-                    { month: "March", desktop: 237, mobile: 95 },
-                    { month: "April", desktop: 73, mobile: 60 },
-                    { month: "May", desktop: 209, mobile: 140 },
-                    { month: "June", desktop: 214, mobile: 130 },
-                    { month: "July", desktop: 174, mobile: 110 },
-                    { month: "August", desktop: 114, mobile: 80 },
-                    { month: "September", desktop: 154, mobile: 90 },
-                    { month: "November", desktop: 24, mobile: 20 },
-                    { month: "December", desktop: 214, mobile: 150 },
-                ]
-            },
-            leadsource : {
-                title : 'Lead Source',
-                data: {
-                    visitors: {
-                        label: "Visitors",
-                    },
-                    firefox: {
-                        label: "Firefox",
-                        color: "hsl(215, 100%, 50%)", // Royal Blue
-                    },
-                    edge: {
-                        label: "Edge",
-                        color: "hsl(210, 80%, 55%)", // Steel Blue
-                    },
-                    other: {
-                        label: "Other",
-                        color: "hsl(210, 40%, 60%)", // Light Steel Blue
-                    },
-                }
-            },
-            performance : {
-                title : 'Performance',
-                data: [
-                    { month: "Sam", assigned: 186, conversions: 80 },
-                    { month: "John", assigned: 86, conversions: 20 },
-                    { month: "jane", assigned: 16, conversions: 8 },
-                    { month: "Nick", assigned: 126, conversions: 100 },
-                    { month: "Peter", assigned: 86, conversions: 30 },
-                ]
-            }, salespersons: salesPersonsData
-        }
-    } else if (user?.role =='Buisness Admin'){
-
-
-    const allMonths = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
-      ];
-
-
-
-    
-
-    const resultMap = new Map(yearLeads.map(r => [r.month, parseInt(r.count)]));
+  const resultMap = new Map(yearLeads.map(r => [r.month, parseInt(r.count)]));
 
     const finalResult = allMonths.map(month => ({
         month,
@@ -159,6 +88,46 @@ const leadStages = await leadRepository
         }
     }
   });
+
+    const salesPersonsData = salesPersons.map(data => {
+        return {
+            id : data?.id,
+            username: data?.name,
+            assignedLeads: data?.leads?.length,
+            conversionPercentage: data?.leads?.length,
+            profileImg: 'https://images.pexels.com/photos/864994/pexels-photo-864994.jpeg', contact: 'john@example.com'
+        }
+    })
+
+
+    if(user?.role=='Admin'){
+        dashboardProps = {
+            yearchart : {
+                title : 'Yearly Trend',
+                data: yearlyleads
+            },
+            // leadsource : leadSource,
+            performance : {
+                title : 'Performance',
+                data: [
+                    { month: "Sam", assigned: 186, conversions: 80 },
+                    { month: "John", assigned: 86, conversions: 20 },
+                    { month: "jane", assigned: 16, conversions: 8 },
+                    { month: "Nick", assigned: 126, conversions: 100 },
+                    { month: "Peter", assigned: 86, conversions: 30 },
+                ]
+            }, salespersons: salesPersonsData
+        }
+    } else if (user?.role =='Buisness Admin'){
+
+
+    
+
+
+
+    
+
+    
 
 
         dashboardProps = {
