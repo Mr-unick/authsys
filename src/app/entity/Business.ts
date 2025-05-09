@@ -78,7 +78,7 @@ export class Business {
 
   @OneToMany(() => Users, user => user.business, { nullable: true })
   @JoinColumn()
-  users: Users[];
+  users:typeof Users[];
 
   @OneToMany(() => Branch, branch => branch.buisness, { nullable: true })
   @JoinColumn()
