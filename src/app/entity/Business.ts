@@ -84,7 +84,7 @@ export class Business {
   @JoinColumn()
   branches: Branch[];
 
-  // @OneToMany(() => Leads, lead => lead.business)
-  // @JoinColumn()
-  // leads: Leads[];
+  @OneToMany(() => Leads, lead => lead.business)
+  @JoinColumn()
+  leads: Leads[];
 }
