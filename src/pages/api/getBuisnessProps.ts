@@ -139,7 +139,7 @@ export default async function handler(req, res) {
       });
 
       
-      newuser.business = buisness;
+      // newuser.business = newbuisness;
       newuser.email = owner_email
       newuser.name = owner_name;
 
