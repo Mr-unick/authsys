@@ -48,7 +48,6 @@ export default function Page() {
       setLoader(true)
       const response = await axios.post('/api/auth/login', { email : email, password :password });
 
-    
       if (response.data.status == 200) {
         router.push('/');
         setLoader(false)

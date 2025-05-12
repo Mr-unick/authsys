@@ -32,7 +32,7 @@ export class Users {
 
   @ManyToOne(() => Business, business => business.id)
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
-  business: Business;
+  business:typeof Business;
 
   @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
   leads: Leads[];

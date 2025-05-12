@@ -74,7 +74,7 @@ export class Leads {
 
   @ManyToOne(() => Business, business => business.id)
   @JoinColumn()
-  business:  Business;
+  business: typeof Business;
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
   comments: typeof Comment

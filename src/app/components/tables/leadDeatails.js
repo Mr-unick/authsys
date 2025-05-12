@@ -87,7 +87,7 @@ export default function LeadDetails({ data }) {
   return (
     <div className=" px-2 max-sm:px-0 h-full  ">
       <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col ">
-        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem]  ">
+        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] ">
           {/* Personal Information */}
 
           <div className="space-y-3 ">
@@ -154,7 +154,7 @@ export default function LeadDetails({ data }) {
 
           <div className="space-y-3">
             
-            <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center ">
+            <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center  ">
               Follow-up
               <div className=" flex items-center gap-2 text-blue-600   rounded-md  max-w-[9rem]">
               <Modal title={'Add Follow-up'} classname={' p-0 shadow-none bg-white text-blue-600 hover:bg-white '} >
@@ -259,8 +259,10 @@ export default function LeadDetails({ data }) {
         </div>
 
         {
-          data?.viewcomment && <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
+          data?.viewcomment ? <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
             <CommentsSection comments={Comments} />
+          </div> : <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
+            {" "}
           </div>
         }
        
