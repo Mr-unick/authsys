@@ -97,7 +97,7 @@ export default function SideBar({ setOpen }) {
       <div className="px-4 mb-6">
         <div className="flex items-center gap-2 px-2 max-sm:px-0">
           <Layers className="h-6 w-6 text-indigo-500" />
-          <h1 className="text-xl font-bold text-white">AppName</h1>
+          <h1 className="text-xl font-bold text-white">LeadTracker</h1>
         </div>
       </div>
 
