@@ -460,7 +460,7 @@ const DataTable = ({ url }) => {
                           <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-green-500 text-white hover:text-white hover:bg-green-500  shadow-none`} open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-green-500 text-white hover:text-white hover:bg-green-500  shadow-none px-2 -py-1`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
                                 </Modal> : <Button className="bg-[#4E49F2] text-white">
                                   <Link className="flex items-center gap-2" href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
@@ -473,7 +473,7 @@ const DataTable = ({ url }) => {
                             {tableData?.delete && (
 
                               <div className="flex items-center gap-2">
-                                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-500 hover:text-white text-sm  ml-2  flex items-center gap-2'} > <p className='max-sm:hidden'>Delete </p><Trash size={22} /></PopupModal>
+                                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white px-2 py-2 rounded-md hover:bg-red-500 hover:text-white text-sm  ml-2  flex items-center gap-2'} > <p className='max-sm:hidden'>Delete </p><Trash size={18} /></PopupModal>
                               </div>
 
                             )}
@@ -507,7 +507,7 @@ const DataTable = ({ url }) => {
                   {
                     tableData?.formtype == 'modal' ? <Modal title={`Upload ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} icon='upload' open={open}>
                       <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
-                    </Modal> : <Link className="text-sm px-3 flex gap-2" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add     {tableData?.name}</p><Plus size={18} strokeWidth={3} />
+                    </Modal> : <Link className="text-sm px-3 flex gap-2" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add {tableData?.name}</p><Plus size={18} strokeWidth={3} />
                     </Link>
                   }
                 </button>

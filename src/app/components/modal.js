@@ -6,11 +6,12 @@ import {
 } from "../../components/components/ui/dialog"
 import { Button } from "../../components/components/ui/button";
 
-export default function Modal({ children, title, icon ,classname}) {
+export default function Modal({ children, title, icon ,classname , customebutton}) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className={`max-sm:block flex items-center  gap-2 ${classname}`}>
+        {
+          customebutton ? customebutton :   <Button className={`max-sm:block flex items-center gap-2 ${classname}`}>
           <p className="max-sm:hidden">
             {title}
           </p>
@@ -28,9 +29,9 @@ export default function Modal({ children, title, icon ,classname}) {
           {
             icon == 'Export' && <Edit size={22} />
           }
-            
           </Button>
-      
+        }
+       
       </DialogTrigger>
       <DialogContent className="max-h-fit max-w-fit rounded-md max-sm:p-3">
         {children}
