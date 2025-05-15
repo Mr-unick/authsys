@@ -27,7 +27,7 @@ export const AppDataSource = new DataSource({
   username: process.env.DBUSER,
   password: process.env.DBPASSWORD,
   database: process.env.DBNAME,
-  synchronize: true,
+  synchronize: false,
   logging: false,
   entities: [__dirname + '/../**/*.entity.{js,ts}', Users, Business, Roles, SuperAdmin, StageChangeHistory, Notification, Permissions, LoginLogoutLog, Leads, LeadStages, AreaOfOperation, BuisnesAdmin, Policy, Branch, Comment, Activity],
 });

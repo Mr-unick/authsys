@@ -144,7 +144,6 @@ export default async function handler(req, res) {
       newuser.name = owner_name;
 
       
-
       
       const hash = bcrypt.hashSync('pass', 10)
 

@@ -6,8 +6,7 @@ import { AppDataSource } from "@/app/lib/data-source";
 
 
 
-export const activityLog = async ({type,description,user,lead}:{type:ActivityType,description:string,user:Users,lead:Leads}) => {
-
+export const activityLog = async (type :ActivityType ,description,user,lead) => {
 try {
     
     const activity = new Activity();

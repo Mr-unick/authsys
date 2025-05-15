@@ -18,6 +18,7 @@ export default async function handler(req, res) {
             .createQueryBuilder('users')
             .leftJoinAndSelect('users.role', 'role')
             .leftJoinAndSelect('users.business', 'business')
+            .addSelect('users.password')
             .where('users.email = :email', { email: email })
             .getOne();
 
@@ -61,7 +62,6 @@ export default async function handler(req, res) {
 
         }
 
-
         const token = jwt.sign(newuser, 'your_secret_key', { expiresIn: '24h' });
 
         const serializedCookie = serialize('token', token, {
@@ -85,6 +85,8 @@ export default async function handler(req, res) {
         });
 
     } catch (error) {
+
+        console.log(error)
 
         return res.status(500).json({
             message: 'Login unsuccessful',

@@ -62,7 +62,6 @@ export default async function assignLeads(req, res) {
 
                 if (!lead.users.some(u => u.id === user.id)) {
 
-
                     lead.users.push(user);
 
                     // const users = await AppDataSource.getRepository(Users).findBy({id: userId});
@@ -70,6 +69,7 @@ export default async function assignLeads(req, res) {
                     // await AppDataSource.getRepository(Leads).save(lead);
 
                 }
+                
                 await AppDataSource.getRepository(Leads).save(lead);
             }
 

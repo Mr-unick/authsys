@@ -21,18 +21,18 @@ export class Users {
   @Column()
   email: string;
 
-  @Column()
+  @Column({select: false})
   password: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true  , select: false})
   created_at: Date;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true  , select: false})
   updated_at: Date;
 
   @ManyToOne(() => Business, business => business.id)
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
-  business: Business;
+  business:typeof Business;
 
   @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
   leads: Leads[];
@@ -58,7 +58,7 @@ export class Users {
 
 
   @OneToMany(() => Comment, comment => comment.user, { nullable: true })
-  comment: typeof Comment
+  comment: Comment[]
 
 
   @OneToMany(() => Activity, activity => activity.user, { nullable: true })

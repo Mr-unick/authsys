@@ -1,10 +1,11 @@
 
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { ROOT_URL } from '../../../../const';
 import LeadDetails from '../../../app/components/tables/leadDeatails';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 import { Loader2 } from 'lucide-react';
+import { LeadContext, LeadProvider, useLead } from '@/app/contexts/leadontext';
 
 export default function page(){
   
@@ -19,6 +20,7 @@ export default function page(){
     setLoading(true);
     const response = await axios.get(`/api/leaddetails/getleaddetails?id=${id}`);
     setLeadDetails(response.data.data);
+   
     setLoading(false);
   }
 // hello
@@ -27,15 +29,21 @@ export default function page(){
   }, [id]);
 
  
+
+
   return (
-    <div className=' bg-white  rounded-md h-full overflow-y-scroll border max-sm:mx-2'>
+    
+      <div className=' bg-white  rounded-md h-full overflow-y-scroll border max-sm:mx-2'>
       {
         loading ? <div className='flex justify-center items-center h-screen '>
           <Loader2 className='animate-spin' size={20} />
-        </div>  : <LeadDetails data={leadDetails} />
+        </div>  :<LeadProvider> 
+          <LeadDetails data={leadDetails} /> 
+          </LeadProvider>
       } 
     
     </div>
+   
   );
 };
 

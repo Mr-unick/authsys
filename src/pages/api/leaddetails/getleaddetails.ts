@@ -12,19 +12,17 @@ import { color } from "motion/dist/react";
 
 
 
-
-
-export default async function handler(req, res) {
-
-    const user = await VerifyToken(req, res, 'leaddetails');
-  
+export const getleadDetails = async(user,id)=>{
     try {
-        const leadid = req.query.id;
+        const leadid = id;
+       
         const lead = await AppDataSource.getRepository(Leads)
             .createQueryBuilder('leads')
             .leftJoinAndSelect('leads.users', 'users')
             .leftJoinAndSelect('leads.stage', 'stage')
             .leftJoinAndSelect('leads.history', 'history')
+            .leftJoinAndSelect('leads.comments', 'comments')
+            .leftJoinAndSelect('comments.user', 'user')
             .leftJoinAndSelect('history.changed_by', 'changed_by')
             .leftJoin('history.stage', 'history_stage')
             .addSelect('history_stage.stage_name')
@@ -41,12 +39,22 @@ export default async function handler(req, res) {
             })
             .getOne();
 
+       //     console.log(leadid,lead)
+
+            if (!lead) {
+                const response: ResponseInstance = {
+                    status: 404,
+                    message: "Lead not found",
+                    data: []
+                }
+                return response;
+            }
 
         const stage = (await AppDataSource.getRepository(Leads)
             .createQueryBuilder('leads')
             .leftJoinAndSelect('leads.stage', 'stage')
             .where('leads.id = :id', { id: leadid })
-            .getRawOne()).stage_stage_name;
+            .getRawOne())?.stage_stage_name;
 
 
         let history = lead?.history.map((item) => {
@@ -58,10 +66,6 @@ export default async function handler(req, res) {
                 reason: item.reason,
             }
         })
-
-
-
-
 
         let leaddetails = {
             id: lead?.id,
@@ -80,13 +84,7 @@ export default async function handler(req, res) {
             notes: lead?.notes || "No notes",
             collaborators: lead?.users || [],
             stageChangeHistory: history || [],
-            //  comments: lead?.comments?.map((item) => {
-            //     return {
-            //         comment: item.comment,
-            //         user: item.user.name,
-            //         createdAt: item.created_at
-            //     }
-            //  })
+             comments: lead?.comments,
             addcollborator: haspermission(user, 'assign_collborators'),
             deletecollborator: haspermission(user, 'delete_collborators'),
             viewcollborator: haspermission(user, 'view_collborators'),
@@ -100,14 +98,6 @@ export default async function handler(req, res) {
             viewstage: haspermission(user, 'view_stage'),
         }
 
-        if (!lead) {
-            const response: ResponseInstance = {
-                status: 404,
-                message: "Lead not found",
-                data: []
-            }
-            return res.json(response);
-        }
 
         const response: ResponseInstance = {
             status: 200,
@@ -115,12 +105,24 @@ export default async function handler(req, res) {
             data: leaddetails
         }
 
-        res.json(response);
+        return response;
 
     } catch (error) {
-        res.status(500).json({
+        return {
             message: "Internal server error",
             data: error.message
-        })
+        }
     }
+}
+
+export default async function handler(req, res) {
+
+    const user = await VerifyToken(req, res, 'leaddetails');
+    const leadid = req.query.id;
+  
+    let response = await getleadDetails(user,leadid);
+    
+
+    res.json(response);
+ 
 }

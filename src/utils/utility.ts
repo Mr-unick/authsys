@@ -22,7 +22,7 @@ export const formatDateTime = (timestamp) => {
   // Format the date as '28 March 2025'
   const options = { day: '2-digit', month: 'long', year: 'numeric' };
   const formattedDate = date.toLocaleDateString('en-GB');  // '28 March 2025'
-
+return formattedDate;
   // Format the time as '06:49:37'
   const timeString = date.toISOString().split('T')[1].slice(0, 8);  // '06:49:37'
 
@@ -31,6 +31,7 @@ export const formatDateTime = (timestamp) => {
 
 
 export function mapLeadSourcesToChartData(sources) {
+  
   const colors = [
     'hsl(240, 100%, 50%)',
     'hsl(215, 100%, 50%)',

@@ -7,16 +7,16 @@ export default function CommentCard({ comment }) {
     return (
         <div
             key={comment.id}
-            className="bg-white border-gray-200 border-[1px]  rounded-md p-4 shadow-xs hover:shadow-sm transition-shadow duration-300 "
+            className="bg-white border-blue-200 border-[1px]  rounded-md p-3 shadow-xs hover:shadow-sm transition-shadow duration-300 "
         >
-            <div className="flex items-start space-x-4">
-              <h1>Hello</h1>
+            <div className="flex items-start space-x-3">
+             
                 <div className="flex-grow">
                     <div className="flex justify-between items-center mb-1">
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-medium text-gray-900 text-sm font-normal">{comment?.user}</h3>
+                            <h3 className="font-medium text-gray-900 text-sm font-normal">{comment?.user?.name}</h3>
                             <span className="text-xs text-gray-400">
-                                {/* {formatDateTime(comment?.createdAt)}  */}
+                                {formatDateTime(comment?.created_at)} 
                             </span>
                         </div>
                     </div>
@@ -25,13 +25,13 @@ export default function CommentCard({ comment }) {
                         {comment?.comment}
                     </p>
 
-                    {comment?.attachment && (
+                    {comment?.url && (
                         <div className="mt-2">
-                            {comment.attachment.type === 'image' ? (
+                            {comment.type === 'image' ? (
                                 <div className="mt-2">
-                                    <a href={comment.attachment.preview} target="_blank" rel="noopener noreferrer">
+                                    <a href={comment?.url} target="_blank" rel="noopener noreferrer">
                                         <img
-                                            src={comment.attachment.preview}
+                                            src={comment?.url}
                                             alt="Attachment"
                                             className="w-full max-h-48 object-cover rounded-md hover:opacity-90 transition-opacity"
                                         />

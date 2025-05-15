@@ -86,5 +86,5 @@ export class Business {
 
   @OneToMany(() => Leads, lead => lead.business)
   @JoinColumn()
-  leads: Leads[];
+  leads:typeof Leads[];
 }
