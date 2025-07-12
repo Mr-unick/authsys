@@ -13,7 +13,7 @@ import TextAreaComponent from "./textarea";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 
-export default function FormComponent({ formdata, id, setOpen }) {
+export default function FormComponent({ formdata, id}) {
   const {
     register,
     handleSubmit,
@@ -59,7 +59,7 @@ export default function FormComponent({ formdata, id, setOpen }) {
 
       if (response.status === 200) {
         toast.success(response.data.message);
-        router.current();
+      //  router.current();
       } else {
         toast.error(response.data.message);
 

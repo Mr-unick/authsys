@@ -196,12 +196,11 @@ export default function LeadDetails({ data }) {
                   lead?.changestage && 
                   <div className=" flex items-center gap-2  text-blue-600  rounded-md "> 
                   <Modal title={'Add Stage History'} classname={'bg-white text-blue-600 p-0 shadow-none hover:bg-white'}>
-                    <FormComponent id={lead?.id} formlead={{ formurl: 'changestageform' }} />
+                    <FormComponent id={lead?.id} formdata={{ formurl: 'changestageform' }} />
                   </Modal>
                   <Plus size={18} />
                   </div> 
                 }
-          
               </h3>
               {
                 lead?.stageChangeHistory?.length > 0 && (
