@@ -35,10 +35,6 @@ export default async function UserDetails(req, res) {
             .andWhere('user.id = :id', { id: id })
             .getOne();
 
-
-        
-
-
         res.json(users);
 
     } catch (error) {

@@ -40,7 +40,7 @@
     ".next/types/**/*.ts",
     "**/*.ts",
     "**/*.tsx"
-, "src/app/entity/LoginLogoutLog.ts", "src/pages/api/auth/[...nextauth].js"  ],
+, "src/app/entity/LoginLogoutLog.ts", "src/pages/api/auth/[...nextauth].js", "src/app/components/cards/activitycard.js"  ],
   "exclude": [
     "node_modules"
   ]

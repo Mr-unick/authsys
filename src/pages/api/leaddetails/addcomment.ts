@@ -9,7 +9,7 @@ import path from 'path';
 import cloudinary from "@/config/cloudnaryconfig";
 import { getleadDetails } from "./getleaddetails";
 import { activityLog } from "@/utils/activityLogs";
-import { ActivityType } from "@/app/entity";
+import { ActivityType } from "@/app/entity/Activity";
 
 export const config = {
   api: {

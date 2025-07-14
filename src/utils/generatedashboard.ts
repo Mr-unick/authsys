@@ -1,4 +1,4 @@
-import { Leads } from "@/app/entity";
+import { Leads } from "@/app/entity/Leads";
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 import { mapLeadSourcesToChartData } from "./utility";
