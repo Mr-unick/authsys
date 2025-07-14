@@ -102,9 +102,9 @@ export default async function addComment(req, res) {
     res.json(updatedlead);
    }
 
-    });
+   res.json(updatedlead);
 
-    
+    });
 
   } catch (error) {
     console.log(error);
