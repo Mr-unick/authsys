@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Timestamp, OneToOne,JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Business } from './Business';
 import {  Leads } from './Leads';
 import { StageChangeHistory } from './StageChangeHistory';
@@ -19,10 +19,10 @@ export class LeadStages {
   discription:string
 
  @Column({ type: 'timestamp' ,nullable: true})
-   created_at: Timestamp;
+   created_at: Date;
  
   @Column({ type: 'timestamp', nullable: true })
-   updated_at: Timestamp;
+   updated_at: Date;
 
   @ManyToOne(() => Business, business => business.leadStages, { nullable: true })
   @JoinColumn({name:'buisnessId'})

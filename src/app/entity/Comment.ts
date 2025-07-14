@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, Long, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, Timestamp } from "typeorm";
+import { Column, Entity, JoinColumn, Long, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { Users } from "./Users";
 import { Leads } from "./Leads";
 
@@ -14,7 +14,7 @@ export class Comment{
     comment:string;
 
     @Column({ type: 'timestamp', nullable: true })
-    created_at: Timestamp;
+    created_at: Date;
 
     @Column({nullable:true , type: 'varchar', length: 1000 })
     url :String

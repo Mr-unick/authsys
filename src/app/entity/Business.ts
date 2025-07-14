@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, Timestamp, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 
 import { Users } from './Users';
 import { SuperAdmin } from './SuperAdmin';
@@ -57,10 +57,10 @@ export class Business {
   business_description: string;
 
   @Column({ type: 'timestamp', nullable: true })
-  created_at: Timestamp;
+  created_at: Date;
 
   @Column({ type: 'timestamp', nullable: true })
-  updated_at: Timestamp;
+  updated_at: Date;
 
   // @ManyToOne(() => SuperAdmin, superAdmin => superAdmin.businesses)
   // superAdmin: SuperAdmin;
