@@ -10,6 +10,7 @@ import cloudinary from "@/config/cloudnaryconfig";
 import { getleadDetails } from "./getleaddetails";
 import { activityLog } from "@/utils/activityLogs";
 import { ActivityType } from "@/app/entity/Activity";
+import { Column } from "typeorm";
 
 export const config = {
   api: {
