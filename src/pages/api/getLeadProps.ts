@@ -147,7 +147,7 @@ export default async function handler(req, res) {
             }
 
           }) 
-
+//
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
