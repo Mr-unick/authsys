@@ -2,7 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
 import { Leads } from './Leads'; // regular import is fine for TypeORM
-// import type { Leads } from './Leads';
 
 @Entity('status_change_history')
 export class StageChangeHistory {
