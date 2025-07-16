@@ -7,23 +7,25 @@ export default function CommentCard({ comment }) {
     return (
         <div
             key={comment.id}
-            className="bg-white border-blue-200 border-[1px]  rounded-md p-3 shadow-xs hover:shadow-sm transition-shadow duration-300 "
+            className="bg-white border-blue-200 border-[1px]   p-3 shadow-xs hover:shadow-sm transition-shadow duration-300 rounded-br-xl rounded-tr-xl rounded-bl-xl "
         >
             <div className="flex items-start space-x-3">
              
                 <div className="flex-grow">
+                <p className="text-gray-500 text-sm leading-relaxed ">
+                        {comment?.comment}
+                    </p>
+
                     <div className="flex justify-between items-center mb-1">
                         <div className="flex items-center space-x-2">
-                            <h3 className="font-medium text-gray-900 text-sm font-normal">{comment?.user?.name}</h3>
+                            <h3 className="font-medium text-gray-900 text-xs font-normal">{comment?.user?.name}</h3>
                             <span className="text-xs text-gray-400">
                                 {formatDateTime(comment?.created_at)} 
                             </span>
                         </div>
                     </div>
 
-                    <p className="text-gray-500 text-sm leading-relaxed ">
-                        {comment?.comment}
-                    </p>
+                   
 
                     {comment?.url && (
                         <div className="mt-2">

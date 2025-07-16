@@ -44,7 +44,7 @@ export default function LeadDetails({ data }) {
 
   return (
     <div className=" px-2 max-sm:px-0 h-full  ">
-      <div className="flex w-full gap-2 text-sm py-4 pl-4 max-md:flex-col max-sm:flex-col ">
+      <div className="flex w-full gap-2 text-sm  pl-4 max-md:flex-col max-sm:flex-col ">
         <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] ">
           {/* Personal Information */}
           <div className="space-y-3 ">
@@ -83,7 +83,7 @@ export default function LeadDetails({ data }) {
                 <p>Collborators</p>
 
                 {
-                  lead?.addcollborator && <PopupModal modaltype={'addcollaborators'} lead={[lead?.id]} classname={' text-sm text-blue-600 flex gap-2 shodow-none outline-none hover:bg-white p-0 focus-none'} ><p className='max-sm:hidden'>Add Collborators </p><Plus size={18} /></PopupModal>
+                  lead?.addcollborator && <PopupModal modaltype={'addcollaborators'} lead={[lead?.id]} classname={' text-sm text-blue-600 flex gap-2 shodow-none outline-none hover:bg-transparent p-0 focus-none'} ><p className='max-sm:hidden'>Add Collborators + </p></PopupModal>
                 }
 
               </h3>
@@ -114,10 +114,10 @@ export default function LeadDetails({ data }) {
             <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center  ">
               Follow-up
               <div className=" flex items-center gap-2 text-blue-600   rounded-md  max-w-[9rem]">
-              <Modal title={'Add Follow-up'} classname={' p-0 shadow-none bg-white text-blue-600 hover:bg-white '} >
+              <Modal title={'Add Follow-up +'} classname={' p-0 shadow-none bg-transparent hover:bg-transparent text-blue-600 hover:bg-transparent '} >
                 <FormComponent formlead={{ formurl: 'addfollowupform' }} />
               </Modal>
-              <Plus size={18} />
+              
             </div>
             </h3>
 
@@ -195,10 +195,10 @@ export default function LeadDetails({ data }) {
                 {
                   lead?.changestage && 
                   <div className=" flex items-center gap-2  text-blue-600  rounded-md "> 
-                  <Modal title={'Add Stage History'} classname={'bg-white text-blue-600 p-0 shadow-none hover:bg-white'}>
+                  <Modal title={'Add Stage History +'} classname={'bg-transparent  text-blue-600 p-0 shadow-none hover:bg-transparent'}>
                     <FormComponent id={lead?.id} formdata={{ formurl: 'changestageform' }} />
                   </Modal>
-                  <Plus size={18} />
+                
                   </div> 
                 }
               </h3>
@@ -213,13 +213,15 @@ export default function LeadDetails({ data }) {
           
         </div>
 
-        {
+       <div className="w-full">
+       {
           lead?.viewcomment ? <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
             <CommentsSection comments={lead.comments} />
           </div> : <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
             {" "}
           </div>
         }
+       </div>
        
       </div>
 

@@ -120,7 +120,6 @@ const CommentsSection = ({comments ,addcomment}) => {
                {
                 loader ?   <div className="flex items-center justify-center bg-white h-28"> 
                    <Loader2 className="animate-spin" size={30} />
-                
                 </div>
                 :
                 <div className="flex items-start space-x-2 border border-blue-200 rounded-md p-2 bg-white">  

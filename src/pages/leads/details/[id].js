@@ -33,7 +33,7 @@ export default function page(){
 
   return (
     
-      <div className=' bg-white  rounded-md h-full overflow-y-scroll border max-sm:mx-2'>
+      <div className='   h-full overflow-y-scroll  max-sm:mx-2'>
       {
         loading ? <div className='flex justify-center items-center h-screen '>
           <Loader2 className='animate-spin' size={20} />
