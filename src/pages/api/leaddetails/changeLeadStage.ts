@@ -1,5 +1,5 @@
 import { Leads } from "@/app/entity/Leads";
-import { LeadStages } from "@/app/entity/LeadStages";
+
 import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
 import { AppDataSource } from "@/app/lib/data-source";
 import { ResponseInstance } from "@/utils/instances";
@@ -15,7 +15,6 @@ export default async function changeLeadStage(req, res) {
         const {  stage, reason } = req.body;
         const leadId  = req.query.id;
 
-      //  console.log(user)
         
         const lead = await AppDataSource.getRepository(Leads).findOne({
             where: { id: leadId }
@@ -24,6 +23,7 @@ export default async function changeLeadStage(req, res) {
         if (!lead) {
             return res.status(404).json({ message: "Lead not found" });
         }
+       
 
         let newhistory = new StageChangeHistory;
         newhistory.stage = stage;
