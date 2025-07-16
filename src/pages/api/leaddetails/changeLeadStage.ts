@@ -46,10 +46,10 @@ export default async function changeLeadStage(req, res) {
 
         res.json(response);
     } catch (error) {
-        console.log(error);
+      
         const response : ResponseInstance = {
             message: "Something went wrong",
-            data: [],
+            data: [error],
             status: 500
         }
 
