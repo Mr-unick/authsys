@@ -1,7 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Leads } from './Leads';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
-import { Leads } from './Leads'; // regular import is fine for TypeORM
+import { type } from 'node:os';
+import { Columns } from 'lucide-react';
 
 @Entity('status_change_history')
 export class StageChangeHistory {
@@ -14,15 +16,15 @@ export class StageChangeHistory {
   @Column()
   reason: string; 
 
-  @ManyToOne(() => Leads, (lead) => lead.history)
-  @JoinColumn({ name: 'lead_id' }) 
-  lead: Leads;
-
-  @ManyToOne(() => LeadStages, (stage) => stage.stageChangeHistory)
+  @ManyToOne(type => LeadStages, (stage) => stage.stageChangeHistory)
   @JoinColumn({name:'stageId'})
-  stage: LeadStages;
+  stage:typeof LeadStages;
+
+  @ManyToOne(type => Leads, (lead) => lead.history)
+  @JoinColumn({ name: 'lead_id' }) 
+  lead:typeof Leads;
 
   @ManyToOne(() => Users, user => user.history)
   @JoinColumn({ name: 'changed_by' })
-  changed_by: Users;
+  changed_by:typeof Users;
 }
