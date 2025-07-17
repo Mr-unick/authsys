@@ -1,10 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, JoinColumn, DeleteDateColumn,Unique} from 'typeorm';
 import { Business } from './Business';
 import {  Leads } from './Leads';
 import { StageChangeHistory } from './StageChangeHistory';
 import { Users } from './Users';
 
 @Entity("lead_stages")
+@Unique(['stage_name', 'business'])
 export class LeadStages {
   @PrimaryGeneratedColumn()
   id: number;
@@ -18,7 +19,7 @@ export class LeadStages {
   @Column()
   discription:string
 
- @Column({ type: 'timestamp' ,nullable: true})
+  @Column({ type: 'timestamp' ,nullable: true})
    created_at: Date;
  
   @Column({ type: 'timestamp', nullable: true })

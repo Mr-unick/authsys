@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import TextAreaComponent from "./textarea";
 import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
+import { Loader2 } from "lucide-react";
 
 export default function FormComponent({ formdata, id}) {
   const {
@@ -22,6 +23,7 @@ export default function FormComponent({ formdata, id}) {
   const [data, setdata] = useState([]);
   const [change, setChange] = useState(false)
   const [res, setRes] = useState(false)
+  const [loder, setloder] = useState(false)
   const router = useRouter();
 
 
@@ -42,14 +44,19 @@ export default function FormComponent({ formdata, id}) {
 
   const onSubmit = async (data) => {
 
+    setloder(true)
+
     if (res.method === "post") {
 
       let response = await axios.post(`${ROOT_URL}api/${res.submiturl}`, data);
       if (response.status === 200) {
         toast.success(response.data.message);
+        setloder(false)
         router.back();
+
       } else {
         toast.error(response.data.message);
+        setloder(false)
       }
 
 
@@ -59,15 +66,19 @@ export default function FormComponent({ formdata, id}) {
 
       if (response.status === 200) {
         toast.success(response.data.message);
-      //  router.current();
+       router.reload()
+       setloder(false)
       } else {
         toast.error(response.data.message);
+        setloder(false)
 
       }
 
     } else {
       toast.error("Something went wrong");
+      setloder(false)
     }
+    setloder(false)
 
   };
 
@@ -79,6 +90,7 @@ export default function FormComponent({ formdata, id}) {
 
 
   return (
+    
     <form
       onSubmit={handleSubmit(onSubmit)}
       className={`flex flex-col justify-around  px-5 max-sm:px-2 max-sm:max-h-[35rem] overflow-y-scroll max-sm:text-xs  py-2 ${data?.fields?.length <= 10 ? "w-[40rem] max-sm:w-[20rem]" : "w-[60rem]"}`}
@@ -175,7 +187,9 @@ export default function FormComponent({ formdata, id}) {
           type="submit"
         // onClick={()=>{onsubmit}}
         >
-          Submit
+         {
+          loder ? <Loader2 className="animate-spin"/> : "Submit"
+         }
         </Button>
       </div>
     </form>
