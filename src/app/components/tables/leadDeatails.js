@@ -23,8 +23,7 @@ import { Comments } from "../../../../const";
 import PopupModal from "../poppupmodal";
 import { useContext, useEffect } from "react";
 import { LeadContext } from "@/app/contexts/leadontext";
-
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/components/ui/tabs";
 
 
 
@@ -45,7 +44,7 @@ export default function LeadDetails({ data }) {
   return (
     <div className=" px-2 max-sm:px-0 h-full  ">
       <div className="flex w-full gap-2 text-sm  pl-4 max-md:flex-col max-sm:flex-col ">
-        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] ">
+        <div className="max-md:w-1/2 sm:w-full space-y-6 max-sm:w-full  max-h-[40rem] max-sm:max-h-[50rem] pr-5 ">
           {/* Personal Information */}
           <div className="space-y-3 ">
             <h3 className="text-2xl text-gray-900 mb-5">{lead?.name}</h3>
@@ -185,10 +184,9 @@ export default function LeadDetails({ data }) {
               <h3 className="text-sm text-gray-900 mb-3">Comments</h3>
 
               <CommentsSection comments={lead.comments} addcomment={lead?.addcomment} />
-
             </div>
          }
-          {
+          {/* {
             lead?.viewstage && <div className="">
               <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center ">
               Stage History
@@ -221,8 +219,48 @@ export default function LeadDetails({ data }) {
             {" "}
           </div>
         }
-       </div>
+       </div> */}
        
+        </div>
+        <Tabs defaultValue="comments" className=" w-full">
+        <TabsList className="w-full  px-4">
+          <TabsTrigger value="comments" className="w-1/2 data-[state=inactive]:border">Comments</TabsTrigger>
+          <TabsTrigger value="stage" className="w-1/2 data-[state=inactive]:border">Stage History</TabsTrigger>
+        </TabsList>
+        <TabsContent value="stage" className="px-5">
+        {
+            lead?.viewstage && <div className="">
+              <h3 className="text-md text-gray-900  flex iteams-center flex justify-between  flex items-center ">
+              Stage History
+                {
+                  lead?.changestage && 
+                  <div className=" flex items-center gap-2  text-blue-600  rounded-md "> 
+                  <Modal title={'Add Stage History +'} classname={'bg-transparent  text-blue-600 px-0 shadow-none hover:bg-transparent'}>
+                    <FormComponent id={lead?.id} formdata={{ formurl: 'changestageform' }} />
+                  </Modal>
+                
+                  </div> 
+                }
+              </h3>
+              {
+                lead?.stageChangeHistory?.length > 0 && (
+                  <LeadTimeline data={lead?.stageChangeHistory} />
+                )
+              }
+
+            </div>
+          }
+        </TabsContent>
+        <TabsContent value="comments">
+        {
+          lead?.viewcomment ? <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-0 max-sm:hidden">
+            <CommentsSection comments={lead.comments} />
+          </div> : <div className="max-md:w-1/2 sm:w-full space-y-6 max-md:px-0 px-5 max-sm:hidden">
+            {" "}
+          </div>
+        }
+        </TabsContent>
+      </Tabs>
       </div>
 
     </div>

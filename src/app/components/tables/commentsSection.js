@@ -97,7 +97,7 @@ const CommentsSection = ({comments ,addcomment}) => {
     return (
         <div className="flex flex-col mb-16">
         
-            <div className="flex-grow overflow-y-scroll max-sm:overflow-y-hidden p-4 max-sm:p-0 space-y-4 h-[35rem] max-sm:-h-[10rem]">
+            <div className="flex-grow overflow-y-scroll max-sm:overflow-y-hidden p-4 max-sm:p-0 space-y-4 h-[30rem] max-sm:-h-[10rem]">
                 {comments?.length == 0? 
                     <div className="text-center flex justify-center item-center text-gray-500 py-10 lg:max-h-[35rem] max-sm:max-h-[35rem] ">
                         <p>No comments yet</p>
