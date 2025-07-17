@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn,JoinColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn,JoinColumn, DeleteDateColumn } from "typeorm";
 import { Business } from "./Business";
 import { Roles } from "./Roles";
 
@@ -41,6 +41,9 @@ export class Branch{
 
     @Column()
     discription:string
+
+    @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+    deletedAt?: Date;
 
     @ManyToOne(()=>Business,(buisness)=>buisness.branches)
     @JoinColumn({name:'buisnessId',referencedColumnName:'id'})

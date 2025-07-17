@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, DeleteDateColumn } from 'typeorm';
 
 
 
@@ -26,6 +26,9 @@ export class AreaOfOperation {
 
   @Column({ type: 'timestamp', nullable: true })
   updated_at: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   // @OneToMany(() => Leads, lead => lead.areaOfOperation)
   // leads: Leads[];

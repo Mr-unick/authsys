@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, Long, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, Long, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, DeleteDateColumn } from "typeorm";
 import { Users } from "./Users";
 import { Leads } from "./Leads";
 
@@ -28,5 +28,8 @@ export class Comment{
     @ManyToOne(()=>Users,users=>users.comment)
     @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
     user:typeof Users
+
+    @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+    deletedAt?: Date;
 
 }

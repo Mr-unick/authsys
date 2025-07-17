@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, DeleteDateColumn } from 'typeorm';
 
 import { Business } from './Business';
 import { LoginLogoutLog } from './LoginLogoutLog';
@@ -29,6 +29,9 @@ export class Users {
 
   @Column({ nullable: true  , select: false})
   updated_at: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   @ManyToOne(() => Business, business => business.id)
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })

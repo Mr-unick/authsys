@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { Users } from './Users';
 
 @Entity('login_logout_logs')
@@ -23,5 +23,8 @@ export class LoginLogoutLog {
   @ManyToOne(() => Users, user => user.id)
   @JoinColumn()
   user:typeof Users;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
 }

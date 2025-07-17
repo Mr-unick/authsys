@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany, DeleteDateColumn } from 'typeorm';
 import { Users } from './Users';
 import { Permissions } from './Permissions';
 import { Business } from './Business';
@@ -19,6 +19,9 @@ export class Roles {
 
   @Column({ nullable: true })
   updated_at: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   @OneToMany(type => Users, user => user.role)
   @JoinColumn()

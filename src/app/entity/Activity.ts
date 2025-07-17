@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, DeleteDateColumn } from 'typeorm';
 import { Users } from './Users';
 import { Leads } from './Leads';
 
@@ -27,6 +27,9 @@ export class Activity {
 
     @CreateDateColumn()
     timestamp: Date;
+
+    @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+    deletedAt?: Date;
 
     @ManyToOne(() => Users, user => user.activities, { onDelete: 'SET NULL', nullable: true })
     user: Users | null;

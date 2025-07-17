@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, JoinTable, ManyToMany, DeleteDateColumn } from 'typeorm';
 import { Roles } from './Roles';
 import { Policy } from './Policy';
 
@@ -23,4 +23,7 @@ export class Permissions {
   @ManyToOne(() => Policy, policy => policy.permissions)
   @JoinColumn()
   policy: typeof Policy[];
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 }

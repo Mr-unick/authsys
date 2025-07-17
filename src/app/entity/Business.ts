@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, DeleteDateColumn } from 'typeorm';
 
 import { Users } from './Users';
 import { SuperAdmin } from './SuperAdmin';
@@ -61,6 +61,9 @@ export class Business {
 
   @Column({ type: 'timestamp', nullable: true })
   updated_at: Date;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 
   // @ManyToOne(() => SuperAdmin, superAdmin => superAdmin.businesses)
   // superAdmin: SuperAdmin;

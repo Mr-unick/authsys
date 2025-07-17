@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne, DeleteDateColumn } from 'typeorm';
 import { Leads } from './Leads';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
@@ -27,4 +27,7 @@ export class StageChangeHistory {
   @ManyToOne(() => Users, user => user.history)
   @JoinColumn({ name: 'changed_by' })
   changed_by:typeof Users;
+
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  deletedAt?: Date;
 }
