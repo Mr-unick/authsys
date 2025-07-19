@@ -43,35 +43,29 @@ export default function FormComponent({ formdata, id}) {
   }, [change]);
 
   const onSubmit = async (data) => {
-
+  
     setloder(true)
 
     if (res.method === "post") {
-
-      let response = await axios.post(`${ROOT_URL}api/${res.submiturl}`, data);
+      let response = await axios.post(`/api/${res.submiturl}`, data);
       if (response.status === 200) {
         toast.success(response.data.message);
+        router.reload()
         setloder(false)
-        router.back();
-
       } else {
         toast.error(response.data.message);
         setloder(false)
       }
 
-
     } else if (res.method === "put") {
-
-      let response = await axios.post(`${ROOT_URL}api/${res.submiturl}?id=${id}`, data);
-
+      let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
       if (response.status === 200) {
         toast.success(response.data.message);
-       router.reload()
+         router.reload()
        setloder(false)
       } else {
         toast.error(response.data.message);
         setloder(false)
-
       }
 
     } else {
@@ -186,6 +180,7 @@ export default function FormComponent({ formdata, id}) {
           className="w-[8rem] bg-[#4E49F2] hover:bg-[#4E49F2]"
           type="submit"
         // onClick={()=>{onsubmit}}
+        disabled={loder}
         >
          {
           loder ? <Loader2 className="animate-spin"/> : "Submit"

@@ -8,10 +8,12 @@ import { LeadStages } from "../../app/entity/LeadStages";
 import { LeadsTableInstace, ResponseInstance } from "../../utils/instances";
 import { GenerateTable } from "../../utils/generateTable";
 import { VerifyToken } from "@/utils/VerifyToken";
+import LeadClass from "./classes/leadclass";
 
 export default async function handler(req, res) {
   let user = await VerifyToken(req, res,'leads');
-  if (req.method == "POST") {
+  const {id} = req.query;
+  if (req.method == "POST" && !req.query.delete) {
 
     const userRepository = AppDataSource.getRepository(Users);
     const businessRepository = AppDataSource.getRepository(Business);
@@ -60,10 +62,7 @@ export default async function handler(req, res) {
 
     await StageChangeHistoryRepository.save(newStageChangeHistory);
 
-    console.log(
-      "Lead created and associated with user and business successfully"
-    );
-
+ 
     res.json({ newLead });
   }
 
@@ -113,8 +112,6 @@ export default async function handler(req, res) {
     }
 
     lead = await lead.getMany();
-
-
           let leads  = lead.map((data)=>{
 
             let collaborators = data?.users?.map((collborator) => {
@@ -147,7 +144,7 @@ export default async function handler(req, res) {
             }
 
           }) 
-//
+
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
@@ -163,6 +160,71 @@ export default async function handler(req, res) {
 
             res.json(response)
     }
+
+  if (req.method == "PUT"){
+
+     let leadclass = new LeadClass(id);
+      try{
+        
+        let lead = await leadclass.updateLead(req.body);
+
+        const response: ResponseInstance = {
+          message: " Updated successfully",
+          data: [lead],
+          status: 200,
+        };
+    
+        res.json(response)
+    
+   
+      }catch(e){
+        const response: ResponseInstance = {
+          message: "Request Failed",
+          data: [e.message],
+          status: 400,
+        };
+    
+        res.json(response)
+      }
+
+
+    }
+
+    if (req.query.delete){
+
+      let ids = req.body.leads.map((lead)=>{
+        return lead.id;
+      })
+
+  
+       try{
+
+        await AppDataSource.getRepository(Leads).update(
+          ids,
+          { deletedAt: new Date() }
+        );
+
+         const response: ResponseInstance = {
+           message: "Deleted successfully",
+           data: [ ],
+           status: 200,
+         };
+     
+         res.json(response)
+     
+    
+       }catch(e){
+         const response: ResponseInstance = {
+           message: "Request Failed",
+           data: [e.message],
+           status: 400,
+         };
+     
+         res.json(response)
+       }
+ 
+ 
+     }
   }
 
  

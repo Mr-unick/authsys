@@ -10,23 +10,22 @@ export default async function handler(req, res){
     const form = new GenerateForm('Lead Form');
 
     if(id !== undefined){
-
         const lead = await AppDataSource.getRepository(Leads).findOne({where: {id: id}});
-
         form.addField('name', 'text').required().value(lead?.name || '').disabled();
         form.addField('email', 'text').value(lead?.email || '').disabled();
-        form.addField('number', 'text').value(lead?.phone || '').disabled();
-        form.addField('second_number', 'text').value(lead?.second_phone || '');
+        form.addField('phone', 'text').value(lead?.phone || '').disabled();
+        form.addField('second_phone', 'text').value(lead?.second_phone || '');
         form.addField('address', 'textarea').newRow().value(lead?.address || '');
-
-        console.log(lead,id,'lead')
-
+        form.submiturl('getLeadProps');
+        form.method('put');
     }else{
         form.addField('name', 'text').required();
         form.addField('email', 'text');
-        form.addField('number', 'text');
-        form.addField('second_number', 'text');
+        form.addField('phone', 'text');
+        form.addField('second_phone', 'text');
         form.addField('address', 'textarea');
+        form.submiturl('getLeadProps');
+        form.method('post');
     }
 
 

@@ -80,7 +80,6 @@ export default async function handler(req, res) {
     newStage.colour = colour;
     newStage.business = user?.business;
 
-    console.log('businesss',user.buisness)
     newStage.discription = discription;
     
 

@@ -11,6 +11,9 @@ import {
   Edit,
   Plus,
   UserPlus,
+  Route,
+  Pin,
+  Timer,
 } from "lucide-react";
 import LeadTimeline from "../charts/leadTimeline";
 
@@ -154,18 +157,18 @@ export default function LeadDetails({ data }) {
               </div>
 
               <div className="flex gap-2 items-center text-gray-600">
-                <Briefcase size={16} />
+                <Route size={16} />
                 <span>Stage</span>
               </div>
               <div className="text-gray-900">{lead?.leadStage}</div>
 
               <div className="flex gap-2 items-center text-gray-600">
-                <Briefcase size={16} />
+                <Pin size={16} />
                 <span>Source</span>
               </div>
               <div className="text-gray-900">{lead?.leadSource}</div>
               <div className="flex gap-2 items-center text-gray-900">
-                <Briefcase size={16} />
+                <Timer size={16} />
                 <span>Last Contact</span>
               </div>
               <div className="text-gray-900">

@@ -21,7 +21,7 @@ export default async function handler(req, res) {
     let roleOptions = roles.map(role => ({ id: role.id, name: role.name }));
 
 
-    if (req.query.id != "undefined") {
+    if (req.query.id !== "undefined") {
 
         // we are not recinving any id means the request is create
 
@@ -57,8 +57,7 @@ export default async function handler(req, res) {
 
         const form = new GenerateForm('Create User');
 
-       
-
+    
         form.addField('name', 'text').required();
         form.addField('email', 'email').required();
       

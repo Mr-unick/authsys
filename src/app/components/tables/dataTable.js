@@ -129,54 +129,9 @@ const DataTable = ({ url }) => {
     }
   };
 
-  // Perform actions on selected rows
-  const handleActionOnSelected = (action) => {
-    if (selectedRows.length === 0) return;
-    // Example: bulk delete
-    if (action === 'delete') {
-      if (window.confirm(`Delete ${selectedRows.length} selected items?`)) {
-        Promise.all(selectedRows.map(id => axios.delete(`${ROOT_URL}api/${url}?id=${id}`)))
-          .then(() => {
-            setChange(true);
-            setSelectedRows([]);
-          })
-          .catch(err => console.error("Bulk delete failed:", err));
-      }
-    }
-
-    if (action === 'assign') {
-      // if (window.confirm(`Assign ${selectedRows.length} selected items?`)) {
-      //   Promise.all(selectedRows.map(id => axios.post(`${ROOT_URL}api/${url}?id=${id}`)))
-      //     .then(() => {
-      //       setChange(true);
-      //     })
-      // }
 
 
-      console.log(selectedRows)
-    }
 
-  };
-
-  // Delete single row
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this item?")) {
-      try {
-        let res = await axios.delete(`${ROOT_URL}api/${url}?id=${id}`);
-        if (res.data.status) {
-          setChange(true);
-          setSelectedRows(prev => prev.filter(rowId => rowId !== id));
-        }
-      } catch (error) {
-        console.error("Delete failed:", error);
-      }
-    }
-  };
-
-  // Update row
-  const handleUpdate = async (id) => {
-    setChange(true);
-  };
 
   // Export to Excel
   const handleExport = () => {
@@ -281,13 +236,11 @@ const DataTable = ({ url }) => {
 
   return (
     <div className="w-full font-pretty max-sm:px-2 pb-16">
-      {
-
-      }
+   
       {
         tableData?.rows?.length > 0 && <div className="mb-4 flex justify-between">
           <div className="flex gap-3">
-            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white max-sm:w-[100%]">
+            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white max-md:w-[100%]">
               <Search size={14} />
               <input
                 onChange={(e) => handleSearchChange(e.target.value)}
@@ -301,9 +254,8 @@ const DataTable = ({ url }) => {
             <Select
               onValueChange={(value) => handleSortChange(value)}
               value={sortConfig.key || ""}
-
             >
-              <SelectTrigger className="w-[180px] h-full bg-white max-sm:hidden">
+              <SelectTrigger className="w-[180px] h-full bg-white max-md:hidden">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
               <SelectContent>
@@ -321,24 +273,24 @@ const DataTable = ({ url }) => {
 
             {selectedRows?.length > 0 && tableData?.delete && (
               <div className="flex items-center gap-2">
-                <PopupModal data={selectedRows} modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-700 text-sm  ml-2  flex items-center gap-2 p-2  px-4 rounded-md'} > <p className='max-sm:hidden'>Delete {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'} </p><Trash size={18} /></PopupModal>
+                <PopupModal setChange={setChange} data={selectedRows} modaltype={'confirmdelete'} classname={'bg-red-500 text-white hover:bg-red-700 text-sm  ml-2  flex items-center gap-2 p-2  px-4 rounded-md'} > <p className='max-md:hidden'>Delete {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'} </p><Trash size={18} /></PopupModal>
               </div>
             )}
 
             {selectedRows?.length > 0 && tableData?.assign && (
               <div className="flex items-center gap-2">
-                <PopupModal modaltype={'confirmassign'} data={selectedRows} classname={'bg-blue-500 text-white hover:bg-blue-700 text-sm  ml-2  flex items-center gap-2 p-3 px-4 rounded-md'} ><p className='max-sm:hidden'>Assign </p><UserPlus size={18} /></PopupModal>
+                <PopupModal setChange={setChange} modaltype={'confirmassign'} data={selectedRows} classname={'bg-blue-500 text-white hover:bg-blue-700 text-sm  ml-2  flex items-center gap-2 p-3 px-4 rounded-md'} ><p className='max-md:hidden'>Assign </p><UserPlus size={18} /></PopupModal>
               </div>
             )}
 
 
             <Button
               onClick={handleExport}
-              className="font-semibold bg-green-500 hover:bg-green-500 hover:text-white text-gray-50 h-full"
+              className="font-semibold bg-green-500 hover:bg-green-500 hover:text-white text-white h-full"
               variant="outline"
             >
               <>
-                <span className="max-sm:hidden font-normal">
+                <span className="max-md:hidden font-normal text-white">
                   Export {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'}
                 </span>
                 <span className="max-sm:block">
@@ -353,7 +305,7 @@ const DataTable = ({ url }) => {
                 {
                   tableData?.formtype == 'modal' ? <Modal title={`Add ${tableData?.name}`} classname={'bg-[#4E49F2] text-white'} icon='Add' open={open}>
                     <FormComponent formdata={tableData?.createform} setOpen={setOpen} />
-                  </Modal> : <Link className="text-sm px-3 flex gap-2" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add {tableData?.name}</p><Plus size={18} strokeWidth={3} />
+                  </Modal> : <Link className="text-sm px-3 flex gap-2" href={`${tableData?.createform?.formurl}`}><p className="max-md:hidden">Add {tableData?.name}</p><Plus size={18} strokeWidth={3} />
                   </Link>
                 }
               </button>
@@ -374,10 +326,10 @@ const DataTable = ({ url }) => {
       <div className="overflow-y-scroll max-h-[85vh] border-[1px] rounded-md">
 
         {
-          tableData?.rows?.length > 0 && <Table className="min-w-full  text-sm text-left text-gray-500 bg-white ">
+          tableData?.rows?.length > 0 && <Table className="min-w-full  text-sm text-left text-gray-500 bg-white  ">
             <thead className="text-xs text-gray-100  p-3 first-letter:uppercase ">
-              <tr >
-                <TH >
+              <tr>
+                <TH>
                   <input type="checkbox"
                     checked={selectAll && filteredRows.length > 0}
                     onChange={toggleSelectAll}
@@ -388,7 +340,7 @@ const DataTable = ({ url }) => {
                   <TH
                     key={key}
                     onClick={() => handleSortChange(key)}
-
+                    classname={`${key == 'id' ? "hidden" : ""}`}
                   >
                     {key.replace(/_/g, ' ')} {sortConfig.key === key && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </TH>
@@ -407,7 +359,6 @@ const DataTable = ({ url }) => {
               ) : (
                 displayData?.map((row, index) => {
                   const isSelected = selectedRows.includes(row.id);
-
                   return (
                     <tr
                       key={index}
@@ -422,7 +373,7 @@ const DataTable = ({ url }) => {
 
                       {Object.entries(row).map(([key, value], idx) => {
                         // Skip rendering the id column if it's not in tableData?.columns
-                        if (key === 'id' && !tableData?.columns.includes('id')) {
+                        if (key === 'id') {
                           return null;
                         }
 
@@ -460,7 +411,7 @@ const DataTable = ({ url }) => {
                           <div className="flex gap-5 max-sm:gap-2">
                             <button>
                               {tableData?.update && (
-                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-green-500 text-white hover:text-white hover:bg-green-500  shadow-none px-2 -py-1`} open={open}>
+                                tableData?.formtype == 'modal' ? <Modal title={`Edit`} icon='Edit' classname={`bg-green-500 text-white hover:text-white hover:bg-green-500  shadow-none px-3 -py-1`} open={open}>
                                   <FormComponent id={row.id} formdata={tableData?.updateform} setOpen={setOpen} />
                                 </Modal> : <Button className="bg-[#4E49F2] text-white">
                                   <Link className="flex items-center gap-2" href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
@@ -473,7 +424,7 @@ const DataTable = ({ url }) => {
                             {tableData?.delete && (
 
                               <div className="flex items-center gap-2">
-                                <PopupModal modaltype={'confirmdelete'} classname={'bg-red-500 text-white px-2 py-2 rounded-md hover:bg-red-500 hover:text-white text-sm  ml-2  flex items-center gap-2'} > <p className='max-sm:hidden'>Delete </p><Trash size={18} /></PopupModal>
+                                <PopupModal url={url} setChange={setChange} data={[row]} modaltype={'confirmdelete'} classname={'bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-500 hover:text-white text-sm  ml-2  flex items-center gap-2'} > <p className='max-md:hidden'>Delete </p><Trash size={18} /></PopupModal>
                               </div>
 
                             )}
@@ -519,13 +470,13 @@ const DataTable = ({ url }) => {
         {/* Pagination */}
 
         {
-          res?.count >= 10 && <div className="w-full bg-white flex justify-between items-center p-2 px-4 ">
+          true && <div className="w-full bg-white flex justify-between items-center p-2 px-4 ">
             <div className="text-sm text-gray-500 w-1/3">
               Showing {10} of {res?.count} entries
               {selectedRows.length > 0 && ` (${selectedRows?.length} selected)`}
             </div>
 
-            <Pagination className="w-1/3">
+            <Pagination className="w-1/3 ">
               <PaginationContent>
                 <PaginationItem>
                   <PaginationPrevious href="#" />

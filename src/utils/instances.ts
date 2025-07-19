@@ -10,7 +10,7 @@ export type ResponseInstance = {
     name: string;
     title: string;
     update: boolean;
-    updateform:object
+    updateform:object;
     delete: boolean;
     view: boolean;
     create: boolean;

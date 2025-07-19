@@ -11,8 +11,8 @@ export default function Modal({ children, title, icon ,classname , customebutton
     <Dialog>
       <DialogTrigger asChild>
         {
-          customebutton ? customebutton :   <Button className={`max-sm:block flex items-center gap-2 ${classname}`}>
-          <p className="max-sm:hidden">
+          customebutton ? customebutton :   <Button className={`max-md:block flex items-center gap-2 ${classname}`}>
+          <p className="max-md:hidden">
             {title}
           </p>
           {

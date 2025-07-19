@@ -15,7 +15,7 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Addcollborator from "./modals/addcollaborator";
 
-export default function PopupModal({ modaltype ,children ,classname ,data}) {
+export default function PopupModal({ modaltype ,children ,classname ,data ,url ,setChange}) {
     const router = useRouter();
 
     const [open, setOpen] = useState(false);
@@ -39,20 +39,32 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
       }else{
         toast.error('Leads assigned failed')
       }
+      setChange(true)
       setLoading(false)
     }
 
-    const handleDelete = async (selectedUser) => {
+    const handleDelete = async () => {
         setLoading(true)
-        console.log("Selected user:",data);
+
+        let response = await axios.post(`/api/${url}?delete=true`, {
+            leads: data,
+        })
+
+        if (response.status == 200) {
+            toast.success('Deleted successfully')
+            setOpen(false)
+            setChange(true)
+           
+        } else {
+            toast.error('Operation failed')
+        }
         setLoading(false)
-      //  setOpen(false)
+        setChange(true)
+        setOpen(false)
     }
 
     const handleaddcollaborators = async (selectedUser) => {
         setLoading(true)
-
-        console.log("Selected user:",selectedUser);
 
         let response = await axios.post('/api/leaddetails/addcollaborators', {
             leads: data,
@@ -60,14 +72,16 @@ export default function PopupModal({ modaltype ,children ,classname ,data}) {
         })
 
         if (response.status == 200) {
-            setOpen(false)
-            window.location.reload()
             toast.success('Collaborators added successfully')
+            setOpen(false)
+            setChange(true)
            
         } else {
             toast.error('Leads assigned failed')
         }
         setLoading(false)
+        setChange(true)
+        setOpen(false)
     }
     
 

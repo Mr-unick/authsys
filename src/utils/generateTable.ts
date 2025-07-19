@@ -26,7 +26,7 @@ export class GenerateTable {
     };
   }
 
-  addform(url: string, formtype: string = 'modal') {
+  addform(url: string, formtype: string = 'modal'){
 
     this.newtable.createform = {
       method: 'post',
@@ -38,6 +38,7 @@ export class GenerateTable {
       formurl: url
     };
 
+  
     return this;
 
   }
