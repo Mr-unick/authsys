@@ -1,3 +1,5 @@
+import { Provider } from "@radix-ui/react-tooltip";
+import { PaginationInstance } from "./instances";
 
 
 export function formatDateToShow(originalDate) {
@@ -55,6 +57,27 @@ export function mapLeadSourcesToChartData(sources) {
   });
 
   return chartData;
+}
+
+
+export function getPagination(page: number, perPage: number | 10, totalRows: number): PaginationInstance {
+  
+  const totalPages = Math.ceil(totalRows / perPage);
+  const hasNextPage = page < totalPages;
+  const hasPrevPage = page > 1;
+  const startIndex = (page - 1) * perPage;
+  const endIndex = Math.min(startIndex + perPage - 1, totalRows - 1);
+
+  return {
+    page,
+    perPage,
+    totalPages,
+    totalRows,
+    hasNextPage,
+    hasPrevPage,
+    startIndex,
+    endIndex,
+  };
 }
 
 

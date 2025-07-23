@@ -35,23 +35,16 @@ export default async function handler(req, res) {
         form.addField('stage_name', 'text').value(stage.stage_name).required();
         form.addField('colour', 'color').value(stage.colour);
         form.addField('discription', 'textarea').newRow().value(stage.discription);
-
         form.submiturl('getLeadStagesProps');
         form.method('put');
-
-
         res.json(form.getForm());
 
     } else {
-
-
         const form = new GenerateForm('Create Lead Stage');
-
-
+        
         form.addField('stage_name', 'text').required();
         form.addField('colour', 'color').required();
         form.addField('discription', 'textarea').required().newRow();
-
         form.submiturl('getLeadStagesProps');
         form.method('post');
         res.json(form.getForm());

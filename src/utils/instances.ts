@@ -6,6 +6,17 @@ export type ResponseInstance = {
     status: number;
   };
 
+  export type PaginationInstance = {
+    page: number;                // Current page number
+    perPage: number;             // Items per page
+    totalPages: number;          // Total number of pages
+    totalRows: number;           // Total number of items
+    hasNextPage: boolean;        // true if next page exists
+    hasPrevPage: boolean;        // true if previous page exists
+    startIndex: number;          // Index of first item on current page
+    endIndex: number;            // Index of last item on current page
+  };
+
  export  type TablePropsResponseInstance = {
     name: string;
     title: string;
@@ -19,6 +30,7 @@ export type ResponseInstance = {
     rows: Array<object>;
     columns: Array<string>;
     assign: boolean;
+    pagination:PaginationInstance | null;
   };
 
  

@@ -9,13 +9,10 @@ import { LeadsTableInstace, ResponseInstance } from "../../utils/instances";
 import { GenerateTable } from "../../utils/generateTable";
 import { VerifyToken } from "@/utils/VerifyToken";
 import LeadClass from "./classes/leadclass";
-import { getPagination } from "@/utils/utility";
 
 export default async function handler(req, res) {
   let user = await VerifyToken(req, res,'leads');
   const {id} = req.query;
-
-
   if (req.method == "POST" && !req.query.delete) {
 
     const userRepository = AppDataSource.getRepository(Users);
@@ -70,13 +67,6 @@ export default async function handler(req, res) {
   }
 
   if (req.method == "GET") {
-
-    let currentpage = 1;
-    let perPage = 10;
-
-    req.query.page ?  currentpage = req.query.page : 1;
-    req.query.perpage ?  perPage = req.query.perpage : 10;
-
     const leadRepository = AppDataSource.getRepository(Leads);
     let lead;
 
@@ -121,16 +111,8 @@ export default async function handler(req, res) {
 
     }
 
-    let alleads  = await lead.getMany();
-
-    let totalRows = alleads.length;
-
-    const leadsRows = await lead
-                    .skip((currentpage - 1) * perPage)
-                    .take(perPage)
-                    .getMany();
-
-    let leads  = leadsRows.map((data)=>{
+    lead = await lead.getMany();
+          let leads  = lead.map((data)=>{
 
             let collaborators = data?.users?.map((collborator) => {
               return collborator.name;
@@ -148,16 +130,16 @@ export default async function handler(req, res) {
               id : data.id,
               name : data?.name || '-',
               email:data?.email || '-',
-              address:data?.address || '-',
+            //   address:data?.address || '-',
               phone:data?.phone || '-',
-              second_phone:data?.second_phone || '-',
-              status:true || '-',
-              stage:data?.stage?.stage_name || '-',
-              collborators:collaborators || '-',
-              headcollborator:data.headcollborator || 'Nikhil Lende',
-              nextfollowup:data?.nextfollowup || '-',
-              lead_source:data?.source || '-',
-              note:data?.note || '-'
+            //   second_phone:data?.second_phone || '-',
+            //   status:true || '-',
+            //   stage:data?.stage?.stage_name || '-',
+            //   collborators:collaborators || '-',
+            //   headcollborator:data.headcollborator || 'Nikhil Lende',
+            //   nextfollowup:data?.nextfollowup || '-',
+            //   lead_source:data?.source || '-',
+            //   note:data?.note || '-'
 
             }
 
@@ -166,7 +148,7 @@ export default async function handler(req, res) {
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
-            }).policy(user,'leads').addform('leadform').addPagination(getPagination(currentpage,10,totalRows)).gettable();
+            }).policy(user,'leads').addform('leadform').gettable();
       
             const response: ResponseInstance = {
               message: "Request successful",

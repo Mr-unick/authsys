@@ -4,7 +4,6 @@ import DataTable from "../../app/components/tables/dataTable";
 
 export default function tableleads(){
     return <div className="pb-10">
-            <DataTable url = {'getLeadProps'} />
-            
-            </div>
+        <DataTable url = {'getContactList'} />
+        </div>
 }
