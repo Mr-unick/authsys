@@ -253,7 +253,7 @@ const DataTable = ({ url }) => {
       {
         tableData?.rows?.length > 0 && <div className="mb-4 flex justify-between">
           <div className="flex gap-3">
-            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white max-md:w-[100%]">
+            <div className="flex px-2 items-center rounded-md border-[1px] gap-2 w-[60%] bg-white max-md:w-[100%] max-sm:w-[95%]">
               <Search size={14} />
               <input
                 onChange={(e) => handleSearchChange(e.target.value)}
