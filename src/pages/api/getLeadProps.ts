@@ -73,9 +73,10 @@ export default async function handler(req, res) {
 
     let currentpage = 1;
     let perPage = 10;
-
-    req.query.page ?  currentpage = req.query.page : 1;
-    req.query.perpage ?  perPage = req.query.perpage : 10;
+    currentpage = req.query.page ?? 1; 
+          // default to 1 if not provided
+    perPage = isNaN(req.query.perpage) ? 8 : parseInt(req.query.perpage) ;       // default to 10 if not provided
+    
 
     const leadRepository = AppDataSource.getRepository(Leads);
     let lead;
@@ -124,7 +125,7 @@ export default async function handler(req, res) {
     let alleads  = await lead.getMany();
 
     let totalRows = alleads.length;
-
+console.log(currentpage,perPage,'this is curr')
     const leadsRows = await lead
                     .skip((currentpage - 1) * perPage)
                     .take(perPage)
@@ -166,7 +167,7 @@ export default async function handler(req, res) {
             const tabledata = new GenerateTable({
               name: "Leads",
               data: leads,
-            }).policy(user,'leads').addform('leadform').addPagination(getPagination(currentpage,10,totalRows)).gettable();
+            }).policy(user,'leads').addform('leadform').addPagination(getPagination(currentpage,perPage,totalRows)).gettable();
       
             const response: ResponseInstance = {
               message: "Request successful",

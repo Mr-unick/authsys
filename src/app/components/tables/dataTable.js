@@ -54,6 +54,8 @@ const DataTable = ({ url }) => {
   const [res, setRes] = useState(null)
   const [loading, setLoading] = useState(false);
   const [pagearray, SetPageArry] = useState([1]);
+  const [currentPage, SetcurrentPage] = useState(1);
+  const [perPgae, SetperPgae] = useState(null);
   const router = useRouter();
   const { asPath } = router;
 
@@ -156,12 +158,23 @@ const DataTable = ({ url }) => {
     date = date.getDate() + "_" + (date.getMonth() + 1) + "_" + date.getFullYear();
     XLSX.writeFile(wb, `${tableData?.title}_${date}.xlsx`);
   };
+  function goToPage(pageNumber, perPage) {
+    SetperPgae(perPage)
+    SetcurrentPage(pageNumber)
+    setChange(true)
+    // if (pageNumber < 1 || pageNumber > perPage) return;
+    // const url = new URL(window.location.href);
+    // url.searchParams.set("page", pageNumber);
+    // url.searchParams.set("perpage", perPage);
+    // window.location.href = url.toString();
 
+  }
+  
 
   const handleFetchdata = useCallback(() => {
     setLoading(true);
     axios
-      .get(`${ROOT_URL}api/${url}`)
+      .get(`${ROOT_URL}api/${url}?page=${currentPage}&perpage=${perPgae}`)
       .then((res) => res.data)
       .then((res) => {
         if (res.status == 500) {
@@ -203,7 +216,7 @@ const DataTable = ({ url }) => {
     if (change) {
       handleFetchdata();
     }
-  }, [change, handleFetchdata]);
+  }, [change, handleFetchdata ]);
 
 
   useEffect(() => {
@@ -236,7 +249,7 @@ const DataTable = ({ url }) => {
 
   return (
     <div className="w-full font-pretty max-sm:px-2 pb-16">
-   
+
       {
         tableData?.rows?.length > 0 && <div className="mb-4 flex justify-between">
           <div className="flex gap-3">
@@ -312,7 +325,7 @@ const DataTable = ({ url }) => {
             )}
 
             {tableData?.upload && (
-              <UploadLeads/>
+              <UploadLeads />
             )}
 
 
@@ -469,42 +482,73 @@ const DataTable = ({ url }) => {
 
         {/* Pagination */}
 
-        {
-          true && <div className="w-full bg-white flex justify-between items-center p-2 px-4 ">
-            <div className="text-sm text-gray-500 w-1/3">
-              Showing {10} of {res?.count} entries
-              {selectedRows.length > 0 && ` (${selectedRows?.length} selected)`}
+        {tableData?.pagination && (
+          <div className="w-full bg-white flex flex-col md:flex-row justify-between items-center gap-4 p-4 border-t">
+
+            {/* Showing text */}
+            <div className="text-sm text-gray-600 w-full md:w-1/3 text-center md:text-left">
+              Showing {tableData?.pagination.startIndex + 1}–{tableData?.pagination.endIndex + 1} of {tableData?.pagination.totalRows} entries
+              {selectedRows.length > 0 && (
+                <span className="text-blue-500"> ({selectedRows.length} selected)</span>
+              )}
             </div>
 
-            <Pagination className="w-1/3 ">
-              <PaginationContent>
+            {/* Pagination buttons */}
+            <Pagination className="w-full md:w-1/3 flex justify-center">
+              <PaginationContent className="flex gap-1">
+
+                {/* Previous */}
                 <PaginationItem>
-                  <PaginationPrevious href="#" />
+                  <PaginationPrevious
+                    href="#"
+                    className={tableData.pagination.hasPrevPage ? '' : 'pointer-events-none opacity-40'}
+                    onClick={() => goToPage(tableData.pagination.page - 1 ,tableData.pagination.perPage)}
+                  />
                 </PaginationItem>
-                {
 
-                  pagearray.slice(0, 5).map((page, key) => {
-                    return <PaginationItem>
-                      <PaginationLink href="#">{key + 1}</PaginationLink>
+                {/* Page numbers (dynamic) */}
+                {Array.from({ length: Math.min(tableData.pagination.totalPages, 5) }).map((_, i) => {
+                  const pageNum = i + 1;
+                  return (
+                    <PaginationItem key={pageNum}>
+                      <PaginationLink
+                        href="#"
+                        isActive={tableData.pagination.page === pageNum}
+                        onClick={() => goToPage(pageNum ,tableData.pagination.perPage)}
+                      >
+                        {pageNum}
+                      </PaginationLink>
                     </PaginationItem>
-                  })
-                }
+                  );
+                })}
 
-                {
-                  pagearray.length > 5 && <PaginationItem>
+                {/* Ellipsis if more pages */}
+                {tableData.pagination.totalPages > 5 && (
+                  <PaginationItem>
                     <PaginationEllipsis />
                   </PaginationItem>
-                }
+                )}
+
+                {/* Next */}
                 <PaginationItem>
-                  <PaginationNext href="#" />
+                  <PaginationNext
+                    href="#"
+                    className={tableData.pagination.hasNextPage ? '' : 'pointer-events-none opacity-40'}
+                    onClick={() => goToPage(currentPage + 1,tableData.pagination.perPage)}
+                  />
                 </PaginationItem>
+
               </PaginationContent>
             </Pagination>
-            <div className="w-1/3">
-              {' '}
+
+            {/* Spacer or additional actions */}
+            <div className="w-full md:w-1/3 text-center md:text-right text-sm text-gray-500">
+              {/* You can show page info here, e.g., Page 1 of 5 */}
+              Page {tableData.pagination.page} of {tableData.pagination.totalPages}
             </div>
           </div>
-        }
+        )}
+
       </div>
     </div>
   );
