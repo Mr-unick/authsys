@@ -1,14 +1,18 @@
-import { Leads } from "@/app/entity/Leads";
-
-import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
 import { AppDataSource } from "@/app/lib/data-source";
 import { ResponseInstance } from "@/utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+
+// import { Leads } from "@/app/entity/Leads";
+// import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
+
 
 
 
 
 export default async function changeLeadStage(req, res) {
+
+    const { Leads } = await import("@/app/entity/Leads");
+  const { StageChangeHistory } = await import("@/app/entity/StageChangeHistory");
     try {
         let user = await VerifyToken(req, res, 'stage');
 
