@@ -11,8 +11,9 @@ import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function changeLeadStage(req, res) {
 
-    const { Leads } = await import("@/app/entity/Leads");
+  const { Leads } = await import("@/app/entity/Leads");
   const { StageChangeHistory } = await import("@/app/entity/StageChangeHistory");
+  
     try {
         let user = await VerifyToken(req, res, 'stage');
 

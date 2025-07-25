@@ -3,11 +3,14 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 
 import { Business } from './Business';
 import { AreaOfOperation } from './AreaOfOperation';
-import { StageChangeHistory } from './StageChangeHistory';
+// import { StageChangeHistory } from './StageChangeHistory';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
+
+
+const { StageChangeHistory } = await import("@/app/entity/StageChangeHistory");
 
 @Entity('leads')
 export class Leads {
@@ -69,7 +72,7 @@ export class Leads {
   users: Users[];
 
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
-  history: StageChangeHistory[];
+  history:typeof StageChangeHistory[];
 
   @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
   @JoinColumn()

@@ -1,9 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne, DeleteDateColumn } from 'typeorm';
-import { Leads } from './Leads';
+// import { Leads } from './Leads';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
 import { type } from 'node:os';
 import { Columns } from 'lucide-react';
+
+const { Leads } = await import("@/app/entity/Leads");
 
 @Entity('status_change_history')
 export class StageChangeHistory {
