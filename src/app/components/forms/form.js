@@ -50,7 +50,7 @@ export default function FormComponent({ formdata, id}) {
       let response = await axios.post(`/api/${res.submiturl}`, data);
       if (response.status === 200) {
         toast.success(response.data.message);
-        router.reload()
+        // router.reload()
         setloder(false)
       } else {
         toast.error(response.data.message);
@@ -61,7 +61,7 @@ export default function FormComponent({ formdata, id}) {
       let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
       if (response.status === 200) {
         toast.success(response.data.message);
-         router.reload()
+        //  router.reload()
        setloder(false)
       } else {
         toast.error(response.data.message);

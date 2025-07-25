@@ -15,7 +15,6 @@ export default async function changeLeadStage(req, res) {
         const {  stage, reason } = req.body;
         const leadId  = req.query.id;
 
-        
         const lead = await AppDataSource.getRepository(Leads).findOne({
             where: { id: leadId }
         });
