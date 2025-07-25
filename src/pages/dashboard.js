@@ -102,6 +102,48 @@ const Dashboard = ({data}) => {
           </Card>
         }
         {
+          data?.performancePieChart && (
+            <Card className="col-span-4 max-sm:col-span-12 shadow-nones">
+              <CardHeader>
+                <CardTitle>{data.performancePieChart.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="shadow-none">
+                <PieChartComponent radius={80} data={data.performancePieChart.data} />
+                {/* Legend for performance pie chart */}
+                <div className="flex gap-4 mt-4 justify-center">
+                  {data.performancePieChart.data.map((entry, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span style={{ display: 'inline-block', width: 16, height: 16, background: entry.color, borderRadius: 4, border: '1px solid #ccc' }}></span>
+                      <span className="text-sm">{entry.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        }
+        {
+          data?.pieChartStages && (
+            <Card className="col-span-4 max-sm:col-span-12">
+              <CardHeader>
+                <CardTitle>{data.pieChartStages.title}</CardTitle>
+              </CardHeader>
+              <CardContent className="shadow-none">
+                <PieChartComponent radius={80} data={data.pieChartStages.data} />
+                {/* Legend for Assigned Leads by Stage pie chart */}
+                <div className="flex gap-4 mt-4 justify-center">
+                  {data.pieChartStages.data.map((entry, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span style={{ display: 'inline-block', width: 16, height: 16, background: entry.color, borderRadius: 4, border: '1px solid #ccc' }}></span>
+                      <span className="text-sm">{entry.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )
+        }
+        {
           data?.newleads && <Card className="col-span-6 max-sm:col-span-12 ">
             <CardHeader className="pt-4">
               <CardTitle>{data?.newleads?.title}</CardTitle>

@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { TrendingUp } from "lucide-react"
-import { Label, Pie, PieChart } from "recharts"
+import { Label, Pie, PieChart, Cell } from "recharts"
 
 import {
   Card,
@@ -69,6 +69,9 @@ export function PieChartComponent({radius,data}) {
               innerRadius={radius}
               strokeWidth={5}
             >
+              {data && data.length > 0 && data.map((entry, idx) => (
+                <Cell key={`cell-${idx}`} fill={entry.color || entry.fill || '#8884d8'} />
+              ))}
               <Label
                 content={({ viewBox }) => {
                   if (viewBox && "cx" in viewBox && "cy" in viewBox) {
