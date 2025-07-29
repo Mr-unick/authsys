@@ -22,7 +22,7 @@ export class StageChangeHistory {
 
   @ManyToOne(type => Leads, (lead) => lead.history)
   @JoinColumn({ name: 'lead_id' }) 
-  lead:typeof Leads;
+  lead: Leads;
 
   @ManyToOne(() => Users, user => user.history)
   @JoinColumn({ name: 'changed_by' })
