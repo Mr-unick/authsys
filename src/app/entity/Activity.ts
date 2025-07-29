@@ -32,7 +32,7 @@ export class Activity {
     deletedAt?: Date;
 
     @ManyToOne(() => Users, (user) => user.activities)
-user: Users;
+    user: Users | null;
 
     @ManyToOne(() => Leads, lead => lead.activities, { onDelete: 'CASCADE', nullable: true })
     lead: Leads | null; 
