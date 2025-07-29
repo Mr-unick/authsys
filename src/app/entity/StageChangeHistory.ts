@@ -1,9 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, OneToOne, DeleteDateColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
 import { Leads } from './Leads';
 import { LeadStages } from './LeadStages';
 import { Users } from './Users';
-import { type } from 'node:os';
-import { Columns } from 'lucide-react';
+
 
 @Entity('status_change_history')
 export class StageChangeHistory {
@@ -20,9 +19,16 @@ export class StageChangeHistory {
   @JoinColumn({name:'stageId'})
   stage:typeof LeadStages;
 
-  @ManyToOne(type => Leads, (lead) => lead.history)
-  @JoinColumn({ name: 'lead_id' }) 
-  lead:typeof Leads;
+  // @ManyToOne(type => Leads, (lead) => lead.history)
+  // @JoinColumn({ name: 'lead_id' }) 
+  // lead:typeof Leads;
+
+  
+
+@ManyToOne(() => Leads, (lead) => lead.history)
+@JoinColumn({ name: 'lead_id' })
+lead: Leads;
+
 
   @ManyToOne(() => Users, user => user.history)
   @JoinColumn({ name: 'changed_by' })

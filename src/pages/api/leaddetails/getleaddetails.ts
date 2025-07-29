@@ -57,15 +57,15 @@ export const getleadDetails = async(user,id)=>{
             .getRawOne())?.stage_stage_name;
 
 
-        // let history = lead?.history?.map((item) => {
-        //     // let stage = item.history_stage.stage_name;
-        //     return {
-        //         stage: item.stage,
-        //         changedAt: item.changed_at,
-        //         changedBy: item.changed_by,
-        //         reason: item.reason,
-        //     }
-        // })
+        let history = lead?.history.map((item) => {
+            // let stage = item.history_stage.stage_name;
+            return {
+                stage: item.stage,
+                changedAt: item.changed_at,
+                changedBy: item.changed_by,
+                reason: item.reason,
+            }
+        })
 
         let leaddetails = {
             id: lead?.id,
@@ -83,7 +83,7 @@ export const getleadDetails = async(user,id)=>{
             leadStage: stage,
             notes: lead?.notes || "No notes",
             collaborators: lead?.users || [],
-            stageChangeHistory: lead?.history || [],
+            stageChangeHistory: history || [],
              comments: lead?.comments,
             addcollborator: haspermission(user, 'assign_collborators'),
             deletecollborator: haspermission(user, 'delete_collborators'),

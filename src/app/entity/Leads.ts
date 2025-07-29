@@ -68,8 +68,11 @@ export class Leads {
   })
   users: Users[];
 
-  @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true ,eager:true})
-  history:typeof StageChangeHistory;
+  // @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
+  // history: StageChangeHistory[];
+
+  @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
+  history: StageChangeHistory[];
 
   @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
   @JoinColumn()
