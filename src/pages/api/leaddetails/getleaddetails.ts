@@ -83,7 +83,7 @@ export const getleadDetails = async(user,id)=>{
             leadStage: stage,
             notes: lead?.notes || "No notes",
             collaborators: lead?.users || [],
-            stageChangeHistory: history || [],
+            stageChangeHistory: lead?.history || [],
              comments: lead?.comments,
             addcollborator: haspermission(user, 'assign_collborators'),
             deletecollborator: haspermission(user, 'delete_collborators'),
