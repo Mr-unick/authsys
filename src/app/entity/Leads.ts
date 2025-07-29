@@ -68,9 +68,6 @@ export class Leads {
   })
   users: Users[];
 
-  // @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
-  // history: StageChangeHistory[];
-
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
   history: StageChangeHistory[];
 
