@@ -5,10 +5,7 @@
 import { Users } from "@/app/entity/Users";
 import { AppDataSource } from "@/app/lib/data-source";
 import { VerifyToken } from "@/utils/VerifyToken";
-import Userclass from "../classes/userclass";
-import CommentClass from "../classes/commentclass";
-import BusinessClass from "../classes/businessclass";
-import LeadClass from "../classes/leadclass";
+
 
 
 export default async function UserDetails(req, res) {

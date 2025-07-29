@@ -31,8 +31,8 @@ export class Activity {
     @DeleteDateColumn({ name: 'deleted_at', nullable: true })
     deletedAt?: Date;
 
-    @ManyToOne(() => Users, user => user.activities, { onDelete: 'SET NULL', nullable: true })
-    user: Users | null;
+    @ManyToOne(() => Users, (user) => user.activities)
+user: Users;
 
     @ManyToOne(() => Leads, lead => lead.activities, { onDelete: 'CASCADE', nullable: true })
     lead: Leads | null; 

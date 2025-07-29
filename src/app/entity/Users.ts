@@ -64,7 +64,8 @@ export class Users {
   comment: Comment[]
 
 
-  @OneToMany(() => Activity, activity => activity.user, { nullable: true })
+  @OneToMany(() => Activity, activity => activity.user)
   activities: typeof Activity[]
 
+  
 }
