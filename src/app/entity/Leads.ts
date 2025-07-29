@@ -69,22 +69,22 @@ export class Leads {
   users: Users[];
 
   @OneToMany(() => StageChangeHistory, (history) => history.lead, { nullable: true })
-  history:typeof StageChangeHistory;
+  history: StageChangeHistory[];
 
   @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
   @JoinColumn()
-  stage: typeof LeadStages;
+  stage:  LeadStages;
 
   @ManyToOne(() => Business, business => business.id)
   @JoinColumn()
-  business:typeof Business;
+  business: Business;
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
-  comments: typeof Comment
+  comments:  Comment
 
 
   @OneToMany(() => Activity, activity => activity.lead, { nullable: true })
-  activities: typeof Activity
+  activities:  Activity
 
   // @ManyToOne(() => AreaOfOperation, areaOfOperation => areaOfOperation.leads)
   // areaOfOperation: AreaOfOperation;

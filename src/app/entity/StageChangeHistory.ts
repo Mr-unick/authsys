@@ -18,15 +18,15 @@ export class StageChangeHistory {
 
   @ManyToOne(type => LeadStages, (stage) => stage.stageChangeHistory)
   @JoinColumn({name:'stageId'})
-  stage:typeof LeadStages;
+  stage: LeadStages;
 
   @ManyToOne(type => Leads, (lead) => lead.history)
   @JoinColumn({ name: 'lead_id' }) 
-  lead:typeof Leads;
+  lead: Leads;
 
   @ManyToOne(() => Users, user => user.history)
   @JoinColumn({ name: 'changed_by' })
-  changed_by:typeof Users;
+  changed_by: Users;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
