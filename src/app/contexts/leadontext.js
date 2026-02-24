@@ -1,23 +1,5 @@
-
-
-'use client';
-
-import { createContext, useState ,useContext } from 'react';
-
-export const LeadContext = createContext();
-
-export function LeadProvider({ children }) {
-
-  const [lead, setLead] = useState(null);
-
-  const value = { lead,setLead};
-
-  return (
-    <LeadContext.Provider value={value}>
-      {children}
-    </LeadContext.Provider>
-  );
-}
-
-
-
+/**
+ * @deprecated This file exists for backward compatibility only.
+ * Import from '@/app/contexts/leadContext' instead (note the correct spelling).
+ */
+export { LeadContext, LeadProvider, useLead } from './leadContext';

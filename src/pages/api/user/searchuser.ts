@@ -1,13 +1,12 @@
-import { Users } from "@/app/entity/Users";
-import { AppDataSource } from "@/app/lib/data-source";
+import prisma from "@/app/lib/prisma";
 import { VerifyToken } from "@/utils/VerifyToken";
 
-
-export default async function searchUsers(req, res) {
+export default async function searchUsers(req: any, res: any) {
     let user = await VerifyToken(req, res, null);
+    if (res.writableEnded) return;
+
     try {
         const query = req.query.q as string;
-        if (!query) return res.json([]);
 
         if (!user || !user.business) {
             return res.status(400).json({
@@ -16,16 +15,20 @@ export default async function searchUsers(req, res) {
             });
         }
 
-        const users = await AppDataSource.getRepository(Users)
-            .createQueryBuilder("user")
-            .leftJoin('user.business', 'business')
-            .where('business.id = :businessid', { businessid: user.business })
-            .andWhere("LOWER(user.name) LIKE :query", { query: `%${query.toLowerCase()}%` })
-            .limit(10)
-            .getMany();
+        const users = await prisma.user.findMany({
+            where: {
+                business_id: user.business,
+                ...(query ? {
+                    name: {
+                        contains: query,
+                    }
+                } : {})
+            },
+            take: 10
+        });
 
         res.json(users);
-    } catch (error) {
-        res.status(500).json({ message: "Error fetching users", error });
+    } catch (error: any) {
+        res.status(500).json({ message: "Error fetching users", error: error.message });
     }
-};
+}

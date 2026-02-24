@@ -1,42 +1,27 @@
+import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
-import { AppDataSource } from "../../app/lib/data-source";
-
 import { ResponseInstance } from "../../utils/instances";
-import { Users } from "../../app/entity/Users";
-import { UserRepository } from "../../app/reposatory/userRepo";
-import { RolesRepository } from "../../app/reposatory/roleRepo";
-import { Roles } from "../../app/entity/Roles";
-import { Business } from "../../app/entity/Business";
-import { Permissions } from "../../app/entity/Permissions";
-import { In } from "typeorm";
-import { Branch } from "../../app/entity/Branch";
 import { VerifyToken } from "@/utils/VerifyToken";
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
+  const user = await VerifyToken(req, res, 'roles');
+  if (res.writableEnded) return;
 
-  let user = await VerifyToken(req, res, 'roles');
-
-  const RolesRepo = RolesRepository.onlyPermit(user?.business);
-
-  if (req.method == "GET") {
+  if (req.method === "GET") {
     try {
-      
-       const RolesData = await RolesRepo.getMany();
-       
-      const tablerows = RolesData.map((data) => {
-        return {
-          id: data.id,
-          name: data.name,
-        };
+      const rolesData = await prisma.role.findMany({
+        where: { business_id: user.business }
       });
 
-      
+      const tablerows = rolesData.map((data: any) => ({
+        id: data.id,
+        name: data.name,
+      }));
 
       const tabledata = new GenerateTable({
         name: "Roles",
         data: tablerows,
-      }).policy(user,'roles').addform('roleform').formtype('page').gettable();
-
+      }).policy(user, 'roles').addform('roleform').formtype('page').gettable();
 
       const response: ResponseInstance = {
         message: "Request successful",
@@ -44,92 +29,86 @@ export default async function handler(req, res) {
         status: 200,
       };
 
-      res.json(response);
-    } catch (e) {
-      const response: ResponseInstance = {
-        message: "Something Went Wrong",
-        data: [],
+      return res.status(200).json(response);
+    } catch (e: any) {
+      return res.status(500).json({
+        message: "Something went wrong",
+        data: [e.message],
         status: 500,
-      };
-
-      res.json(response);
+      });
     }
   }
 
-  if (req.method == "POST"){
-
-    const { name , permissions ,branch} = req.body;
-
-    let buisnes = await AppDataSource.getRepository(Business).findOne({where:{id:user.business}});
-
-    let rolebranch;
-
-
-    if(!buisnes){
-      const response: ResponseInstance = {
-        message: "Business not found",
-        data: [],
-        status: 404,
-      };
-      res.json(response);
-      return;
-    }
-
-
-    let newRole =  new Roles();
-    
-    let permissionsList = await AppDataSource.getRepository(Permissions).find({
-      where:{id:In(permissions)}
-    })
-
-  
-    newRole.name = name;
-    newRole.permissions = permissionsList;
-    newRole.created_at = new Date();
-    newRole.buisness = user.business;
-
-    if (branch) {
-      rolebranch = await AppDataSource.getRepository(Branch).findOne({ where: { id: branch } })
-      newRole.branch = rolebranch;
-    }
-   
-    newRole.buisness= req.body.buisness;
-
-
-    AppDataSource.getRepository(Roles).save(newRole);
-
-    const response: ResponseInstance = {
-      message: "New Role Created Successfully",
-      data: newRole,
-      status: 200,
-    };
-    res.json(response);
-    
-  }
-  if (req.method == "DELETE") {
+  if (req.method === "POST") {
     try {
-  
-      
-      await AppDataSource.getRepository(Roles).createQueryBuilder("role")
-        .delete()
-        .where("id = :id", { id: req.query.id })
-        .execute();
+      const { name, permissions, branch } = req.body;
 
-      const response: ResponseInstance = {
-        message: "Record Deleted Succesfully",
+      if (!name) {
+        return res.status(400).json({
+          message: "Role name is required",
+          data: [],
+          status: 400,
+        });
+      }
+
+      const newRole = await prisma.$transaction(async (tx) => {
+        const role = await tx.role.create({
+          data: {
+            name: name,
+            business_id: user.business,
+            branch_id: branch ? Number(branch) : null,
+            created_at: new Date()
+          }
+        });
+
+        if (permissions?.length) {
+          await tx.rolePermission.createMany({
+            data: permissions.map((id: number | string) => ({
+              role_id: role.id,
+              permission_id: Number(id)
+            }))
+          });
+        }
+
+        return role;
+      });
+
+      return res.status(201).json({
+        message: "Role created successfully",
+        data: newRole,
+        status: 201,
+      });
+    } catch (e: any) {
+      return res.status(500).json({
+        message: "Something went wrong while creating role",
+        data: [e.message],
+        status: 500,
+      });
+    }
+  }
+
+  // ---- SOFT DELETE ----
+  if (req.query.delete) {
+    try {
+      const ids = req.body.leads?.map((item: any) => item.id);
+      if (!ids || ids.length === 0) {
+        return res.status(400).json({ message: "No records specified for deletion", data: [], status: 400 });
+      }
+
+      await prisma.role.updateMany({
+        where: { id: { in: ids } },
+        data: { deleted_at: new Date() }
+      });
+
+      return res.status(200).json({
+        message: "Deleted successfully",
         data: [],
         status: 200,
-      };
-
-      res.json(response);
-    } catch (e) {
-      const response: ResponseInstance = {
-        message: "Something went wrong while deleting record",
-        data: [e],
-        status: 500,
-      };
-
-      res.json(response);
+      });
+    } catch (e: any) {
+      return res.status(500).json({ message: "Deletion failed", data: [e.message], status: 500 });
     }
   }
+
+  return res.status(405).json({ message: "Method not allowed", data: [], status: 405 });
 }

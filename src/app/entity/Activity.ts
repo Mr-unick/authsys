@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn, DeleteDateColumn } from 'typeorm';
-import { Users } from './Users';
-import { Leads } from './Leads';
+import type { Users } from './Users';
+import type { Leads } from './Leads';
 
 
 export enum ActivityType {
@@ -31,9 +31,9 @@ export class Activity {
     @DeleteDateColumn({ name: 'deleted_at', nullable: true })
     deletedAt?: Date;
 
-    @ManyToOne(() => Users, (user) => user.activities)
+    @ManyToOne('Users', 'activities')
     user: Users | null;
 
-    @ManyToOne(() => Leads, lead => lead.activities, { onDelete: 'CASCADE', nullable: true })
-    lead: Leads | null; 
+    @ManyToOne('Leads', 'activities', { onDelete: 'CASCADE', nullable: true })
+    lead: Leads | null;
 }

@@ -11,19 +11,18 @@ const InputComponent = forwardRef(({
   ...rest
 }, ref) => {
   return (
-    <div className="flex flex-col gap-2">
-      <label className="text-sm max-sm:text-xs text-gray-500">
-        {label}{required ? <span className="text-red-500">*</span> : <span className="text-gray-400 ml-1 text-xs"> (optional)</span>}
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-sm font-semibold text-gray-700">
+        {label}{required ? <span className="text-red-500 ml-1">*</span> : <span className="text-gray-400 ml-1 text-xs font-normal">(optional)</span>}
       </label>
-      <Input 
+      <Input
         {...rest}
         ref={ref}
         name={name}
-        className="placeholder:text-gray-600 max-sm:text-xs border-[1px] border-gray-300 " 
-        type={type} 
+        className="h-11 w-full px-4 border-gray-200 rounded-xl focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-500 transition-all text-sm placeholder:text-gray-400 bg-white shadow-sm font-medium"
+        type={type}
         defaultValue={value}
         disabled={disabled}
-    
         placeholder={placeholder}
       />
     </div>

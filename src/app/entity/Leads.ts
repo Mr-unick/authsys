@@ -1,17 +1,13 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable, OneToOne, DeleteDateColumn } from 'typeorm';
-
-
-import { Business } from './Business';
-import { AreaOfOperation } from './AreaOfOperation';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, JoinTable, DeleteDateColumn } from 'typeorm';
+import type { Business } from './Business';
 import { StageChangeHistory } from './StageChangeHistory';
 import { LeadStages } from './LeadStages';
-import { Users } from './Users';
+import type { Users } from './Users';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
 
-@Entity('leads')
+@Entity()
 export class Leads {
-
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -21,22 +17,25 @@ export class Leads {
   @Column()
   email: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   phone: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
+  second_phone: string;
+
+  @Column({ nullable: true })
   city: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   state: string;
 
-  @Column({nullable:true ,default:"india"})
+  @Column({ nullable: true, default: "india" })
   country: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   notes: string;
 
-  @Column({nullable:true})
+  @Column({ nullable: true })
   pincode: string;
 
   @Column({ nullable: true })
@@ -44,9 +43,6 @@ export class Leads {
 
   @Column({ nullable: true, default: 'active' })
   status: string;
-
-  @Column({ nullable: true })
-  second_phone: string;
 
   @Column({ nullable: true })
   lead_source: string;
@@ -60,7 +56,7 @@ export class Leads {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  @ManyToMany(() => Users, (users) => users.leads, { nullable: true })
+  @ManyToMany('Users', 'leads', { nullable: true })
   @JoinTable({
     name: 'lead_users',
     joinColumn: { name: 'lead_id', referencedColumnName: 'id' },
@@ -73,20 +69,15 @@ export class Leads {
 
   @ManyToOne(() => LeadStages, stage => stage.leads, { nullable: true })
   @JoinColumn()
-  stage: typeof LeadStages;
+  stage: LeadStages;
 
-  @ManyToOne(() => Business, business => business.id)
+  @ManyToOne('Business', 'leads')
   @JoinColumn()
-  business:typeof Business;
+  business: Business;
 
   @OneToMany(() => Comment, comments => comments.lead, { nullable: true })
-  comments: typeof Comment
-
+  comments: Comment[];
 
   @OneToMany(() => Activity, activity => activity.lead, { nullable: true })
-  activities: typeof Activity
-
-  // @ManyToOne(() => AreaOfOperation, areaOfOperation => areaOfOperation.leads)
-  // areaOfOperation: AreaOfOperation;
-
+  activities: Activity[];
 }

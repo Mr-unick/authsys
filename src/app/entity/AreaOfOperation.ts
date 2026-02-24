@@ -1,12 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, DeleteDateColumn } from 'typeorm';
-
-
-
-import { Leads } from './Leads';
-import { Business } from './Business';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import type { Business } from './Business';
 
 @Entity('area_of_operations')
-
 export class AreaOfOperation {
   @PrimaryGeneratedColumn()
   id: number;
@@ -14,14 +9,23 @@ export class AreaOfOperation {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ nullable: true })
+  email: string;
+
+  @Column({ nullable: true })
+  number: string;
+
+  @Column({ nullable: true })
+  address: string;
+
+  @Column({ nullable: true })
   region_code: string;
 
-  @Column()
-  @ManyToOne(type => Business, business => business.id)
-  business_id: number;
+  @ManyToOne('Business', 'areasOfOperation')
+  @JoinColumn({ name: 'business_id' })
+  business: Business;
 
-  @Column({ type: 'timestamp',nullable: true})
+  @Column({ type: 'timestamp', nullable: true })
   created_at: Date;
 
   @Column({ type: 'timestamp', nullable: true })
@@ -29,9 +33,4 @@ export class AreaOfOperation {
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
-
-  // @OneToMany(() => Leads, lead => lead.areaOfOperation)
-  // leads: Leads[];
-
-  
 }

@@ -11,31 +11,31 @@ const NewLeadCard = ({ data }) => {
 
     return (
         <Link href={`/leads/details/${id}`}>
-            <div className="bg-white rounded-lg p-2 flex items-center justify-between my-3   border border-gray-200 hover:border-blue-300">
-                <div className="flex items-center space-x-3">
-                    <div className="bg-blue-100 p-2 rounded-full">
+            <div className="bg-white rounded-xl p-3 flex items-center justify-between my-2 border border-gray-50 hover:border-blue-200 hover:shadow-sm transition-all duration-200 group">
+                <div className="flex items-center space-x-4">
+                    <div className="bg-blue-50 p-2.5 rounded-xl group-hover:bg-blue-100 transition-colors">
                         <User className="h-5 w-5 text-blue-600" />
                     </div>
                     <div>
-                        <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                        <h3 className="text-sm font-bold text-[#0F1626]">
                             {name}
                         </h3>
-                        <div className="flex items-center mt-1 text-gray-500">
-                            <Phone className="h-4 w-4 mr-1" />
-                            <span className="text-sm">{number}</span>
+                        <div className="flex items-center mt-0.5 text-gray-400">
+                            <Phone className="h-3 w-3 mr-1.5" />
+                            <span className="text-[11px] font-medium tracking-tight whitespace-nowrap">{number}</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex items-center">
+                <div className="flex items-center gap-2">
                     {hasReminder && (
-                        <div className="flex items-center bg-amber-100 px-2 py-1 rounded-md">
-                            <Bell className="h-4 w-4 text-amber-600 mr-1" />
-                            <span className="text-xs font-medium text-amber-600">Reminder</span>
+                        <div className="flex items-center bg-amber-50 px-2 py-1 rounded-lg">
+                            <Bell className="h-3 w-3 text-amber-600 mr-1" />
+                            <span className="text-[10px] font-bold text-amber-600">Reminder</span>
                         </div>
                     )}
-                    <div className="ml-2 p-2 rounded-full hover:bg-gray-100">
-                        <MessageSquare className="h-4 w-4 text-gray-400" />
+                    <div className="p-2 rounded-lg text-gray-300 group-hover:text-blue-500 transition-colors">
+                        <MessageSquare className="h-4 w-4" />
                     </div>
                 </div>
             </div>

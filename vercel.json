@@ -1,0 +1,12 @@
+{
+    "crons": [
+        {
+            "path": "/api/cron/poll-linkedin",
+            "schedule": "*/15 * * * *"
+        },
+        {
+            "path": "/api/cron/refresh-tokens",
+            "schedule": "0 2 * * *"
+        }
+    ]
+}

@@ -1,91 +1,84 @@
-import { Users } from "lucide-react";
-import { AppDataSource } from "../../../app/lib/data-source";
-import { GenerateForm } from "../../../utils/generateForm";
-import { UserRepository } from "../../../app/reposatory/userRepo";
-import { Roles } from "../../../app/entity/Roles";
+import prisma from "@/app/lib/prisma";
+import { GenerateForm } from "@/utils/generateForm";
 import { VerifyToken } from "@/utils/VerifyToken";
 
+export default async function handler(req: any, res: any) {
+    const userContext = await VerifyToken(req, res, null);
+    if (res.writableEnded) return;
 
-export default async function handler(req, res) {
-
-    let user = await VerifyToken(req,res,null);
-
-    if(!user){
+    if (!userContext) {
         return res.status(401).json({
-            message: 'Unauthorized',
-            status: 401
+            message: "Unauthorized",
+            status: 401,
         });
     }
 
-    let roles = await AppDataSource.getRepository(Roles).createQueryBuilder('roles').where('roles.buisnesId = :businessId', { businessId: user?.business }).getMany();
-    let roleOptions = roles.map(role => ({ id: role.id, name: role.name }));
+    try {
+        const roles = await prisma.role.findMany({
+            where: { business_id: userContext.business }
+        });
 
+        const roleOptions = roles.map((role: any) => ({
+            id: role.id,
+            name: role.name
+        }));
 
-    if (req.query.id !== "undefined") {
+        if (req.query.id !== "undefined" && req.query.id) {
+            const existingUser = await prisma.user.findFirst({
+                where: {
+                    id: Number(req.query.id),
+                    business_id: userContext.business
+                },
+                include: {
+                    role: true
+                }
+            });
 
-        // we are not recinving any id means the request is create
+            if (!existingUser) {
+                return res.status(404).json({ message: "User not found", status: 404 });
+            }
 
-        const UsersRepo = await UserRepository.onlyPermit(1);
+            const form = new GenerateForm('User Form');
 
-        const user = await UsersRepo.where("user.id = :id", { id: req.query.id }).getOne();
+            form.addField('name', 'text').value(existingUser?.name).required();
+            form.addField('email', 'email').value(existingUser?.email);
+            form.addField('number', 'text').value((existingUser as any)?.number).newRow();
+            form.addField('address', 'textarea').newRow().value((existingUser as any)?.address);
+            form.addField('gender', 'select').value((existingUser as any)?.gender).options([
+                { id: 'male', name: 'Male' },
+                { id: 'female', name: 'Female' },
+                { id: 'other', name: 'Other' },
+            ]);
+            form.addField('role', 'select').options(roleOptions).value(existingUser?.role_id).required();
+            form.addField('old_password', 'password');
+            form.addField('new_password', 'password');
 
-        const form = new GenerateForm('User Form');
+            return res.status(200).json(form.getForm());
+        } else {
+            const form = new GenerateForm('Create User');
 
-        form.addField('name', 'text').value(user?.name).required();
-        form.addField('email', 'email').value(user?.email);
-        form.addField('number', 'text').value(user?.number).newRow();
-        form.addField('address', 'textarea').newRow().value(user?.address);
-        form.addField('gender', 'select').value(user?.gender).options([{
-            id: 'male',
-            name: 'Male'
-        },{
-            id: 'female',
-            name: 'Female'
-        },{
-            id: 'other',
-            name: 'Other'
-        }]);
-        form.addField('role', 'select').options(roleOptions).value(user?.role?.id).required();
-        form.addField('old_password', 'password').value('yavatmal, ghtanji dist');
-        form.addField('new_password', 'password').value('yavatmal, ghtanji dist');
-       
-        res.json(form.getForm());
+            form.addField('name', 'text').required();
+            form.addField('email', 'email').required();
+            form.addField('address', 'textarea').newRow().required();
+            form.addField('gender', 'select').value('male').options([
+                { id: 'male', name: 'Male' },
+                { id: 'female', name: 'Female' },
+                { id: 'other', name: 'Other' },
+            ]);
+            form.addField('role', 'select').options(roleOptions).required();
+            form.addField('password', 'password').required();
+            form.addField('confirm_password', 'password').required();
 
+            form.submiturl('getUserProps');
+            form.method('post');
 
-    } else {
-
-
-        const form = new GenerateForm('Create User');
-
-    
-        form.addField('name', 'text').required();
-        form.addField('email', 'email').required();
-      
-       
-        form.addField('address', 'textarea').newRow().value('yavatmal, ghtanji dist').required();
-
-        form.addField('gender', 'select').value('male').options([{
-            id: 'male',
-            name: 'Male'
-        }, {
-            id: 'female',
-            name: 'Female'
-        }, {
-            id: 'other',
-            name: 'Other'
-        }]);
-        form.addField('role', 'select').options(roleOptions).required();
-
-        form.addField('password', 'password').required();
-        form.addField('confirm_password', 'password').required();
-        
-        form.submiturl('getUserProps');
-        form.method('post');
-
-        res.json(form.getForm());
-
+            return res.status(200).json(form.getForm());
+        }
+    } catch (error: any) {
+        return res.status(500).json({
+            message: "Something went wrong",
+            error: error.message,
+            status: 500,
+        });
     }
-
-
-
 }

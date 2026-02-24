@@ -1,35 +1,31 @@
-import { Column, Entity, JoinColumn, Long, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, DeleteDateColumn } from "typeorm";
-import { Users } from "./Users";
-import { Leads } from "./Leads";
-
-
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
+import type { Users } from './Users';
+import type { Leads } from './Leads';
 
 @Entity('comment')
-
-export class Comment{
+export class Comment {
     @PrimaryGeneratedColumn()
-    id : number;
+    id: number;
 
     @Column()
-    comment:string;
+    comment: string;
 
     @Column({ type: 'timestamp', nullable: true })
     created_at: Date;
 
-    @Column({nullable:true , type: 'varchar', length: 1000 })
-    url :String
+    @Column({ nullable: true, type: 'varchar', length: 1000 })
+    url: string;
 
-    @Column({nullable:true})
-    type : String
+    @Column({ nullable: true })
+    type: string;
 
-    @ManyToOne(()=>Leads,leads=>leads.comments)
-    lead:typeof Leads
+    @ManyToOne('Leads', 'comments')
+    lead: Leads;
 
-    @ManyToOne(()=>Users,users=>users.comment)
+    @ManyToOne('Users', 'comment')
     @JoinColumn({ name: 'userId', referencedColumnName: 'id' })
-    user:typeof Users
+    user: Users;
 
     @DeleteDateColumn({ name: 'deleted_at', nullable: true })
     deletedAt?: Date;
-
 }

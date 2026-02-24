@@ -15,32 +15,32 @@ import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import Addcollborator from "./modals/addcollaborator";
 
-export default function PopupModal({ modaltype ,children ,classname ,data ,url ,setChange}) {
+export default function PopupModal({ modaltype, children, classname, data, url, setChange }) {
     const router = useRouter();
 
     const [open, setOpen] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const handleAssign =async (selectedUser) => {
+    const handleAssign = async (selectedUser) => {
 
-      setLoading(true)
-      
-        let response = await axios.post('/api/leaddetails/assignleads',{
-            leads : data,
-            salespersons : selectedUser.map(user => user.id)
+        setLoading(true)
+
+        let response = await axios.post('/api/leaddetails/assignleads', {
+            leads: data,
+            salespersons: selectedUser.map(user => user.id)
         })
-       
-      if(response.status == 200){
-        setOpen(false)
-      
-        toast.success(response.data.message)
-       //  window.location.reload()
 
-      }else{
-        toast.error('Leads assigned failed')
-      }
-      setChange(true)
-      setLoading(false)
+        if (response.status == 200) {
+            setOpen(false)
+
+            toast.success(response.data.message)
+            //  window.location.reload()
+
+        } else {
+            toast.error('Leads assigned failed')
+        }
+        setChange(true)
+        setLoading(false)
     }
 
     const handleDelete = async () => {
@@ -54,7 +54,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data ,url ,
             toast.success('Deleted successfully')
             setOpen(false)
             setChange(true)
-           
+
         } else {
             toast.error('Operation failed')
         }
@@ -75,7 +75,7 @@ export default function PopupModal({ modaltype ,children ,classname ,data ,url ,
             toast.success('Collaborators added successfully')
             setOpen(false)
             setChange(true)
-           
+
         } else {
             toast.error('Leads assigned failed')
         }
@@ -83,39 +83,39 @@ export default function PopupModal({ modaltype ,children ,classname ,data ,url ,
         setChange(true)
         setOpen(false)
     }
-    
+
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button
-                
+
                     className={classname}
                     onClick={() => setOpen(true)}
                 >
-                <span className="text-sm flex items-center gap-2">{children}</span>
+                    <span className="text-sm flex items-center gap-2">{children}</span>
                 </button>
 
             </DialogTrigger>
             <DialogContent className="max-h-fit max-w-fit rounded-md ">
 
-               {loading ?
-                <div className="flex  w-[20rem] min-h-[15rem] items-center justify-center h-full">
-                    <Loader2 className="animate-spin" />
-                </div> : <>
+                {loading ?
+                    <div className="flex  w-[20rem] min-h-[15rem] items-center justify-center h-full">
+                        <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                    </div> : <>
                         {
                             modaltype == 'confirmdelete' ? <ConfirmDelete itemName={'ss'} setOpen={setOpen} handleDelete={handleDelete} /> :
-                            modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} setOpen={setOpen} handleAssign={handleAssign} />
+                                modaltype == 'confirmassign' && <ConfirmAssign itemName={'ss'} setOpen={setOpen} handleAssign={handleAssign} />
                         }
 
                         {
                             modaltype == 'addcollaborators' && <Addcollborator itemName={'ss'} setOpen={setOpen} handleaddcollaborators={handleaddcollaborators} />
                         }
-                </>
-                 }
+                    </>
+                }
 
 
-        </DialogContent>
+            </DialogContent>
         </Dialog>
     );
 }

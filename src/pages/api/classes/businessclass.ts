@@ -1,11 +1,5 @@
-import { AppDataSource } from "@/app/lib/data-source";
-import { Business } from "@/app/entity/Business";
-import { Users } from "@/app/entity/Users";
-import { Roles } from "@/app/entity/Roles";
-import { Leads } from "@/app/entity/Leads";
-import { AreaOfOperation } from "@/app/entity/AreaOfOperation";
-import { LeadStages } from "@/app/entity/LeadStages";
-import { Branch } from "@/app/entity/Branch";
+import prisma from "@/app/lib/prisma";
+import { Business, AreaOfOperation, LeadStage, Branch, User, Lead } from "@prisma/client";
 
 class BusinessClass {
     private businessId?: number;
@@ -15,195 +9,207 @@ class BusinessClass {
     }
 
     // Create a new business
-    async createBusiness(businessData: Partial<Business>) {
-        const businessRepository = AppDataSource.getRepository(Business);
-        const newBusiness = businessRepository.create(businessData);
-        return await businessRepository.save(newBusiness);
+    async createBusiness(businessData: any) {
+        return await prisma.business.create({
+            data: businessData
+        });
     }
 
     // Get business by ID with relations
     async getBusinessById() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.users", "users")
-            .leftJoinAndSelect("business.role", "roles")
-            .leftJoinAndSelect("business.areasOfOperation", "areasOfOperation")
-            .leftJoinAndSelect("business.leadStages", "leadStages")
-            .leftJoinAndSelect("business.branches", "branches")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                users: true,
+                roles: true,
+                areasOfOperation: true,
+                leadStages: true,
+                branches: true,
+            }
+        });
     }
 
     // Update business
-    async updateBusiness(updateData: Partial<Business>) {
+    async updateBusiness(updateData: any) {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        const businessRepository = AppDataSource.getRepository(Business);
-        await businessRepository.update(this.businessId, updateData);
+
+        await prisma.business.update({
+            where: { id: this.businessId },
+            data: updateData
+        });
         return await this.getBusinessById();
     }
 
     // Delete business
     async deleteBusiness() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        const businessRepository = AppDataSource.getRepository(Business);
-        return await businessRepository.delete(this.businessId);
+
+        return await prisma.business.delete({
+            where: { id: this.businessId }
+        });
     }
 
     // Get all businesses
     async getAllBusinesses() {
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.users", "users")
-            .leftJoinAndSelect("business.role", "roles")
-            .getMany();
+        return await prisma.business.findMany({
+            include: {
+                users: true,
+                roles: true,
+            }
+        });
     }
 
     // Get business users
     async getBusinessUsers() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.users", "users")
-            .leftJoinAndSelect("users.role", "role")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                users: {
+                    include: {
+                        role: true
+                    }
+                }
+            }
+        });
     }
 
     // Get business roles
     async getBusinessRoles() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.role", "roles")
-            .leftJoinAndSelect("roles.permissions", "permissions")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                roles: {
+                    include: {
+                        rolePermissions: {
+                            include: { permission: true }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     // Get business leads
     async getBusinessLeads() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.leads", "leads")
-            .leftJoinAndSelect("leads.users", "users")
-            .leftJoinAndSelect("leads.stage", "stage")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                leads: {
+                    include: {
+                        leadUsers: { include: { user: true } },
+                        stage: true
+                    }
+                }
+            }
+        });
     }
 
     // Get business areas of operation
     async getBusinessAreas() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.areasOfOperation", "areasOfOperation")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                areasOfOperation: true
+            }
+        });
     }
 
     // Add area of operation to business
-    async addAreaOfOperation(areaData: Partial<AreaOfOperation>) {
+    async addAreaOfOperation(areaData: any) {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        const business = await this.getBusinessById();
-        if (!business) throw new Error("Business not found");
 
-        const areaRepository = AppDataSource.getRepository(AreaOfOperation);
-        const newArea = areaRepository.create({
-            ...areaData,
-            business_id: this.businessId
+        return await prisma.areaOfOperation.create({
+            data: {
+                ...areaData,
+                business_id: this.businessId
+            }
         });
-        
-        return await areaRepository.save(newArea);
     }
 
     // Get business lead stages
     async getBusinessLeadStages() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.leadStages", "leadStages")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                leadStages: true
+            }
+        });
     }
 
     // Add lead stage to business
-    async addLeadStage(stageData: LeadStages) {
+    async addLeadStage(stageData: any) {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        const business = await this.getBusinessById();
-        if (!business) throw new Error("Business not found");
 
-        const stageRepository = AppDataSource.getRepository(LeadStages);
-        const newStage = stageRepository.create({
-            ...stageData,
-            // business: business
+        return await prisma.leadStage.create({
+            data: {
+                ...stageData,
+                business_id: this.businessId
+            }
         });
-        
-        return await stageRepository.save(newStage);
     }
 
     // Get business branches
     async getBusinessBranches() {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        return await AppDataSource.getRepository(Business)
-            .createQueryBuilder("business")
-            .leftJoinAndSelect("business.branches", "branches")
-            .where("business.id = :id", { id: this.businessId })
-            .getOne();
+
+        return await prisma.business.findUnique({
+            where: { id: this.businessId },
+            include: {
+                branches: true
+            }
+        });
     }
 
     // Add branch to business
-    async addBranch(branchData: Partial<Branch>) {
+    async addBranch(branchData: any) {
         if (!this.businessId) throw new Error("Business ID is required");
-        
-        const business = await this.getBusinessById();
-        if (!business) throw new Error("Business not found");
 
-        const branchRepository = AppDataSource.getRepository(Branch);
-        const newBranch = branchRepository.create({
-            ...branchData,
-            // buisness: business
+        return await prisma.branch.create({
+            data: {
+                ...branchData,
+                business_id: this.businessId
+            }
         });
-        
-        return await branchRepository.save(newBranch);
     }
 
     // Get business statistics
-    // async getBusinessStats() {
-    //     if (!this.businessId) throw new Error("Business ID is required");
-        
-    //     const business = await this.getBusinessById();
-    //     if (!business) throw new Error("Business not found");
+    async getBusinessStats() {
+        if (!this.businessId) throw new Error("Business ID is required");
 
-    //     const [userCount, leadCount, branchCount] = await Promise.all([
-    //         AppDataSource.getRepository(Users).count({ where: { buisnesId: this.businessId } }),
-    //         AppDataSource.getRepository(Leads).count({ where: { businessId: this.businessId } }),
-    //         AppDataSource.getRepository(Branch).count({ where: { buisnessId: this.businessId } })
-    //     ]);
+        const business = await prisma.business.findUnique({
+            where: { id: this.businessId }
+        });
+        if (!business) throw new Error("Business not found");
 
-    //     return {
-    //         userCount,
-    //         leadCount,
-    //         branchCount,
-    //         businessDetails: {
-    //             name: business.business_name,
-    //             email: business.email,
-    //             contact: business.contact_number
-    //         }
-    //     };
-    // }
+        const [userCount, leadCount, branchCount] = await Promise.all([
+            prisma.user.count({ where: { business_id: this.businessId } }),
+            prisma.lead.count({ where: { business_id: this.businessId } }),
+            prisma.branch.count({ where: { business_id: this.businessId } })
+        ]);
+
+        return {
+            userCount,
+            leadCount,
+            branchCount,
+            businessDetails: {
+                name: business.business_name,
+                email: business.email,
+                contact: business.contact_number
+            }
+        };
+    }
 }
 
-export default BusinessClass; 
+export default BusinessClass;

@@ -1,97 +1,119 @@
-import { getRepository } from "typeorm";
-import { Users } from "../../app/entity/Users";
-import { Business } from "../../app/entity/Business";
-import { Leads } from "../../app/entity/Leads";
-import { AppDataSource } from "../../app/lib/data-source";
-import { StageChangeHistory } from "../../app/entity/StageChangeHistory";
-import { LeadStages } from "../../app/entity/LeadStages";
-import { LeadsTableInstace, ResponseInstance } from "../../utils/instances";
+import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
 import { VerifyToken } from "@/utils/VerifyToken";
-import MailService from "@/utils/mail/sendmail";
 
-export default async function handler(req, res) {
-
-    let user = await VerifyToken(req, res, 'freshleads');
+export default async function handler(req: any, res: any) {
+    let user = await VerifyToken(req, res, "freshleads");
+    if (res.writableEnded) return;
 
     if (req.method == "GET") {
-        const leadRepository = AppDataSource.getRepository(Leads);
-        let lead;
+        try {
+            const whereClause: any = {
+                business_id: user.business,
+                deleted_at: null,
+                leadUsers: {
+                    none: {},
+                },
+            };
 
-        let count = await leadRepository.createQueryBuilder('leads')
-                    .leftJoin('leads.business', 'business')
-                    .where('business.id = :businessid', { businessid: user.business })
-                    .getMany();
-
-        lead = await leadRepository.createQueryBuilder('leads')
-            .leftJoin('leads.users', 'users')
-            .leftJoin('leads.history', 'history')
-            .leftJoin('history.changed_by', 'changed_by')
-            .leftJoin('leads.stage', 'stage')
-            .leftJoin('leads.business', 'business')
-            .where('business.id = :businessid', { businessid: user.business })
-            .andWhere(qb => {
-                const subQuery = qb.subQuery()
-                    .select("lu.lead_id")
-                    .from("lead_users", "lu")
-                    .where("lu.lead_id = leads.id")
-                    .getQuery();
-                return `NOT EXISTS (${subQuery})`;
-            })
-            .limit(10)
-            .getMany();
-
-       
-
-        let leads = lead.map((data) => {
-
-            let collaborators = data?.users?.map((collborator) => {
-                return collborator.name;
+            const totalCount = await prisma.lead.count({
+                where: {
+                    business_id: user.business,
+                    deleted_at: null,
+                },
             });
 
-            let history = data?.history?.map((history) => {
+            const leadRows = await prisma.lead.findMany({
+                where: whereClause,
+                include: {
+                    leadUsers: { include: { user: true } },
+                    stage: true,
+                },
+                take: 10,
+            });
+
+            const leads = leadRows.map((data: any) => {
+                const collaborators =
+                    data?.leadUsers?.map((lu: any) => lu.user?.name) || [];
+
                 return {
-                    stage: history.stage.stage_name,
-                    changed_by: history.changed_by.name,
-                    comment: history.reason,
+                    id: data.id,
+                    name: data?.name || "-",
+                    email: data?.email || "-",
+                    address: data?.address || "-",
+                    phone: data?.phone || "-",
+                    second_phone: data?.second_phone || "-",
+                    status: true,
+                    collborators: collaborators,
+                    headcollborator: (data as any).headcollborator || "Nikhil Lende",
+                    nextfollowup: (data as any).nextfollowup || "-",
+                    lead_source: data?.lead_source || "-",
+                    note: data?.notes || "-",
                 };
             });
 
-            return {
-                id: data.id,
-                name: data?.name || '-',
-                email: data?.email || '-',
-                address: data?.address || '-',
-                phone: data?.phone || '-',
-                second_phone: data?.second_phone || '-',
-                status: true || '-',
-                collborators: collaborators || '-',
-                headcollborator: data.headcollborator || 'Nikhil Lende',
-                nextfollowup: data?.nextfollowup || '-',
-                lead_source: data?.source || '-',
-                note: data?.note || '-'
+            const tabledata = new GenerateTable({
+                name: "Leads",
+                data: leads,
+            })
+                .policy(user, "freshleads")
+                .addform("leadform")
+                .gettable();
 
+            const response = {
+                message: "Request successful",
+                data: {
+                    ...tabledata,
+                    upload: true,
+                },
+                status: 200,
+                count: totalCount,
+            };
+
+            return res.json(response);
+        } catch (error: any) {
+            return res.status(500).json({
+                message: "Something went wrong",
+                error: error.message,
+                status: 500,
+            });
+        }
+    }
+
+    // ---- SOFT DELETE ----
+    if (req.query.delete) {
+        try {
+            const ids = req.body.leads?.map((item: any) => item.id);
+            if (!ids || ids.length === 0) {
+                return res
+                    .status(400)
+                    .json({
+                        status: 400,
+                        message: "No records specified for deletion",
+                        data: [],
+                    });
             }
 
-        })
+            await prisma.lead.updateMany({
+                where: { id: { in: ids } },
+                data: { deleted_at: new Date() },
+            });
 
-        const tabledata = new GenerateTable({
-            name: "Leads",
-            data: leads,
-        }).policy(user, 'freshleads').addform('leadform').gettable();
-
-        const response = {
-            message: "Request successful",
-            data: {
-                ...tabledata,upload:true
-            },
-            status: 200,
-            count:count.length
-        };
-
-        res.json(response)
+            return res.status(200).json({
+                status: 200,
+                message: "Deleted successfully",
+                data: [],
+            });
+        } catch (error: any) {
+            return res.status(500).json({
+                status: 500,
+                message: "Deletion failed",
+                error: error.message,
+            });
+        }
     }
+
+    return res
+        .status(405)
+        .json({ message: "Method not allowed", data: [], status: 405 });
 }
-
-
-

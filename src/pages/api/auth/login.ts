@@ -1,96 +1,100 @@
-import cookie from 'cookie';
+import prisma from "@/app/lib/prisma";
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
-import { redirect } from 'next/navigation';
-import { AppDataSource } from '@/app/lib/data-source';
-import { Users } from '@/app/entity/Users';
-import { Permissions } from '@/app/entity/Permissions';
-import { Roles } from '@/app/entity/Roles';
-import bcrypt from "bcrypt";
+import bcrypt from 'bcryptjs';
+import { env } from '@/config/env';
+import { AUTH_COOKIE_NAME, AUTH_COOKIE_MAX_AGE_SECONDS, JWT_EXPIRATION } from '@/config/constants';
+import { activityLog } from "@/utils/activityLogs";
+import { ActivityType } from "@/utils/activityTypes";
 
-export default async function handler(req, res) {
 
+export default async function handler(req: any, res: any) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: 'Method not allowed', status: 405 });
+    }
 
     try {
         const { email, password } = req.body;
 
-        let user = await AppDataSource.getRepository(Users)
-            .createQueryBuilder('users')
-            .leftJoinAndSelect('users.role', 'role')
-            .leftJoinAndSelect('users.business', 'business')
-            .addSelect('users.password')
-            .where('users.email = :email', { email: email })
-            .getOne();
-
-        console.log(user , req.body,'this is user')
-
-        if (!user) {
-            return res.json({
-                message: 'User not found',
-                status:404
+        // Input validation
+        if (!email || !password) {
+            return res.status(400).json({
+                message: 'Email and password are required',
+                status: 400,
             });
         }
 
-       let comparepass =  bcrypt.compareSync(password, user.password);
-
-       console.log(!comparepass)
-
-       if (!comparepass) {
-        return res.json({
-            message: 'Incorrect Password',
-            status:401
+        const user = await prisma.user.findUnique({
+            where: { email },
+            include: {
+                role: {
+                    include: {
+                        rolePermissions: {
+                            include: {
+                                permission: true
+                            }
+                        }
+                    }
+                },
+                business: true
+            }
         });
+
+        if (!user) {
+            return res.status(404).json({
+                message: 'User not found',
+                status: 404,
+            });
         }
 
-       
-        let permissions = (await AppDataSource.getRepository(Users)
-            .createQueryBuilder('users')
-            .leftJoin('users.role', 'role')
-            .leftJoin('role.permissions', 'permissions')
-            .select('permissions.permission', 'permission')
-            .where('users.id = :id', { id: user?.id })
-            .getRawMany()).map(p => p.permission);
-          
-        let buisness = (await AppDataSource.getRepository(Users).createQueryBuilder('users').leftJoin('users.business', 'business').where('users.id = :id', { id: user?.id }).getRawMany()).map(p => p.users_buisnesId)[0];     
+        const isPasswordValid = bcrypt.compareSync(password, user.password);
 
-      
-        let newuser = {
-            ...user,
-            role: user?.role.name,
-            business: buisness,
-            permissions: permissions
-
+        if (!isPasswordValid) {
+            return res.status(401).json({
+                message: 'Incorrect password',
+                status: 401,
+            });
         }
 
-        const token = jwt.sign(newuser, 'your_secret_key', { expiresIn: '24h' });
+        // Extract permissions
+        const permissions = user.role?.rolePermissions.map(p => p.permission.permission) || [];
 
-        const serializedCookie = serialize('token', token, {
+        // Build token payload (exclude password)
+        const tokenPayload = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            role: user.role?.name,
+            business: user.business_id,
+            permissions,
+        };
+
+        // Use environment-sourced JWT secret
+        const token = jwt.sign(tokenPayload, env.JWT_SECRET, { expiresIn: JWT_EXPIRATION });
+
+        // Cookie maxAge aligned with JWT expiration
+        const serializedCookie = serialize(AUTH_COOKIE_NAME, token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            maxAge: 60 * 60 * 60 * 24,
+            secure: env.NODE_ENV === 'production',
+            maxAge: AUTH_COOKIE_MAX_AGE_SECONDS,
             path: '/',
             sameSite: 'strict',
         });
 
         res.setHeader('Set-Cookie', serializedCookie);
 
-        // sessionStorage.setItem('user',JSON.stringify({
-        //     name : newuser.name,
-        //     role : newuser.role
-        // }))
+        // turbo
+        await activityLog(ActivityType.LOGIN, `${user.name} logged in`, user.id);
 
-        return res.json({
+        return res.status(200).json({
             message: 'Login successful',
-            status : 200
+            status: 200,
         });
-
-    } catch (error) {
-
-        console.log(error)
-
+    } catch (error: any) {
         return res.status(500).json({
             message: 'Login unsuccessful',
             error: error.message,
+            status: 500,
         });
     }
 }

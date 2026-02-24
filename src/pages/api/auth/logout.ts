@@ -1,37 +1,33 @@
-import cookie from 'cookie';
-import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
-import { redirect } from 'next/navigation';
 import { VerifyToken } from '@/utils/VerifyToken';
+import { AUTH_COOKIE_NAME } from '@/config/constants';
+import { activityLog } from "@/utils/activityLogs";
+import { ActivityType } from "@/utils/activityTypes";
 
-export default async function handler(req, res) {
+export default async function handler(req: any, res: any) {
+    if (req.method !== 'POST') {
+        return res.status(405).json({ message: 'Method not allowed' });
+    }
 
     try {
-
-        const user = VerifyToken(req, res, null);
-
-        if (!user) {
-            return res.status(401).json({
-                message: 'Unauthorized',
-            });
-        }
-
-        const serializedCookie = serialize('token', '', {
+        const serializedCookie = serialize(AUTH_COOKIE_NAME, '', {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
             expires: new Date(0), // Expires immediately
             path: '/',
         });
 
-        res.setHeader('Set-Cookie', serializedCookie);
+        const user = await VerifyToken(req, res, null);
+        if (user) {
+            await activityLog(ActivityType.LOGOUT, `${user.name} logged out`, user.id);
+        }
 
+        res.setHeader('Set-Cookie', serializedCookie);
 
         return res.status(200).json({
             message: 'Logged out successfully',
         });
-
-    } catch (error) {
-
+    } catch (error: any) {
         return res.status(500).json({
             message: 'Logout unsuccessful',
             error: error.message,

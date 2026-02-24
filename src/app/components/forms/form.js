@@ -14,7 +14,7 @@ import { redirect } from "next/navigation";
 import { useRouter } from "next/router";
 import { Loader2 } from "lucide-react";
 
-export default function FormComponent({ formdata, id}) {
+export default function FormComponent({ formdata, id, onSuccess }) {
   const {
     register,
     handleSubmit,
@@ -34,7 +34,7 @@ export default function FormComponent({ formdata, id}) {
       .then((res) => {
         setdata(res);
         setRes(res);
-        
+
       })
       .catch(error => {
         console.error("Failed to fetch data:", error);
@@ -43,13 +43,14 @@ export default function FormComponent({ formdata, id}) {
   }, [change]);
 
   const onSubmit = async (data) => {
-  
+
     setloder(true)
 
     if (res.method === "post") {
       let response = await axios.post(`/api/${res.submiturl}`, data);
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status < 300) {
         toast.success(response.data.message);
+        if (onSuccess) onSuccess(response.data);
         // router.reload()
         setloder(false)
       } else {
@@ -59,10 +60,11 @@ export default function FormComponent({ formdata, id}) {
 
     } else if (res.method === "put") {
       let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
-      if (response.status === 200) {
+      if (response.status >= 200 && response.status < 300) {
         toast.success(response.data.message);
+        if (onSuccess) onSuccess(response.data);
         //  router.reload()
-       setloder(false)
+        setloder(false)
       } else {
         toast.error(response.data.message);
         setloder(false)
@@ -84,23 +86,26 @@ export default function FormComponent({ formdata, id}) {
 
 
   return (
-    
+
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col justify-around  px-5 max-sm:px-2 max-sm:max-h-[35rem] overflow-y-scroll max-sm:text-xs  py-2 ${data?.fields?.length <= 10 ? "w-[40rem] max-sm:w-[20rem]" : "w-[60rem]"}`}
+      className={`flex flex-col gap-8 p-4 sm:p-6 max-sm:max-h-[35rem] overflow-y-auto ${data?.fields?.length <= 10 ? "w-full max-w-5xl px-6" : "w-full max-w-[1500px] px-6"}`}
     >
-      <div>
-        <h1 className="mb-6 text-xl max-sm:text-[1rem] font-normal text-gray-700">
+      <div className="mb-2">
+        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
           {data?.title}
         </h1>
+        <p className="text-sm text-gray-500 mt-1">Please provide the necessary information below.</p>
       </div>
-      <div className={`grid  gap-x-8 gap-y-8 max-sm:gap-y-4 ${data?.fields?.length <= 10 ? "grid-cols-2 " : "grid-cols-3"}`}>
+
+      <div className={`grid gap-x-10 gap-y-5 max-sm:gap-y-4 ${data?.fields?.length <= 10 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 md:grid-cols-2"}`}>
         {data?.fields?.map((field, key) => {
-          const gridClasses = field.newRow ? "col-span-2" : "max-sm:col-span-2";
+          const gridClasses = field.newRow ? "sm:col-span-2 lg:col-span-3" : "";
           const validationRules = field.required
             ? { required: `${field.name} is required` }
             : {};
-
+          // ... select logic remains same but container styling applied ...
+          // ... input logic remains same but container styling applied ...
           if (field.type === "select") {
             return (
               <div key={key} className={gridClasses}>
@@ -113,7 +118,7 @@ export default function FormComponent({ formdata, id}) {
                   {...register(field.name, validationRules)}
                 />
                 {errors[field.name] && (
-                  <p className="text-red-500 text-xs mt-2">
+                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 px-1">
                     {errors[field.name]?.message}
                   </p>
                 )}
@@ -141,7 +146,7 @@ export default function FormComponent({ formdata, id}) {
                   {...register(field.name, validationRules)}
                 />
                 {errors[field?.name] && (
-                  <p className="text-red-500 text-xs mt-2">
+                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 px-1">
                     {errors[field?.name]?.message}
                   </p>
                 )}
@@ -159,32 +164,19 @@ export default function FormComponent({ formdata, id}) {
                 />
               </div>
             )
-          } else if (field.type === "date") {
-            return (
-              <div key={key} className={gridClasses}>
-                <TextAreaComponent
-                  value={field.value}
-                  label={field.label}
-                  placeholder={field.placeholder}
-                  required={field.required}
-                  {...register(field.name, validationRules)}
-                />
-              </div>
-            )
           }
         })}
       </div>
 
-      <div className="flex justify-end w-full mt-8 gap-4 ">
+      <div className="flex justify-end pt-6 border-t border-gray-100 mt-4">
         <Button
-          className="w-[8rem] bg-[#4E49F2] hover:bg-[#4E49F2]"
+          className="w-full sm:w-auto min-w-[140px] bg-indigo-600 hover:bg-indigo-700 text-white h-10 rounded-lg shadow-sm transition-all font-semibold text-sm"
           type="submit"
-        // onClick={()=>{onsubmit}}
-        disabled={loder}
+          disabled={loder}
         >
-         {
-          loder ? <Loader2 className="animate-spin"/> : "Submit"
-         }
+          {
+            loder ? <Loader2 className="h-5 w-5 animate-spin text-white" /> : (id ? "Update Details" : "Save Changes")
+          }
         </Button>
       </div>
     </form>

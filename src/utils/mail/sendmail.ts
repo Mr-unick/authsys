@@ -1,4 +1,5 @@
 import nodemailer, { Transporter, SendMailOptions } from 'nodemailer';
+import { env } from '@/config/env';
 
 interface EmailConfig {
   host: string;
@@ -21,24 +22,27 @@ interface EmailOptions {
   }>;
 }
 
+/**
+ * Singleton mail service using nodemailer.
+ * Uses centralized env.ts for SMTP configuration.
+ */
 class MailService {
   private static instance: MailService;
   private transporter: Transporter;
   private defaultFrom: string;
 
   private constructor() {
- 
     const config: EmailConfig = {
-      host: process.env.SMTP_HOST || 'smtp.gmail.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_SECURE === 'true',
+      host: env.SMTP_HOST,
+      port: env.SMTP_PORT,
+      secure: env.SMTP_SECURE,
       auth: {
-        user: process.env.SMTP_USER || '',
-        pass: process.env.SMTP_PASS || '',
-      }
+        user: env.SMTP_USER,
+        pass: env.SMTP_PASS,
+      },
     };
 
-    this.defaultFrom = process.env.SMTP_FROM || 'noreply@yourdomain.com';
+    this.defaultFrom = env.SMTP_FROM;
     this.transporter = nodemailer.createTransport(config);
   }
 
@@ -50,7 +54,7 @@ class MailService {
   }
 
   /**
-   * Send a basic email
+   * Send a basic email.
    */
   async sendEmail(options: EmailOptions): Promise<void> {
     try {
@@ -63,70 +67,61 @@ class MailService {
         attachments: options.attachments,
       };
 
-     let res = await this.transporter.sendMail(mailOptions);
-
-      console.log('Mail Sent Succesfully',res)
+      await this.transporter.sendMail(mailOptions);
     } catch (error) {
-      console.error('Error sending email:', error);
+      console.error('[MailService] Error sending email:', error);
       throw error;
     }
   }
 
-  
+  /**
+   * Send a welcome email to a new user.
+   */
   async sendWelcomeEmail(to: string, name: string): Promise<void> {
-    const subject = 'Welcome to Our Platform!';
-    const html = `
-      <h1>Welcome ${name}!</h1>
-      <p>Thank you for joining our platform. We're excited to have you on board!</p>
-    `;
-
     await this.sendEmail({
       to,
-      subject,
-      html,
+      subject: 'Welcome to Our Platform!',
+      html: `
+        <h1>Welcome ${name}!</h1>
+        <p>Thank you for joining our platform. We're excited to have you on board!</p>
+      `,
     });
   }
 
   /**
-   * Send a password reset email
+   * Send a password reset email.
    */
   async sendPasswordResetEmail(to: string, resetToken: string): Promise<void> {
-    const subject = 'Password Reset Request';
-    const html = `
-      <h1>Password Reset</h1>
-      <p>You requested a password reset. Click the link below to reset your password:</p>
-      <a href="${process.env.FRONTEND_URL}/reset-password?token=${resetToken}">Reset Password</a>
-      <p>If you didn't request this, please ignore this email.</p>
-    `;
-
     await this.sendEmail({
       to,
-      subject,
-      html,
+      subject: 'Password Reset Request',
+      html: `
+        <h1>Password Reset</h1>
+        <p>You requested a password reset. Click the link below to reset your password:</p>
+        <a href="${env.BASE_URL}/reset-password?token=${resetToken}">Reset Password</a>
+        <p>If you didn't request this, please ignore this email.</p>
+      `,
     });
   }
 
   /**
-   * Send a verification email
+   * Send a verification email.
    */
   async sendVerificationEmail(to: string, verificationToken: string): Promise<void> {
-    const subject = 'Verify Your Email';
-    const html = `
-      <h1>Email Verification</h1>
-      <p>Please verify your email address by clicking the link below:</p>
-      <a href="${process.env.FRONTEND_URL}/verify-email?token=${verificationToken}">Verify Email</a>
-      <p>If you didn't create an account, please ignore this email.</p>
-    `;
-
     await this.sendEmail({
       to,
-      subject,
-      html,
+      subject: 'Verify Your Email',
+      html: `
+        <h1>Email Verification</h1>
+        <p>Please verify your email address by clicking the link below:</p>
+        <a href="${env.BASE_URL}/verify-email?token=${verificationToken}">Verify Email</a>
+        <p>If you didn't create an account, please ignore this email.</p>
+      `,
     });
   }
 
   /**
-   * Send an email with attachments
+   * Send an email with attachments.
    */
   async sendEmailWithAttachments(
     to: string,
@@ -134,16 +129,8 @@ class MailService {
     text: string,
     attachments: Array<{ filename: string; path: string }>
   ): Promise<void> {
-    await this.sendEmail({
-      to,
-      subject,
-      text,
-      attachments,
-    });
+    await this.sendEmail({ to, subject, text, attachments });
   }
 }
 
 export default MailService;
-
-
-// export const sendMail = MailService.getInstance();

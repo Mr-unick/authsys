@@ -1,15 +1,19 @@
-import { UsserData } from "../../const";
-import { haspermission } from "./authroization";
+import { haspermission } from "./authorization";
 import { PaginationInstance, TablePropsResponseInstance } from "./instances";
 
+interface TableInput {
+  name: string;
+  data: Array<Record<string, any>>;
+}
 
-
+/**
+ * Builder class for generating table configurations for the frontend.
+ * Uses the Builder pattern for fluent API.
+ */
 export class GenerateTable {
-
   private newtable: TablePropsResponseInstance;
 
-  constructor(table) {
-
+  constructor(table: TableInput) {
     this.newtable = {
       name: table.name,
       title: `${table.name} Details`,
@@ -21,35 +25,30 @@ export class GenerateTable {
       createform: {},
       updateform: {},
       formtype: 'modal',
-      rows: table?.data.length > 0 ? table.data : [],
-      columns: table?.data.length > 0 ? Object.keys(table?.data ? table.data[0] : {}) : [],
-      pagination:null
+      rows: table.data.length > 0 ? table.data : [],
+      columns: table.data.length > 0 ? Object.keys(table.data[0]) : [],
+      pagination: null,
     };
   }
 
-  addform(url: string, formtype: string = 'modal'){
-
+  addform(url: string, formtype: string = 'modal'): this {
     this.newtable.createform = {
       method: 'post',
       formurl: url,
-
     };
     this.newtable.updateform = {
       method: 'put',
-      formurl: url
+      formurl: url,
     };
-
-  
     return this;
-
   }
 
-  formtype(type: string) {
+  formtype(type: string): this {
     this.newtable.formtype = type;
     return this;
   }
 
-  policy(user: object, policy: string) {
+  policy(user: any, policy: string): this {
     this.newtable.update = haspermission(user, `update_${policy}`);
     this.newtable.create = haspermission(user, `create_${policy}`);
     this.newtable.delete = haspermission(user, `delete_${policy}`);
@@ -57,16 +56,13 @@ export class GenerateTable {
     this.newtable.assign = haspermission(user, `assign_${policy}`);
     return this;
   }
-  
-  addPagination(pagination:PaginationInstance){
-    this.newtable.pagination  = pagination;
-    return this;
- }
 
-  gettable() {
-    return this.newtable;
+  addPagination(pagination: PaginationInstance): this {
+    this.newtable.pagination = pagination;
+    return this;
   }
 
-
-
+  gettable(): TablePropsResponseInstance {
+    return this.newtable;
+  }
 }

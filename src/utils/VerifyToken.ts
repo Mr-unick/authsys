@@ -1,46 +1,55 @@
-
 import { jwtVerify } from 'jose';
 import { ResponseInstance } from './instances';
-import { haspermission } from './authroization';
+import { haspermission } from './authorization';
+import { env } from '@/config/env';
 
+/**
+ * Verifies the JWT token from the request cookies and optionally checks policy-based permissions.
+ *
+ * @param req  - Next.js API request
+ * @param res  - Next.js API response
+ * @param policy - Permission policy name (e.g. 'users', 'leads'), or null to skip permission check
+ * @returns The decoded JWT payload, or sends a 401 response and returns undefined
+ */
+export const VerifyToken = async (req: any, res: any, policy: string | null) => {
+  const token = req.cookies.token;
 
-export const VerifyToken =async (req,res,policy : string | null)=>{
+  if (!token) {
+    const response: ResponseInstance = {
+      data: [],
+      message: "Unauthorized — no token provided",
+      status: 401,
+    };
+    return res.status(401).json(response);
+  }
 
-    const token = req.cookies.token;
+  try {
+    const secretKey = new TextEncoder().encode(env.JWT_SECRET);
+    const { payload } = await jwtVerify(token, secretKey);
 
-    if (!token) {
-      const response: ResponseInstance = {
-        data: [],
-        message: "unauthorised",
-        status: 401
-      }
-
-    return  res.json(response);
+    // If no policy check needed, return payload directly
+    if (policy == null) {
+      return payload;
     }
 
-  const secretKey = new TextEncoder().encode('your_secret_key');
-  const { payload } = await jwtVerify(token, secretKey);
+    const isAuthorized = haspermission(payload, `view_${policy}`);
 
-  let isauth = haspermission(payload, `view_${policy}`);
-
-  if(policy == null){
-    return payload
-  }
-
-  console.log(payload, policy, isauth)
-
-  if (isauth !== true && policy){
+    if (!isAuthorized) {
       const response: ResponseInstance = {
-        message: "Unauthorised from ",
+        message: "Forbidden — insufficient permissions",
         data: [],
-        status: 401,
+        status: 403,
       };
+      return res.status(403).json(response);
+    }
 
-    return res.json(response);
+    return payload;
+  } catch (error: any) {
+    const response: ResponseInstance = {
+      message: "Unauthorized — invalid or expired token",
+      data: [],
+      status: 401,
+    };
+    return res.status(401).json(response);
   }
-
-  
-
- return payload
- 
-}
+};

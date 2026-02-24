@@ -1,74 +1,64 @@
+import React, { useState, useEffect } from 'react';
+import { Calendar, User, FileText, MessageSquare, Clock, Activity, Loader2, ArrowRight, Zap } from 'lucide-react';
+import axios from 'axios';
+import { getRelativeTime } from '@/utils/utility';
+import {
+    Card,
+    CardContent,
+    CardHeader,
+    CardTitle,
+} from "../components/components/ui/card";
 
-
-
-import React, { useState } from 'react';
-import { Calendar, User, FileText, MessageSquare, Clock } from 'lucide-react';
-
-const ActivityTab = () => {
+const ActivityTab = ({ showHeader = true }) => {
     const [selectedFilter, setSelectedFilter] = useState('all');
-    const [activities, setActivities] = useState([
-        {
-            id: 1,
-            user: {
-                name: 'John Doe',
-                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
-            },
-            action: 'created a new document',
-            target: 'Annual Report 2025',
-            timestamp: '10 minutes ago',
-            type: 'document'
-        },
-        {
-            id: 2,
-            user: {
-                name: 'Jane Smith',
-                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
-            },
-            action: 'commented on',
-            target: 'Project Timeline',
-            timestamp: '1 hour ago',
-            type: 'comment'
-        },
-        {
-            id: 3,
-            user: {
-                name: 'Robert Johnson',
-                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
-            },
-            action: 'scheduled a meeting with',
-            target: 'Marketing Team',
-            timestamp: '3 hours ago',
-            type: 'meeting'
-        },
-        {
-            id: 4,
-            user: {
-                name: 'Lisa Anderson',
-                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
-            },
-            action: 'updated profile information',
-            target: '',
-            timestamp: 'Yesterday',
-            type: 'profile'
-        },
-        {
-            id: 5,
-            user: {
-                name: 'Michael Brown',
-                avatar: 'https://images.pexels.com/photos/7552374/pexels-photo-7552374.jpeg'
-            },
-            action: 'shared a document with you',
-            target: 'Q1 Financial Report',
-            timestamp: '2 days ago',
-            type: 'document'
+    const [activities, setActivities] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+    const fetchActivities = async () => {
+        try {
+            const res = await axios.get('/api/activities');
+            if (res.data.status === 200) {
+                setActivities(res.data.data);
+            }
+        } catch (error) {
+            console.error("Failed to fetch activities:", error);
+        } finally {
+            setLoading(false);
         }
-    ]);
+    };
+
+    useEffect(() => {
+        fetchActivities();
+
+        const eventSource = new EventSource('/api/activities/stream');
+
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            if (data.sseType === 'activity' || !data.sseType) {
+                setActivities((prev) => [data, ...prev].slice(0, 50));
+            }
+        };
+
+        eventSource.onerror = (error) => {
+            console.error("SSE Error:", error);
+            eventSource.close();
+        };
+
+        const timer = setInterval(() => {
+            setActivities((prev) => [...prev]);
+        }, 30000);
+
+        return () => {
+            eventSource.close();
+            clearInterval(timer);
+        };
+    }, []);
 
     const filters = [
-        { value: 'all', label: 'All' },
-        { value: 'document', label: 'Leads' },
-        { value: 'comment', label: 'Comments' },
-        { value: 'profile', label: 'Profile' }
+        { value: 'all', label: 'All Activity' },
+        { value: 'Comment', label: 'Comments' },
+        { value: 'Stage Change', label: 'Stages' },
+        { value: 'Assign', label: 'Assignments' }
     ];
 
     const filteredActivities = selectedFilter === 'all'
@@ -77,81 +67,116 @@ const ActivityTab = () => {
 
     const getActivityIcon = (type) => {
         switch (type) {
-            case 'document':
-                return <FileText className="h-5 w-5 text-blue-500" />;
-            case 'comment':
-                return <MessageSquare className="h-5 w-5 text-green-500" />;
-            case 'meeting':
-                return <Calendar className="h-5 w-5 text-purple-500" />;
-            case 'profile':
-                return <User className="h-5 w-5 text-orange-500" />;
+            case 'Stage Change':
+                return <div className="bg-blue-50 p-2 sm:p-2.5 rounded-xl border border-blue-100"><FileText className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" /></div>;
+            case 'Comment':
+                return <div className="bg-emerald-50 p-2 sm:p-2.5 rounded-xl border border-emerald-100"><MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" /></div>;
+            case 'Assign':
+                return <div className="bg-purple-50 p-2 sm:p-2.5 rounded-xl border border-purple-100"><User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" /></div>;
             default:
-                return <Clock className="h-5 w-5 text-gray-500" />;
+                return <div className="bg-indigo-50 p-2 sm:p-2.5 rounded-xl border border-indigo-100"><Clock className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" /></div>;
         }
     };
 
-    return (
-        <div className="bg-white rounded-lg  px-4 py-4 max-w-screen ">
-            <div className="mb-4">
-               
-                <div className="flex space-x-2 overflow-x-auto pb-2">
-                    {filters.map(filter => (
-                        <button
-                            key={filter.value}
-                            onClick={() => setSelectedFilter(filter.value)}
-                            className={`px-3 py-1 rounded-full text-sm whitespace-nowrap ${selectedFilter === filter.value
-                                    ? 'bg-blue-600 text-white'
-                                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                                }`}
-                        >
-                            {filter.label}
-                        </button>
-                    ))}
-                </div>
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+                <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Loading Feed...</p>
             </div>
+        );
+    }
 
-            <div className="divide-y divide-gray-200">
-                {filteredActivities.length > 0 ? (
-                    filteredActivities.map(activity => (
-                        <div key={activity.id} className="py-4 flex">
-                            <div className="mr-4">
-                                <div className="relative">
-                                    <img
-                                        src={activity.user.avatar}
-                                        alt={activity.user.name}
-                                        className="w-10 h-10 rounded-full object-cover"
-                                    />
-                                    <div className="absolute -bottom-1 -right-1 bg-white p-1 rounded-full">
+    return (
+        <div className={`mx-auto ${showHeader ? 'max-w-[1600px] py-3 sm:py-4 px-2 sm:px-4' : 'w-full'} animate-in fade-in duration-500`}>
+            {showHeader && (
+                <div className="flex items-center gap-3 mb-5 sm:mb-8">
+                    <div className="bg-[#0F1626] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200">
+                        <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    </div>
+                    <div>
+                        <h1 className="text-xl sm:text-3xl font-extrabold text-[#0F1626] tracking-tight leading-tight">Activity</h1>
+                        <p className="text-xs sm:text-sm font-medium text-gray-400 mt-0.5 hidden sm:block">Real-time tracker for all lead interactions</p>
+                    </div>
+                </div>
+            )}
+
+            <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                {showHeader && (
+                    <CardHeader className="bg-gray-50/30 border-b border-gray-100 py-3 px-4 sm:py-4 sm:px-6">
+                        <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
+                            {filters.map(filter => (
+                                <button
+                                    key={filter.value}
+                                    onClick={() => setSelectedFilter(filter.value)}
+                                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 uppercase tracking-wider border whitespace-nowrap shrink-0 ${selectedFilter === filter.value
+                                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100'
+                                        : 'bg-white text-gray-500 border-gray-100 hover:border-indigo-100 hover:text-indigo-500 hover:bg-indigo-50/30'
+                                        }`}
+                                >
+                                    {filter.label}
+                                </button>
+                            ))}
+                        </div>
+                    </CardHeader>
+                )}
+                <CardContent className="p-0">
+                    <div className="divide-y divide-gray-50">
+                        {filteredActivities.length > 0 ? (
+                            filteredActivities.map((activity) => (
+                                <div
+                                    key={activity.id}
+                                    className={`py-3.5 px-4 sm:py-5 sm:px-6 flex items-start gap-3 sm:gap-5 transition-all duration-300 hover:bg-gray-50/50`}
+                                >
+                                    <div className="shrink-0 mt-0.5">
                                         {getActivityIcon(activity.type)}
                                     </div>
+                                    <div className="flex-grow min-w-0 flex flex-col gap-1.5">
+                                        <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
+                                            <span className="text-sm font-bold text-[#0F1626] shrink-0">
+                                                {activity.user?.name || 'System'}
+                                            </span>
+                                            <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 self-center" />
+                                            <p className="text-sm font-medium text-gray-600 flex-1 min-w-0 break-words">
+                                                {activity.description}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            {activity.lead && (
+                                                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50/50 rounded-lg border border-indigo-100/30">
+                                                    <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-widest">Lead</span>
+                                                    <span className="font-bold text-[#0F1626] text-[11px] max-w-[100px] sm:max-w-[150px] truncate">
+                                                        {activity.lead.name}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
+                                                <Clock className="h-3 w-3 mr-1 text-gray-300" />
+                                                {getRelativeTime(activity.timestamp)}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="py-16 sm:py-24 text-center flex flex-col items-center justify-center text-gray-400 gap-4">
+                                <div className="bg-gray-50 p-5 rounded-3xl border-2 border-dashed border-gray-100">
+                                    <Activity className="h-10 w-10 opacity-20" />
+                                </div>
+                                <div>
+                                    <p className="text-base font-bold text-gray-400">Quiet day...</p>
+                                    <p className="text-xs font-medium uppercase tracking-widest mt-1">No activities found</p>
                                 </div>
                             </div>
-                            <div>
-                                <div className="text-sm">
-                                    <span className="font-medium text-gray-900">{activity.user.name}</span>
-                                    <span className="text-gray-700"> {activity.action} </span>
-                                    {activity.target && (
-                                        <span className="font-medium text-gray-900">{activity.target}</span>
-                                    )}
-                                </div>
-                                <div className="mt-1 flex items-center text-xs text-gray-500">
-                                    <Clock className="h-3 w-3 mr-1" />
-                                    {activity.timestamp}
-                                </div>
-                            </div>
-                        </div>
-                    ))
-                ) : (
-                    <div className="py-6 text-center text-gray-500">
-                        No activities to display
+                        )}
                     </div>
-                )}
-            </div>
+                </CardContent>
+            </Card>
 
-            {filteredActivities.length > 5 && (
-                <div className="mt-4 text-center">
-                    <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                        View more
+            {showHeader && filteredActivities.length > 5 && (
+                <div className="mt-6 text-center">
+                    <button className="px-6 py-2.5 sm:px-8 sm:py-3 rounded-2xl bg-[#0F1626] text-white text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 transition-all hover:shadow-xl hover:shadow-indigo-100 transform hover:-translate-y-1">
+                        Load More History
                     </button>
                 </div>
             )}

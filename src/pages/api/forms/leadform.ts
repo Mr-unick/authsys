@@ -1,16 +1,15 @@
-import { Leads } from "@/app/entity/Leads";
+import prisma from "@/app/lib/prisma";
 import { GenerateForm } from "../../../utils/generateForm";
-import { AppDataSource } from "@/app/lib/data-source";
 
-
-export default async function handler(req, res){
-
-    const {id} = req.query;
-
+export default async function handler(req: any, res: any) {
+    const { id } = req.query;
     const form = new GenerateForm('Lead Form');
 
-    if(id !== undefined){
-        const lead = await AppDataSource.getRepository(Leads).findOne({where: {id: id}});
+    if (id !== "undefined" && id) {
+        const lead = await prisma.lead.findUnique({
+            where: { id: Number(id) }
+        });
+
         form.addField('name', 'text').required().value(lead?.name || '').disabled();
         form.addField('email', 'text').value(lead?.email || '').disabled();
         form.addField('phone', 'text').value(lead?.phone || '').disabled();
@@ -18,7 +17,7 @@ export default async function handler(req, res){
         form.addField('address', 'textarea').newRow().value(lead?.address || '');
         form.submiturl('getLeadProps');
         form.method('put');
-    }else{
+    } else {
         form.addField('name', 'text').required();
         form.addField('email', 'text');
         form.addField('phone', 'text');
@@ -28,7 +27,5 @@ export default async function handler(req, res){
         form.method('post');
     }
 
-
     res.json(form.getForm());
-
 }

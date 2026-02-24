@@ -1,184 +1,240 @@
-
+import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
-import { AppDataSource } from "../../app/lib/data-source";
 import { ResponseInstance } from "../../utils/instances";
-import { Business } from "../../app/entity/Business";
-import {Users} from "../../app/entity/Users"
-import { GenerateForm } from "../../utils/generateForm";
-import { title } from "process";
 import { VerifyToken } from "@/utils/VerifyToken";
-import { Roles } from "@/app/entity";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
+export default async function handler(req: any, res: any) {
+  const user = await VerifyToken(req, res, 'business');
+  if (res.writableEnded) return;
 
-export default async function handler(req, res) {
-
-  let user = await VerifyToken(req, res,'business'); // verify token and get user details
-  const BusinesRepo = AppDataSource.getRepository(Business);
-  if (req.method == "GET") {
-
+  if (req.method === "GET") {
     try {
-      let BuisnesData;
+      let businessData;
 
-      if(user?.business){
-        BuisnesData = await BusinesRepo
-          .createQueryBuilder("business")
-          .where('business.id = :id', { id: user?.business })
-          .getMany();
-      }else{
-        BuisnesData = await BusinesRepo
-          .createQueryBuilder("business")
-          .getMany();
+      if (user?.business) {
+        businessData = await prisma.business.findMany({
+          where: {
+            id: user.business,
+            deleted_at: null
+          }
+        });
+      } else {
+        businessData = await prisma.business.findMany({
+          where: {
+            deleted_at: null
+          }
+        });
       }
 
-      
-
-      const tablerows = BuisnesData.map(data => {
-        return {
-          id: data.id,
-          name: data.business_name,
-          gst_number: data.gst_number,
-          pan_number: data.pan_number,
-          business_address: data.business_address,
-          city: data.city,
-          state: data.state,
-          pin_code: data.pin_code,
-          contact_number: data.contact_number,
-          email: data.email,
-          website: data.website,
-          owner_name: data.owner_name,
-          owner_contact: data.owner_contact,
-          owner_email: data.owner_email,
-          business_description: data.business_description,
-        }
-      })
-
-      console.log(user)
+      const tablerows = businessData.map((data: any) => ({
+        id: data.id,
+        name: data.business_name,
+        gst_number: data.gst_number,
+        pan_number: data.pan_number,
+        business_address: data.business_address,
+        city: data.city,
+        state: data.state,
+        pin_code: data.pin_code,
+        contact_number: data.contact_number,
+        email: data.email,
+        website: data.website,
+        owner_name: data.owner_name,
+        owner_contact: data.owner_contact,
+        owner_email: data.owner_email,
+        business_description: data.business_description,
+      }));
 
       const tabledata = new GenerateTable({
-        name: "Buisness",
+        name: "Business",
         data: tablerows,
       }).policy(user, 'business').addform('buisnessform').gettable();
 
-      const response: ResponseInstance = {
+      return res.status(200).json({
         message: "Request successful",
         data: tabledata,
         status: 200,
-      };
-
-      res.json(response);
-    } catch (e) {
-      const response: ResponseInstance = {
-        message: "Something Went Wrong",
-        data: [{message:e.message}],
+      });
+    } catch (e: any) {
+      return res.status(500).json({
+        message: "Something went wrong",
+        data: [{ message: e.message }],
         status: 500,
-      };
-
-      res.json(response);
+      });
     }
   }
 
-  if (req.method == "DELETE") {
+  if (req.method === "DELETE") {
     try {
-      await BusinesRepo
-        .createQueryBuilder("buisness")
-        .delete()
-        .where("id = :id", { id: req.query.id })
-        .execute();
+      const id = req.query.id as string;
+      if (!id) {
+        return res.status(400).json({ message: "Business ID is required", data: [], status: 400 });
+      }
 
-      const response: ResponseInstance = {
-        message: "Record Deleted Succesfully",
-        data: [],
-        status: 200,
-      };
-
-      res.json(response);
-    } catch (e) {
-      const response: ResponseInstance = {
-        message: "Something went wrong while deleting record",
-        data: [e],
-        status: 500,
-      };
-      res.json(response);
-    }
-  }
-
-  if (req.method == "POST") {
-
-    try {
-      const { business_name, gst_number, pan_number, business_address, city, state, pin_code, contact_number, email, website, owner_name, owner_contact, owner_email, business_description } = req.body;
-
-      const newbuisness = new Business();
-      newbuisness.business_name = business_name;
-      newbuisness.gst_number = gst_number;
-      newbuisness.pan_number = pan_number;
-      newbuisness.business_address = business_address;
-      newbuisness.city = city;
-      newbuisness.state = state;
-      newbuisness.pin_code = pin_code;
-      newbuisness.contact_number = contact_number;
-      newbuisness.email = email;
-      newbuisness.website = website;
-      newbuisness.owner_name = owner_name;
-      newbuisness.owner_contact = owner_contact;
-      newbuisness.owner_email = owner_email;
-      newbuisness.business_description = business_description;
-
-
-      const buisnessRepo = AppDataSource.getRepository(Business);
-
-      const buisness = await buisnessRepo.save(newbuisness);
-
-      
-      let newuser = new Users();
-
-      let role = await AppDataSource.getRepository(Roles).findOne({
-        where:{
-          name:'Buisness Admin'
+      await prisma.business.update({
+        where: { id: parseInt(id) },
+        data: {
+          deleted_at: new Date()
         }
       });
 
-      
- //   newuser.business = newbuisness;
-      newuser.email = owner_email
-      newuser.name = owner_name;
-
-      
-      
-      const hash = bcrypt.hashSync('pass', 10)
-
-      newuser.password = hash;
-
-      if(role !== null){
-        newuser.role =role
-      };
-
-
-      try{
-        await AppDataSource.getRepository(Users).save(newuser);
-      }catch(e){
-        console.log(e.message)
-      }
-
-      const response: ResponseInstance = {
-        message: "Buisness created successfully",
-        data: buisness,
+      return res.status(200).json({
+        message: "Record deleted successfully",
+        data: [],
         status: 200,
-      };
-
-      res.json(response);
-
-    } catch (error) {
-      const response: ResponseInstance = {
-        message: "Something went wrong while creating buisness",
-        data: [error],
+      });
+    } catch (e: any) {
+      return res.status(500).json({
+        message: "Something went wrong while deleting record",
+        data: [e.message],
         status: 500,
-      };
-      res.json(response);
-
+      });
     }
-
-
   }
 
+  if (req.method === "POST") {
+    try {
+      const {
+        business_name, gst_number, pan_number, business_address,
+        city, state, pin_code, contact_number, email, website,
+        owner_name, owner_contact, owner_email, business_description,
+      } = req.body;
+
+      if (!business_name || !email) {
+        return res.status(400).json({
+          message: "Business name and email are required",
+          data: [],
+          status: 400,
+        });
+      }
+
+      const result = await prisma.$transaction(async (tx) => {
+        const newBusiness = await tx.business.create({
+          data: {
+            business_name,
+            gst_number,
+            pan_number,
+            business_address,
+            city,
+            state,
+            pin_code,
+            contact_number,
+            email,
+            website,
+            owner_name,
+            owner_contact,
+            owner_email,
+            business_description,
+            created_at: new Date(),
+            updated_at: new Date()
+          }
+        });
+
+        // Find Buisness Admin role
+        const role = await tx.role.findFirst({
+          where: { name: 'Buisness Admin' }
+        });
+
+        // Create business admin user
+        await tx.user.create({
+          data: {
+            email: owner_email,
+            name: owner_name,
+            password: bcrypt.hashSync('Admin@123', 10),
+            created_at: new Date(),
+            updated_at: new Date(),
+            business_id: newBusiness.id,
+            role_id: role?.id || null
+          }
+        });
+
+        // Create default stages
+        await tx.leadStage.createMany({
+          data: [
+            {
+              stage_name: 'Closed',
+              colour: '#228b22', // ForestGreen
+              order: 99,
+              stage_type: 'WON',
+              business_id: newBusiness.id,
+              discription: 'Lead has been successfully closed and converted.'
+            },
+            {
+              stage_name: 'Lost',
+              colour: '#ff0000', // Red
+              order: 100,
+              stage_type: 'LOST',
+              business_id: newBusiness.id,
+              discription: 'Lead has been lost.'
+            }
+          ]
+        });
+
+        return newBusiness;
+      });
+
+      return res.status(201).json({
+        message: "Business created successfully",
+        data: result,
+        status: 201,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: "Something went wrong while creating business",
+        data: [error.message],
+        status: 500,
+      });
+    }
+  }
+
+  if (req.method === "PUT") {
+    try {
+      const { id } = req.query;
+      if (!id) {
+        return res.status(400).json({ message: "Business ID is required", status: 400 });
+      }
+
+      const updatedBusiness = await prisma.business.update({
+        where: { id: parseInt(id as string) },
+        data: req.body
+      });
+
+      return res.status(200).json({
+        message: "Business updated successfully",
+        data: updatedBusiness,
+        status: 200,
+      });
+    } catch (error: any) {
+      return res.status(500).json({
+        message: "Something went wrong while updating business",
+        data: [error.message],
+        status: 500,
+      });
+    }
+  }
+
+  // ---- SOFT DELETE ----
+  if (req.query.delete) {
+    try {
+      const ids = req.body.leads?.map((item: any) => item.id);
+      if (!ids || ids.length === 0) {
+        return res.status(400).json({ message: "No records specified for deletion", data: [], status: 400 });
+      }
+
+      await prisma.business.updateMany({
+        where: { id: { in: ids } },
+        data: { deleted_at: new Date() }
+      });
+
+      return res.status(200).json({
+        message: "Deleted successfully",
+        data: [],
+        status: 200,
+      });
+    } catch (e: any) {
+      return res.status(500).json({ message: "Deletion failed", data: [e.message], status: 500 });
+    }
+  }
+
+  return res.status(405).json({ message: "Method not allowed", data: [], status: 405 });
 }

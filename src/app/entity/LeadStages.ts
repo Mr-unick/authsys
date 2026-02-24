@@ -1,8 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne, JoinColumn, DeleteDateColumn,Unique} from 'typeorm';
-import { Business } from './Business';
-import {  Leads } from './Leads';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, DeleteDateColumn, Unique } from 'typeorm';
+import type { Business } from './Business';
+import type { Leads } from './Leads';
 import { StageChangeHistory } from './StageChangeHistory';
-import { Users } from './Users';
 
 @Entity("lead_stages")
 @Unique(['stage_name', 'business'])
@@ -14,29 +13,27 @@ export class LeadStages {
   stage_name: string;
 
   @Column()
-  colour :string
+  colour: string;
 
-  @Column()
-  discription:string
+  @Column({ nullable: true })
+  discription: string;
 
-  @Column({ type: 'timestamp' ,nullable: true})
-   created_at: Date;
- 
   @Column({ type: 'timestamp', nullable: true })
-   updated_at: Date;
+  created_at: Date;
+
+  @Column({ type: 'timestamp', nullable: true })
+  updated_at: Date;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  @ManyToOne(() => Business, business => business.leadStages, { nullable: true })
-  @JoinColumn({name:'buisnessId'})
-  business:typeof Business;
+  @ManyToOne('Business', 'leadStages', { nullable: true })
+  @JoinColumn({ name: 'buisnessId' })
+  business: Business;
 
-  @OneToMany(() => Leads, lead => lead.stage, { nullable: true })
-  @JoinColumn({name:'lead_Id'})
-  leads:typeof Leads[];
+  @OneToMany('Leads', 'stage', { nullable: true })
+  leads: Leads[];
 
   @OneToMany(() => StageChangeHistory, stageChangeHistory => stageChangeHistory.stage, { nullable: true })
-  @JoinColumn({name:'stage_Id'})
   stageChangeHistory: StageChangeHistory[];
 }

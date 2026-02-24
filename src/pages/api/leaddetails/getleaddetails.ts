@@ -1,90 +1,73 @@
-import { Comment } from "@/app/entity/Comment";
-import { Leads } from "@/app/entity/Leads";
-import { LeadStages } from "@/app/entity/LeadStages";
-import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
-import { Users } from "@/app/entity/Users";
-import { AppDataSource } from "@/app/lib/data-source";
-import { haspermission } from "@/utils/authroization";
-import { ResponseInstance } from "@/utils/instances";
+import prisma from "@/app/lib/prisma";
+import { haspermission } from "@/utils/authorization";
 import { VerifyToken } from "@/utils/VerifyToken";
-import { color } from "motion/dist/react";
 
-
-
-
-export const getleadDetails = async(user,id)=>{
+export const getleadDetails = async (user: any, id: any) => {
     try {
-        const leadid = id;
-       
-        const lead = await AppDataSource.getRepository(Leads)
-            .createQueryBuilder('leads')
-            .leftJoinAndSelect('leads.users', 'users')
-            .leftJoinAndSelect('leads.stage', 'stage')
-            .leftJoinAndSelect('leads.history', 'history')
-            .leftJoinAndSelect('leads.comments', 'comments')
-            .leftJoinAndSelect('comments.user', 'user')
-            .leftJoinAndSelect('history.changed_by', 'changed_by')
-            .leftJoin('history.stage', 'history_stage')
-            .addSelect('history_stage.stage_name')
-            .addSelect('history_stage.colour')
-            .leftJoin('leads.business', 'business')
-            .where('leads.id = :id', { id: leadid })
-            .andWhere(qb => {
-                const subQuery = qb.subQuery()
-                    .select("1")
-                    .from("lead_users", "lu")
-                    .where("lu.lead_id = leads.id")
-                    .getQuery();
-                return `EXISTS (${subQuery})`;
-            })
-            .getOne();
+        const leadid = Number(id);
 
-       //     console.log(leadid,lead)
-
-            if (!lead) {
-                const response: ResponseInstance = {
-                    status: 404,
-                    message: "Lead not found",
-                    data: []
-                }
-                return response;
+        const lead = await prisma.lead.findUnique({
+            where: { id: leadid },
+            include: {
+                leadUsers: { include: { user: true } },
+                stage: true,
+                history: {
+                    include: {
+                        stage: true,
+                        user: true
+                    },
+                    orderBy: {
+                        changed_at: 'desc'
+                    }
+                },
+                comments: {
+                    include: {
+                        user: true
+                    },
+                    orderBy: {
+                        created_at: 'desc'
+                    }
+                },
+                business: true
             }
+        });
 
-        const stage = (await AppDataSource.getRepository(Leads)
-            .createQueryBuilder('leads')
-            .leftJoinAndSelect('leads.stage', 'stage')
-            .where('leads.id = :id', { id: leadid })
-            .getRawOne())?.stage_stage_name;
-
-
-        let history = lead?.history.map((item) => {
-            // let stage = item.history_stage.stage_name;
+        if (!lead) {
             return {
-                stage: item.stage,
-                changedAt: item.changed_at,
-                changedBy: item.changed_by,
-                reason: item.reason,
-            }
-        })
+                status: 404,
+                message: "Lead not found",
+                data: []
+            };
+        }
 
-        let leaddetails = {
-            id: lead?.id,
-            name: lead?.name,
-            email: lead?.email,
-            phone: lead?.phone,
-            secondPhone: lead?.second_phone || "No second phone",
-            address: lead?.address,
-            city: lead?.city || "Mumbai",
-            state: lead?.state || "Maharashtra",
-            country: lead?.country || "India",
-            pincode: lead?.pincode || "411001",
-            leadStatus: lead?.status || "active",
-            leadSource: lead?.lead_source || "Website",
-            leadStage: stage,
-            notes: lead?.notes || "No notes",
-            collaborators: lead?.users || [],
-            stageChangeHistory: history || [],
-             comments: lead?.comments,
+        const stageName = lead.stage?.stage_name;
+
+        const history = lead.history?.map((item) => ({
+            stage: item.stage,
+            changedAt: item.changed_at,
+            changedBy: item.user,
+            reason: item.reason,
+        })) || [];
+
+        const leaddetails = {
+            id: lead.id,
+            name: lead.name,
+            email: lead.email,
+            phone: lead.phone,
+            secondPhone: lead.second_phone || "No second phone",
+            address: lead.address,
+            city: lead.city || "Mumbai",
+            state: lead.state || "Maharashtra",
+            country: lead.country || "India",
+            pincode: lead.pincode || "411001",
+            leadStatus: lead.status || "active",
+            leadSource: lead.lead_source || "Website",
+            leadStage: stageName,
+            notes: lead.notes || "No notes",
+            nextFollowUp: lead.nextFollowUp,
+            collaborators: lead.leadUsers?.map((lu: any) => lu.user) || [],
+            stageChangeHistory: history,
+            comments: lead.comments || [],
             addcollborator: haspermission(user, 'assign_collborators'),
             deletecollborator: haspermission(user, 'delete_collborators'),
             viewcollborator: haspermission(user, 'view_collborators'),
@@ -96,33 +79,46 @@ export const getleadDetails = async(user,id)=>{
             deletestage: haspermission(user, 'delete_stage'),
             editstage: haspermission(user, 'edit_stage'),
             viewstage: haspermission(user, 'view_stage'),
-        }
+            allStages: await prisma.leadStage.findMany({
+                where: { business_id: lead.business_id, deleted_at: null },
+                orderBy: { id: 'asc' }
+            }),
+            navigation: {
+                previous: (await prisma.lead.findFirst({
+                    where: { id: { lt: leadid }, business_id: lead.business_id, deleted_at: null },
+                    orderBy: { id: 'desc' },
+                    select: { id: true }
+                }))?.id || null,
+                next: (await prisma.lead.findFirst({
+                    where: { id: { gt: leadid }, business_id: lead.business_id, deleted_at: null },
+                    orderBy: { id: 'asc' },
+                    select: { id: true }
+                }))?.id || null
+            }
+        };
 
-
-        const response: ResponseInstance = {
+        return {
             status: 200,
             message: "Lead found",
             data: leaddetails
-        }
+        };
 
-        return response;
-
-    } catch (error) {
+    } catch (error: any) {
         return {
+            status: 500,
             message: "Internal server error",
             data: error.message
-        }
+        };
     }
 }
 
-export default async function handler(req, res) {
-
+export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, 'leaddetails');
-    const leadid = req.query.id;
-  
-    let response = await getleadDetails(user,leadid);
-    
+    if (res.writableEnded) return;
 
-    res.json(response);
- 
+    const leadid = req.query.id;
+    const response = await getleadDetails(user, leadid);
+
+    const status = response.status || 200;
+    return res.status(status).json(response);
 }

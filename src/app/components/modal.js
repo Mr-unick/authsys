@@ -1,37 +1,44 @@
-import { Delete, Edit, FilePen, Plus ,Trash } from "lucide-react";
+import { Delete, Edit, FilePen, Plus, Trash } from "lucide-react";
 import {
   Dialog,
   DialogContent,
   DialogTrigger, DialogClose, DialogFooter
 } from "../../components/components/ui/dialog"
 import { Button } from "../../components/components/ui/button";
+import { useState } from "react";
 
-export default function Modal({ children, title, icon ,classname , customebutton}) {
+export default function Modal({ children, title, icon, classname, customebutton, open: controlledOpen, onOpenChange: setControlledOpen }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+
+  const open = isControlled ? controlledOpen : internalOpen;
+  const onOpenChange = isControlled ? setControlledOpen : setInternalOpen;
+
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>
         {
-          customebutton ? customebutton :   <Button className={`max-md:block flex items-center gap-2 ${classname}`}>
-          <p className="max-md:hidden">
-            {title}
-          </p>
-          {
-            icon == 'Add' && <Plus size={22} />
-          }
+          customebutton ? customebutton : <Button className={`max-md:block flex items-center gap-2 ${classname}`}>
+            <p className="max-md:hidden">
+              {title}
+            </p>
+            {
+              icon == 'Add' && <Plus size={22} />
+            }
 
-          {
-            icon == 'Delete' && <Trash size={22} />
-          }
+            {
+              icon == 'Delete' && <Trash size={22} />
+            }
 
-          {
-            icon == 'Edit' && <FilePen size={22} />
-          }
-          {
-            icon == 'Export' && <Edit size={22} />
-          }
+            {
+              icon == 'Edit' && <FilePen size={22} />
+            }
+            {
+              icon == 'Export' && <Edit size={22} />
+            }
           </Button>
         }
-       
+
       </DialogTrigger>
       <DialogContent className="max-h-fit max-w-fit rounded-md max-sm:p-3">
         {children}

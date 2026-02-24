@@ -1,53 +1,58 @@
-import { In } from "typeorm";
-import { Permissions } from "../../app/entity/Permissions";
-import { Policy } from "../../app/entity/Policy";
-import { AppDataSource } from "../../app/lib/data-source";
+import prisma from "@/app/lib/prisma";
 
-
-
-export default async function handler(req,res){
-
- if(req.method === "GET"){
-let policy = await AppDataSource.getRepository(Policy).find({
-    relations:["permissions"]
-})
-
-res.json({
-    message:"Policy fetched successfully",
-    data:policy,
-    status:200
-})
- }
-
- if(req.method === "POST"){
-    try {
-        let newpolicy = new Policy();
-        newpolicy.name = "dashboard";
-        newpolicy.description = "User can view dashboard";
-
-        newpolicy.permissions = await AppDataSource.getRepository(Permissions).find({
-            where:{
-                    id:In([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20])
+export default async function handler(req: any, res: any) {
+    if (req.method === "GET") {
+        try {
+            const policies = await prisma.policy.findMany({
+                include: {
+                    permissions: true
                 }
-        })
+            });
 
-        let policy = await AppDataSource.getRepository(Policy).save(newpolicy);
-        
-        res.json({
-            message:"Policy created successfully",
-            data:policy,
-            status:200
-        })
-        
-    } catch (error) {
-
-        console.log(error);
-        
-        res.json({
-            message:"Something went wrong",
-            status:500,
-            error:error
-        })
+            return res.json({
+                message: "Policy fetched successfully",
+                data: policies,
+                status: 200
+            });
+        } catch (error: any) {
+            return res.status(500).json({
+                message: "Something went wrong",
+                status: 500,
+                error: error.message
+            });
+        }
     }
- }
+
+    if (req.method === "POST") {
+        try {
+            const { name, description, permissionIds } = req.body;
+
+            const policy = await prisma.policy.create({
+                data: {
+                    name: name || "dashboard",
+                    description: description || "User can view dashboard",
+                    permissions: {
+                        connect: (permissionIds || [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]).map((id: number) => ({ id }))
+                    }
+                },
+                include: {
+                    permissions: true
+                }
+            });
+
+            return res.json({
+                message: "Policy created successfully",
+                data: policy,
+                status: 200
+            });
+        } catch (error: any) {
+            return res.status(500).json({
+                message: "Something went wrong",
+                status: 500,
+                error: error.message
+            });
+        }
+    }
+
+    return res.status(405).json({ message: "Method not allowed", status: 405 });
 }

@@ -1,19 +1,17 @@
-import { Leads } from "@/app/entity/Leads";
-import { StageChangeHistory } from "@/app/entity/StageChangeHistory";
-import { Users } from "@/app/entity/Users";
-import { AppDataSource } from "@/app/lib/data-source";
+import prisma from "@/app/lib/prisma";
 import { ResponseInstance } from "@/utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+import { activityLog } from "@/utils/activityLogs";
+import { ActivityType } from "@/utils/activityTypes";
+import { createNotification } from "@/utils/notifications";
 
-export default async function assignLeads(req, res) {
+export default async function assignLeads(req: any, res: any) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
     let user = await VerifyToken(req, res, null);
-    if (!user) {
-        return res.status(401).json({ message: 'Unauthorized' });
-    }
+    if (res.writableEnded) return;
 
     try {
         const { leads, salespersons } = req.body;
@@ -22,72 +20,77 @@ export default async function assignLeads(req, res) {
             return res.status(400).json({ message: 'Invalid request body' });
         }
 
-        // Process each lead sequentially
-        for (const leadId of leads) {
+        // Get the first stage for the business
+        const firstStage = await prisma.leadStage.findFirst({
+            where: { business_id: Number(user.business) },
+            orderBy: { created_at: 'asc' }
+        });
 
-            const lead = await AppDataSource.getRepository(Leads).findOne({
-                where: { id: leadId }
-            });
+        await prisma.$transaction(async (tx) => {
+            for (const leadId of leads) {
+                // Assign each lead to each salesperson
+                for (const userId of salespersons) {
+                    await tx.leadUser.upsert({
+                        where: {
+                            lead_id_user_id: {
+                                lead_id: Number(leadId),
+                                user_id: Number(userId)
+                            }
+                        },
+                        create: {
+                            lead_id: Number(leadId),
+                            user_id: Number(userId)
+                        },
+                        update: {}
+                    });
+                }
 
-            if (lead == null) {
-                return res.status(404).json({ message: `Lead with ID ${leadId} not found` });
-            }
+                // Set lead stage to the first stage
+                if (firstStage) {
+                    await tx.lead.update({
+                        where: { id: Number(leadId) },
+                        data: { stage_id: firstStage.id }
+                    });
+                }
 
-
-            // let initialHistory = new StageChangeHistory;
-            // initialHistory.stage = lead.stage || 1
-            // initialHistory.lead = leadId
-            // initialHistory.changed_by = user.id
-            // initialHistory.changed_at = new Date()
-            // initialHistory.reason = 'Initial Assignment'
-
-
-            // await AppDataSource.getRepository(StageChangeHistory).save(initialHistory);
-
-            // Process each salesperson sequentially
-            for (const userId of salespersons) {
-                const user = await AppDataSource.getRepository(Users).findOne({
-                    where: { id: userId }
+                // Add the initial stage comment requested by the user
+                await tx.comment.create({
+                    data: {
+                        lead_id: Number(leadId),
+                        user_id: Number(user.id),
+                        comment: `( initial stage ,assigned by ${user.name} )`
+                    }
                 });
-
-                if (!user) {
-                    return res.status(404).json({ message: `User with ID ${userId} not found` });
-                }
-
-                if (!lead.users) {
-                    lead.users = [];
-                }
-
-                // Check if user is already assigned to this lead
-
-                if (!lead.users.some(u => u.id === user.id)) {
-
-                    lead.users.push(user);
-
-                    // const users = await AppDataSource.getRepository(Users).findBy({id: userId});
-                    // lead.users = [...lead.users, ...users];
-                    // await AppDataSource.getRepository(Leads).save(lead);
-
-                }
-                
-                await AppDataSource.getRepository(Leads).save(lead);
             }
+        });
 
-            await AppDataSource.getRepository(Leads).save(lead);
+        const description = `Assigned ${leads.length} leads to ${salespersons.length} salespersons`;
+        await activityLog(ActivityType.ASSIGN, description, user.id);
+
+        // Notify salespersons
+        const firstLeadId = leads[0];
+        const lead = await prisma.lead.findUnique({ where: { id: Number(firstLeadId) } });
+        for (const userId of salespersons) {
+            await createNotification(
+                Number(userId),
+                `You have been assigned ${leads.length} new lead(s) including ${lead?.email || `#${firstLeadId}`} by ${user.name}`,
+                leads.length === 1 ? `/leads/details/${firstLeadId}` : '/leads/tableleads'
+            );
         }
+
         const response: ResponseInstance = {
             message: 'Leads assigned successfully',
             data: [],
             status: 200
-        }  
+        }
         return res.json(response);
-    } catch (error) {
+    } catch (error: any) {
         const response: ResponseInstance = {
             message: 'Leads assigned failed',
             data: [error.message],
             status: 500
         }
-        return res.json(response);
+        return res.status(500).json(response);
     }
 }
 

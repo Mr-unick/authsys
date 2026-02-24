@@ -1,29 +1,39 @@
-import { Activity, ActivityType } from "@/app/entity/Activity";
-import { Leads } from "@/app/entity/Leads";
-import { Users } from "@/app/entity/Users";
-import { AppDataSource } from "@/app/lib/data-source";
+import prisma from "@/app/lib/prisma";
 
+/**
+ * Creates and saves an activity log entry using Prisma.
+ *
+ * @param type - Activity type (string or enum equivalent)
+ * @param description - Human-readable description of the activity
+ * @param userId - ID of the user who performed the action (optional)
+ * @param leadId - ID of the related lead (optional)
+ */
+export const activityLog = async (
+    type: string,
+    description: string,
+    userId?: number,
+    leadId?: number
+): Promise<void> => {
+    try {
+        const newActivity = await prisma.activity.create({
+            data: {
+                type,
+                description,
+                user_id: userId,
+                lead_id: leadId,
+                timestamp: new Date()
+            },
+            include: {
+                user: true,
+                lead: true
+            }
+        });
 
+        // Emit for real-time updates
+        const { activityEmitter } = await import("./activityEmitter");
+        activityEmitter.emit('newActivity', newActivity);
 
-
-export const activityLog = async (type :ActivityType ,description,user,lead) => {
-try {
-    
-    const activity = new Activity();
-    activity.type = type;
-    activity.description = description;
-    activity.user = user;
-    activity.lead = lead;
-
-    await AppDataSource.getRepository(Activity).save(activity);
-
-    return true
-    
-} catch (error) {
-
-    return false
-}
-
-
-
-}
+    } catch (error: any) {
+        console.error("[ActivityLog] Failed to create activity log:", error.message);
+    }
+};

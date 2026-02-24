@@ -1,13 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, DeleteDateColumn } from 'typeorm';
-
-import { Users } from './Users';
-import { SuperAdmin } from './SuperAdmin';
-import { AreaOfOperation } from './AreaOfOperation';
-import { LeadStages } from './LeadStages';
-import { Leads } from './Leads';
-import { Exclude } from 'class-transformer';
-import { Roles } from './Roles';
-import { Branch } from './Branch';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, DeleteDateColumn } from 'typeorm';
+import type { AreaOfOperation } from './AreaOfOperation';
+import type { LeadStages } from './LeadStages';
+import type { Leads } from './Leads';
+import type { Roles } from './Roles';
+import type { Branch } from './Branch';
+import type { Users } from './Users';
 
 @Entity('business')
 export class Business {
@@ -65,29 +62,21 @@ export class Business {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  // @ManyToOne(() => SuperAdmin, superAdmin => superAdmin.businesses)
-  // superAdmin: SuperAdmin;
-
-  @OneToMany(type => AreaOfOperation, areaOfOperation => areaOfOperation.business_id, { nullable: true })
+  @OneToMany('AreaOfOperation', 'business', { nullable: true })
   areasOfOperation: AreaOfOperation[];
 
-  @OneToMany(() => LeadStages, leadStage => leadStage.business, { nullable: true })
-  @JoinColumn()
-  leadStages: typeof LeadStages[];
+  @OneToMany('LeadStages', 'business', { nullable: true })
+  leadStages: LeadStages[];
 
-  @OneToMany(() => Roles, role => role.buisness, { nullable: true })
-  @JoinColumn()
-  role: typeof Roles[];
+  @OneToMany('Roles', 'buisness', { nullable: true })
+  role: Roles[];
 
-  @OneToMany(() => Users, user => user.business, { nullable: true })
-  @JoinColumn()
+  @OneToMany('Users', 'business', { nullable: true })
   users: Users[];
 
-  @OneToMany(() => Branch, branch => branch.buisness, { nullable: true })
-  @JoinColumn()
+  @OneToMany('Branch', 'buisness', { nullable: true })
   branches: Branch[];
 
-  @OneToMany(() => Leads, lead => lead.business)
-  @JoinColumn()
-  leads:typeof Leads[];
+  @OneToMany('Leads', 'business')
+  leads: Leads[];
 }

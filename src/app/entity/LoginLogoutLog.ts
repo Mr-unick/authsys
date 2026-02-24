@@ -1,5 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, DeleteDateColumn } from 'typeorm';
-import { Users } from './Users';
+import type { Users } from './Users';
 
 @Entity('login_logout_logs')
 export class LoginLogoutLog {
@@ -20,9 +20,9 @@ export class LoginLogoutLog {
   @Column()
   user_agent: string;
 
-  @ManyToOne(() => Users, user => user.id)
+  @ManyToOne('Users', 'loginLogoutLogs')
   @JoinColumn()
-  user:typeof Users;
+  user: Users;
 
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;

@@ -11,61 +11,61 @@ const BoardCard = ({ data }) => {
     messageCount,
     hasReminder,
     status,
-    lastContactTime, email
+    lastContactTime,
+    email
   } = data;
+
+  const isActive = status === true || status === 'active';
+
   return (
-    <Link href={`/leads/details/${id}`} >
-      <div className="bg-white rounded-lg p-4 shadow hover:shadow-md transition-all duration-200 border-[1px] border-gray-200">
-        <div className="flex items-start justify-between mb-3 ">
-          <div>
-            <h3 className="font-medium text-gray-900 mb-2 text-start ">
+    <Link href={`/leads/details/${id}`}>
+      <div className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300 border border-gray-100 group">
+        <div className="flex items-start justify-between mb-4">
+          <div className="min-w-0 flex-1">
+            <h3 className="font-bold text-[#0F1626] text-sm mb-1 group-hover:text-indigo-600 transition-colors truncate">
               {name}
             </h3>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Phone size={14} />
-              <span className="text-sm">{phone}</span>
+            <div className="flex items-center gap-1.5 text-gray-400">
+              <Phone size={11} className="shrink-0" />
+              <span className="text-[11px] font-medium truncate">{phone || 'No phone'}</span>
             </div>
           </div>
           <span
             className={`
-    inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold
-    ${status  ? "bg-green-500 text-white" : "bg-red-500 text-white"}
-  `}
+              shrink-0 inline-flex items-center px-2 py-0.5 rounded-lg text-[10px] font-bold uppercase tracking-wider
+              ${isActive ? "bg-green-50 text-green-600 border border-green-100" : "bg-gray-50 text-gray-400 border border-gray-100"}
+            `}
           >
-            {status ? "Active" : "Inactive"}
+            {isActive ? "Active" : "Inactive"}
           </span>
         </div>
 
-        {/* Footer with messages, time and reminder */}
-
-        <div className="flex items-center justify-between  mt-3">
-          <div className="flex items-center gap-3 w-[100%]  justify-between">
-            {
-              lastContactTime ? <div className="flex items-center gap-1.5 text-gray-500">
-                <Clock size={14} />
-                <span className="text-xs">{lastContactTime}</span>
-              </div> : <div className="flex items-center gap-1.5 text-gray-500">
-                <Mail size={14} />
-                  <span className="text-xs">{email}</span>
+        <div className="flex items-center justify-between pt-3 border-t border-gray-50">
+          <div className="flex items-center gap-3 min-w-0">
+            {lastContactTime ? (
+              <div className="flex items-center gap-1 text-gray-400">
+                <Clock size={12} />
+                <span className="text-[10px] font-bold truncate">{lastContactTime}</span>
               </div>
-            }
-           
-
-            {hasReminder ? (
-              <Bell size={16} className="text-blue-500" />
             ) : (
-              <div className="flex items-center gap-1 text-gray-600">
-                <MessageSquare size={16} />
-                <span className="text-sm font-medium">{messageCount}</span>
+              <div className="flex items-center gap-1 text-gray-400">
+                <Mail size={12} />
+                <span className="text-[10px] font-bold truncate">{email || 'No email'}</span>
               </div>
             )}
           </div>
-          {/* 
-          {hasReminder && (
-            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-blue-50">
-              <Bell size={16} className="text-blue-500" />
+
+          <div className="flex items-center gap-2">
+            {hasReminder && (
+              <div className="p-1.5 bg-blue-50 rounded-lg text-blue-500">
+                <Bell size={12} />
+              </div>
+            )}
+            <div className={`flex items-center gap-1 px-1.5 py-0.5 rounded-lg border ${messageCount > 0 ? 'bg-indigo-50 border-indigo-100 text-indigo-600' : 'bg-gray-50 border-gray-100 text-gray-300'}`}>
+              <MessageSquare size={11} />
+              <span className="text-[10px] font-bold">{messageCount || 0}</span>
             </div>
-          )} */}
+          </div>
         </div>
       </div>
     </Link>

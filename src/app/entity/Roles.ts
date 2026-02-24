@@ -1,10 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, OneToOne, ManyToOne, JoinTable, ManyToMany, DeleteDateColumn } from 'typeorm';
-import { Users } from './Users';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, JoinColumn, ManyToOne, JoinTable, ManyToMany, DeleteDateColumn } from 'typeorm';
+import type { Users } from './Users';
 import { Permissions } from './Permissions';
-import { Business } from './Business';
-import { Branch } from './Branch';
-
-
+import type { Business } from './Business';
+import type { Branch } from './Branch';
 
 @Entity('roles')
 export class Roles {
@@ -23,20 +21,18 @@ export class Roles {
   @DeleteDateColumn({ name: 'deleted_at', nullable: true })
   deletedAt?: Date;
 
-  @OneToMany(type => Users, user => user.role)
-  @JoinColumn()
-  users: typeof Users[];
+  @OneToMany('Users', 'role')
+  users: Users[];
 
-  @ManyToOne(type => Business, buisnes => buisnes.role, { nullable: true })
+  @ManyToOne('Business', 'role', { nullable: true })
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
-  buisness: typeof Business;
+  buisness: Business;
 
-  @ManyToOne(type => Branch, branch => branch.roles)
+  @ManyToOne('Branch', 'roles', { nullable: true })
   @JoinColumn({ name: 'branchId', referencedColumnName: 'id' })
-  branch: typeof Branch;
+  branch: Branch;
 
-
-  @ManyToMany(type => Permissions, permissions => permissions.role, { eager: false })
+  @ManyToMany(() => Permissions, permissions => permissions.role, { eager: false })
   @JoinTable({
     name: "role_has_permissions",
     joinColumn: {
@@ -49,5 +45,4 @@ export class Roles {
     }
   })
   permissions: Permissions[];
-
 }

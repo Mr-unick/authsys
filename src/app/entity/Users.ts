@@ -1,16 +1,13 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, ManyToMany, DeleteDateColumn } from 'typeorm';
-
-import { Business } from './Business';
+import type { Business } from './Business';
 import { LoginLogoutLog } from './LoginLogoutLog';
-import { Roles } from './Roles';
-import { Notification } from './Notifications';
+import type { Roles } from './Roles';
 import { StageChangeHistory } from './StageChangeHistory';
-import { Leads } from './Leads';
+import type { Leads } from './Leads';
 import { Comment } from './Comment';
 import { Activity } from './Activity';
 
 @Entity('users')
-
 export class Users {
   @PrimaryGeneratedColumn()
   id: number;
@@ -21,50 +18,38 @@ export class Users {
   @Column()
   email: string;
 
-  @Column({select: false})
+  @Column({ select: false })
   password: string;
 
-  @Column({ nullable: true  , select: false})
+  @Column({ nullable: true })
   created_at: Date;
 
-  @Column({ nullable: true  , select: false})
+  @Column({ nullable: true })
   updated_at: Date;
 
-  @DeleteDateColumn({ name: 'deleted_at', nullable: true })
+  @DeleteDateColumn({ name: 'deleted_at', nullable: true, select: false })
   deletedAt?: Date;
 
-  @ManyToOne(() => Business, business => business.id)
+  @ManyToOne('Business', 'users')
   @JoinColumn({ name: 'buisnesId', referencedColumnName: 'id' })
-  business:typeof Business;
+  business: Business;
 
-  @ManyToMany(() => Leads, (leads) => leads.users, { nullable: true })
+  @ManyToMany('Leads', 'users', { nullable: true })
   leads: Leads[];
 
-  @ManyToOne(type => Roles, role => role.users)
+  @ManyToOne('Roles', 'users')
   @JoinColumn({ name: "roleId", referencedColumnName: 'id' })
-  role:  Roles;
-
-
-  // @OneToMany(() => Notification, notification => notification.user)
-  // @JoinColumn()
-  // notifications: Notification[];
+  role: Roles;
 
   @OneToMany(() => LoginLogoutLog, log => log.user, { nullable: true })
-  @JoinColumn()
   loginLogoutLogs: LoginLogoutLog[];
 
-  // @OneToMany(type => StageChangeHistory,history=> history.changed_by)
-
   @OneToMany(() => StageChangeHistory, history => history.changed_by, { nullable: true })
-  // @JoinColumn({name:'id',referencedColumnName:'changed_by'})
-  history: typeof StageChangeHistory[];
-
+  history: StageChangeHistory[];
 
   @OneToMany(() => Comment, comment => comment.user, { nullable: true })
-  comment: Comment[]
-
+  comment: Comment[];
 
   @OneToMany(() => Activity, activity => activity.user, { nullable: true })
-  activities: typeof Activity[]
-
+  activities: Activity[];
 }

@@ -1,71 +1,57 @@
-
+import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
-import { AppDataSource } from "../../app/lib/data-source";
-
 import { ResponseInstance } from "../../utils/instances";
-import { Users } from "../../app/entity/Users";
-import { UserRepository } from "../../app/reposatory/userRepo";
-import { Roles } from "../../app/entity/Roles";
-import { Business } from "@/app/entity/Business";
-import { haspermission } from "@/utils/authroization";
-import { User } from "lucide-react";
-import { userData, UsserData } from "../../../const";
 import { VerifyToken } from "@/utils/VerifyToken";
+import bcrypt from "bcryptjs";
 
+export default async function handler(req: any, res: any) {
+  const user = await VerifyToken(req, res, 'users');
+  if (res.writableEnded) return;
 
-
-
-
-export default async function handler(req, res) {
-
-  let user = await VerifyToken(req, res, 'users');
-
-  const UsersRepo = UserRepository.onlyPermit(user.buisness);
-
-  if (req.method == "GET") {
-
+  if (req.method === "GET") {
     try {
-
-      let UsersData;
+      let usersData;
 
       if (user?.business != null) {
-
-        UsersData = await AppDataSource.getRepository(Users)
-        .createQueryBuilder('users').leftJoinAndSelect('users.role', 'role')
-        .leftJoinAndSelect('role.permissions', 'permissions')
-        .leftJoinAndSelect('users.business', 'business')
-        .where('users.buisnesId = :businessId', { businessId: user?.business })
-        .getMany();
-
+        usersData = await prisma.user.findMany({
+          where: {
+            business_id: user.business,
+            deleted_at: null
+          },
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: { permission: true }
+                }
+              }
+            },
+            business: true
+          }
+        });
       } else {
-        UsersData = await AppDataSource.getRepository(Users).find({
-          relations: [
-            "role", 'business', "role.permissions"
-          ]
-        })
+        usersData = await prisma.user.findMany({
+          where: {
+            deleted_at: null
+          },
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: { permission: true }
+                }
+              }
+            },
+            business: true
+          }
+        });
       }
 
-      const roles = await AppDataSource.getRepository(Roles).find();
-
-      // if (roles.length == 0) {
-      //   return res.json({
-      //     message: "Add Roles First",
-      //     type: 'model',
-      //     url: '/roles',
-      //     data: [],
-      //     status: 200
-      //   });
-      // }
-     
-
-      const tablerows = UsersData.map(data => {
-        return {
-          id: data.id,
-          name: data.name,
-          role: data.role.name,
-
-        }
-      })
+      const tablerows = usersData.map((data: any) => ({
+        id: data.id,
+        name: data.name,
+        role: data.role?.name ?? '-',
+      }));
 
       const tabledata = new GenerateTable({
         name: "User",
@@ -78,74 +64,113 @@ export default async function handler(req, res) {
         status: 200,
       };
 
-      res.json(response);
-    } catch (e) {
+      return res.status(200).json(response);
+    } catch (e: any) {
       const response: ResponseInstance = {
-        message: "Something Went Wrong",
+        message: "Something went wrong",
         data: [e.message],
         status: 500,
       };
-
-      res.json(response);
+      return res.status(500).json(response);
     }
   }
-  if (req.method == "POST") {
+
+  if (req.method === "POST") {
     try {
-      const { name, password, email, role } = req.body;
+      const { name, password, email, role, business: businessId } = req.body;
 
-      let buisness = await AppDataSource.getRepository(Business).findOne({ where: { id: 1 } });
-      let userrole = await AppDataSource.getRepository(Roles).findOne({ where: { id: role } });
+      if (!name || !password || !email) {
+        return res.status(400).json({
+          message: "Name, password, and email are required",
+          data: [],
+          status: 400,
+        });
+      }
 
-      const newUser = new Users();
-      newUser.name = name;
-      newUser.password = password;
-      newUser.email = email;
-      newUser.role = req.body.role;
-      newUser.business = req.body.buisness;
+      const hashedPassword = bcrypt.hashSync(password, 10);
 
-      await AppDataSource.getRepository(Users).save(newUser);
+      const newUser = await prisma.user.create({
+        data: {
+          name,
+          password: hashedPassword,
+          email,
+          role_id: role ? Number(role) : null,
+          business_id: Number(businessId || user.business),
+          created_at: new Date(),
+          updated_at: new Date()
+        }
+      });
 
       const response: ResponseInstance = {
-        message: "User Created Successfully",
+        message: "User created successfully",
         data: [],
-        status: 200,
+        status: 201,
       };
 
-      res.json(response);
-    } catch (e) {
+      return res.status(201).json(response);
+    } catch (e: any) {
       const response: ResponseInstance = {
         message: "Something went wrong while creating user",
-        data: [e],
+        data: [e.message],
         status: 500,
       };
+      return res.status(500).json(response);
     }
   }
 
-  if (req.method == "DELETE") {
+  if (req.method === "DELETE") {
     try {
-      await UsersRepo
-        .createQueryBuilder("buisness")
-        .delete()
-        .where("id = :id", { id: req.query.id })
-        .execute();
+      const id = req.query.id as string;
+      if (!id) {
+        return res.status(400).json({ message: "User ID is required", data: [], status: 400 });
+      }
+
+      await prisma.user.update({
+        where: { id: parseInt(id) },
+        data: {
+          deleted_at: new Date()
+        }
+      });
 
       const response: ResponseInstance = {
-        message: "Record Deleted Succesfully",
+        message: "User deleted successfully",
         data: [],
         status: 200,
       };
 
-      res.json(response);
-
-    } catch (e) {
-
+      return res.status(200).json(response);
+    } catch (e: any) {
       const response: ResponseInstance = {
-        message: "Something went wrong while deleting record",
-        data: [e],
+        message: "Something went wrong while deleting user",
+        data: [e.message],
         status: 500,
       };
-
-      res.json(response);
+      return res.status(500).json(response);
     }
   }
+
+  // ---- SOFT DELETE ----
+  if (req.query.delete) {
+    try {
+      const ids = req.body.leads?.map((item: any) => item.id);
+      if (!ids || ids.length === 0) {
+        return res.status(400).json({ message: "No records specified for deletion", data: [], status: 400 });
+      }
+
+      await prisma.user.updateMany({
+        where: { id: { in: ids } },
+        data: { deleted_at: new Date() }
+      });
+
+      return res.status(200).json({
+        message: "Deleted successfully",
+        data: [],
+        status: 200,
+      });
+    } catch (e: any) {
+      return res.status(500).json({ message: "Deletion failed", data: [e.message], status: 500 });
+    }
+  }
+
+  return res.status(405).json({ message: "Method not allowed", data: [], status: 405 });
 }

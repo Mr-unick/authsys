@@ -1,0 +1,478 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Business {
+  id                   Int               @id @default(autoincrement())
+  created_at           DateTime?         @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?         @updatedAt @db.Timestamp(0)
+  business_name        String
+  gst_number           String
+  pan_number           String
+  business_address     String
+  city                 String
+  state                String
+  pin_code             String
+  contact_number       String
+  email                String
+  website              String?
+  owner_name           String
+  owner_contact        String
+  owner_email          String
+  business_description String?           @db.Text
+  deleted_at           DateTime?         @map("deleted_at")
+  areasOfOperation     AreaOfOperation[]
+  branches             Branch[]
+  leadStages           LeadStage[]
+  leads                Lead[]
+  roles                Role[]
+  users                User[]
+
+  @@map("business")
+}
+
+model User {
+  id                Int                  @id @default(autoincrement())
+  name              String
+  email             String               @unique
+  created_at        DateTime?            @default(now())
+  updated_at        DateTime?            @updatedAt
+  business_id       Int?                 @map("buisnesId")
+  role_id           Int?                 @map("roleId")
+  password          String
+  deleted_at        DateTime?            @map("deleted_at")
+  activities        Activity[]
+  comments          Comment[]
+  leadUsers         LeadUser[]
+  logs              LoginLogoutLog[]
+  notifications     Notification[]
+  pushSubscriptions PushSubscription[]
+  history           StageChangeHistory[]
+  business          Business?            @relation(fields: [business_id], references: [id])
+  role              Role?                @relation(fields: [role_id], references: [id])
+
+  @@index([business_id], map: "users_buisnesId_fkey")
+  @@index([role_id], map: "users_roleId_fkey")
+  @@map("users")
+}
+
+model Lead {
+  id           Int                  @id @default(autoincrement())
+  name         String
+  email        String
+  phone        String?
+  lead_source  String?
+  created_at   DateTime             @default(now())
+  updated_at   DateTime             @updatedAt
+  stage_id     Int?                 @map("stageId")
+  business_id  Int?                 @map("businessId")
+  address      String?
+  status       String?              @default("active")
+  second_phone String?
+  city         String?
+  state        String?
+  country      String?              @default("india")
+  notes        String?              @db.Text
+  pincode      String?
+  deleted_at   DateTime?            @map("deleted_at")
+  nextFollowUp DateTime?            @map("next_follow_up")
+  activities   Activity[]
+  comments     Comment[]
+  leadUsers    LeadUser[]
+  business     Business?            @relation(fields: [business_id], references: [id])
+  stage        LeadStage?           @relation(fields: [stage_id], references: [id])
+  history      StageChangeHistory[]
+
+  @@index([business_id], map: "leads_businessId_fkey")
+  @@index([stage_id], map: "leads_stageId_fkey")
+  @@map("leads")
+}
+
+model LeadUser {
+  lead_id Int  @map("lead_id")
+  user_id Int  @map("user_id")
+  lead    Lead @relation(fields: [lead_id], references: [id])
+  user    User @relation(fields: [user_id], references: [id])
+
+  @@id([lead_id, user_id])
+  @@index([user_id], map: "lead_users_user_id_fkey")
+  @@map("lead_users")
+}
+
+model Role {
+  id              Int              @id @default(autoincrement())
+  name            String
+  created_at      DateTime?        @default(now())
+  updated_at      DateTime?        @updatedAt
+  business_id     Int?             @map("buisnesId")
+  branch_id       Int?             @map("branchId")
+  deleted_at      DateTime?        @map("deleted_at")
+  rolePermissions RolePermission[]
+  branch          Branch?          @relation(fields: [branch_id], references: [id])
+  business        Business?        @relation(fields: [business_id], references: [id])
+  users           User[]
+
+  @@index([branch_id], map: "roles_branchId_fkey")
+  @@index([business_id], map: "roles_buisnesId_fkey")
+  @@map("roles")
+}
+
+model Permission {
+  id              Int              @id @default(autoincrement())
+  permission      String
+  action          String
+  description     String
+  policy_id       Int?             @map("policyId")
+  deleted_at      DateTime?        @map("deleted_at")
+  policy          Policy?          @relation(fields: [policy_id], references: [id])
+  rolePermissions RolePermission[]
+
+  @@index([policy_id], map: "permissions_policyId_fkey")
+  @@map("permissions")
+}
+
+model RolePermission {
+  role_id       Int        @map("role_id")
+  permission_id Int        @map("permission_id")
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  role          Role       @relation(fields: [role_id], references: [id])
+
+  @@id([role_id, permission_id])
+  @@index([permission_id], map: "role_has_permissions_permission_id_fkey")
+  @@map("role_has_permissions")
+}
+
+model Policy {
+  id          Int          @id @default(autoincrement())
+  name        String
+  description String
+  permissions Permission[]
+
+  @@map("policy")
+}
+
+model Branch {
+  id          Int       @id @default(autoincrement())
+  name        String
+  location    String
+  business_id Int?      @map("buisnessId")
+  email       String
+  branch_code String
+  number      String
+  address     String
+  state       String
+  district    String
+  city        String
+  pincode     String
+  discription String
+  deleted_at  DateTime? @map("deleted_at")
+  business    Business? @relation(fields: [business_id], references: [id])
+  roles       Role[]
+
+  @@index([business_id], map: "branch_buisnessId_fkey")
+  @@map("branch")
+}
+
+model AreaOfOperation {
+  id          Int       @id @default(autoincrement())
+  name        String
+  region_code String?
+  business_id Int?      @map("business_id")
+  created_at  DateTime? @default(now())
+  updated_at  DateTime? @updatedAt
+  deleted_at  DateTime? @map("deleted_at")
+  address     String?
+  email       String?
+  number      String?
+  business    Business? @relation(fields: [business_id], references: [id])
+
+  @@index([business_id], map: "area_of_operations_business_id_fkey")
+  @@map("area_of_operations")
+}
+
+model LeadStage {
+  id          Int                  @id @default(autoincrement())
+  stage_name  String
+  colour      String
+  created_at  DateTime?            @default(now())
+  updated_at  DateTime?            @updatedAt
+  business_id Int?                 @map("buisnessId")
+  discription String?
+  deleted_at  DateTime?            @map("deleted_at")
+  order       Int                  @default(0)
+  stage_type  String               @default("ONGOING") @map("stage_type")
+  business    Business?            @relation(fields: [business_id], references: [id])
+  leads       Lead[]
+  history     StageChangeHistory[]
+
+  @@unique([stage_name, business_id])
+  @@index([business_id], map: "lead_stages_buisnessId_fkey")
+  @@map("lead_stages")
+}
+
+model StageChangeHistory {
+  id         Int        @id @default(autoincrement())
+  changed_at DateTime   @default(now())
+  reason     String?
+  stage_id   Int?       @map("stageId")
+  lead_id    Int?       @map("lead_id")
+  user_id    Int?       @map("changed_by")
+  deleted_at DateTime?  @map("deleted_at")
+  user       User?      @relation(fields: [user_id], references: [id])
+  lead       Lead?      @relation(fields: [lead_id], references: [id])
+  stage      LeadStage? @relation(fields: [stage_id], references: [id])
+
+  @@index([user_id], map: "status_change_history_changed_by_fkey")
+  @@index([lead_id], map: "status_change_history_lead_id_fkey")
+  @@index([stage_id], map: "status_change_history_stageId_fkey")
+  @@map("status_change_history")
+}
+
+model Comment {
+  id         Int       @id @default(autoincrement())
+  comment    String
+  created_at DateTime? @default(now())
+  lead_id    Int?      @map("leadId")
+  user_id    Int?      @map("userId")
+  type       String?
+  deleted_at DateTime? @map("deleted_at")
+  url        String?   @db.VarChar(1000)
+  lead       Lead?     @relation(fields: [lead_id], references: [id])
+  user       User?     @relation(fields: [user_id], references: [id])
+
+  @@index([lead_id], map: "comment_leadId_fkey")
+  @@index([user_id], map: "comment_userId_fkey")
+  @@map("comment")
+}
+
+model Activity {
+  id          Int       @id @default(autoincrement())
+  type        String
+  description String?   @db.Text
+  timestamp   DateTime  @default(now())
+  user_id     Int?      @map("userId")
+  lead_id     Int?      @map("leadId")
+  deleted_at  DateTime? @map("deleted_at")
+  lead        Lead?     @relation(fields: [lead_id], references: [id])
+  user        User?     @relation(fields: [user_id], references: [id])
+
+  @@index([lead_id], map: "activity_leadId_fkey")
+  @@index([user_id], map: "activity_userId_fkey")
+  @@map("activity")
+}
+
+model LoginLogoutLog {
+  id         Int       @id @default(autoincrement())
+  action     String
+  timestamp  DateTime
+  ip_address String
+  user_agent String
+  user_id    Int?      @map("userId")
+  deleted_at DateTime? @map("deleted_at")
+  user       User?     @relation(fields: [user_id], references: [id])
+
+  @@index([user_id], map: "login_logout_logs_userId_fkey")
+  @@map("login_logout_logs")
+}
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  message    String
+  status     String   @default("unread")
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user_id    Int?     @map("userId")
+  url        String?
+  user       User?    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id], map: "notifications_userId_fkey")
+  @@map("notifications")
+}
+
+model SuperAdmin {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("super_admin")
+}
+
+model BusinessAdmin {
+  id         Int      @id @default(autoincrement())
+  name       String
+  email      String   @unique
+  password   String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@map("buisness_admin")
+}
+
+model PushSubscription {
+  id         Int      @id @default(autoincrement())
+  endpoint   String   @unique @db.VarChar(500)
+  p256dh     String
+  auth       String
+  user_id    Int?     @map("userId")
+  created_at DateTime @default(now())
+  user       User?    @relation(fields: [user_id], references: [id])
+
+  @@index([user_id], map: "push_subscriptions_userId_fkey")
+  @@map("push_subscriptions")
+}
+
+model Integration {
+  id               Int                         @id @default(autoincrement())
+  business_id      Int                         @map("business_id")
+  provider         String
+  display_name     String?
+  status           String                      @default("disconnected")
+  webhook_secret   String?
+  api_key          String?
+  created_at       DateTime                    @default(now())
+  updated_at       DateTime                    @updatedAt
+  account_name     String?
+  last_sync        DateTime?
+  last_sync_status String?
+  externalLeads    ExternalLead[]
+  assignmentRules  IntegrationAssignmentRule[]
+  tokens           IntegrationToken[]
+  mappings         LeadSourceMapping[]
+  config           Json?
+  syncLogs         SyncLog[]
+  webhookLogs      WebhookLog[]
+
+  @@index([business_id, provider])
+  @@map("integrations")
+}
+
+model IntegrationToken {
+  id             Int         @id @default(autoincrement())
+  business_id    Int         @map("business_id")
+  integration_id Int         @map("integration_id")
+  access_token   String      @db.Text
+  refresh_token  String?     @db.Text
+  token_type     String      @default("bearer")
+  expires_at     DateTime?
+  scopes         String?
+  iv             String
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+  provider       String      @default("unknown")
+  integration    Integration @relation(fields: [integration_id], references: [id])
+
+  @@index([integration_id], map: "integration_tokens_integration_id_fkey")
+  @@map("integration_tokens")
+}
+
+model ExternalLead {
+  id               Int         @id @default(autoincrement())
+  business_id      Int         @map("business_id")
+  integration_id   Int         @map("integration_id")
+  external_lead_id String      @map("external_lead_id") @db.VarChar(300)
+  provider         String
+  crm_lead_id      Int?        @map("crm_lead_id")
+  raw_payload      String?     @db.LongText
+  mapped_payload   String?     @db.LongText
+  status           String      @default("raw")
+  error_message    String?     @db.Text
+  received_at      DateTime    @default(now())
+  imported_at      DateTime?
+  integration      Integration @relation(fields: [integration_id], references: [id])
+
+  @@unique([business_id, provider, external_lead_id])
+  @@index([integration_id], map: "external_leads_integration_id_fkey")
+  @@map("external_leads")
+}
+
+model WebhookLog {
+  id              Int          @id @default(autoincrement())
+  business_id     Int?         @map("business_id")
+  integration_id  Int?         @map("integration_id")
+  provider        String
+  event_type      String?
+  payload         String?      @db.LongText
+  signature       String?      @db.VarChar(500)
+  signature_valid Boolean?
+  processed       Boolean      @default(false)
+  error           String?      @db.Text
+  received_at     DateTime     @default(now())
+  processed_at    DateTime?
+  integration     Integration? @relation(fields: [integration_id], references: [id])
+
+  @@index([integration_id], map: "webhook_logs_integration_id_fkey")
+  @@map("webhook_logs")
+}
+
+model LeadSourceMapping {
+  id             Int         @id @default(autoincrement())
+  business_id    Int         @map("business_id")
+  integration_id Int         @map("integration_id")
+  form_id        String?
+  form_name      String?
+  external_field String
+  crm_field      String
+  transform      String?
+  is_active      Boolean     @default(true)
+  created_at     DateTime    @default(now())
+  integration    Integration @relation(fields: [integration_id], references: [id])
+
+  @@index([integration_id], map: "lead_source_mappings_integration_id_fkey")
+  @@map("lead_source_mappings")
+}
+
+model SyncLog {
+  id              Int         @id @default(autoincrement())
+  business_id     Int         @map("business_id")
+  integration_id  Int         @map("integration_id")
+  sync_type       String
+  status          String      @default("running")
+  leads_received  Int         @default(0)
+  leads_imported  Int         @default(0)
+  leads_failed    Int         @default(0)
+  leads_duplicate Int         @default(0)
+  started_at      DateTime    @default(now())
+  error_message   String?     @db.Text
+  finished_at     DateTime?
+  integration     Integration @relation(fields: [integration_id], references: [id])
+
+  @@index([integration_id], map: "sync_logs_integration_id_fkey")
+  @@map("sync_logs")
+}
+
+model IntegrationAssignmentRule {
+  id             Int                        @id @default(autoincrement())
+  business_id    Int                        @map("business_id")
+  integration_id Int                        @map("integration_id")
+  form_id        String?
+  strategy       String                     @default("round_robin")
+  user_ids       String                     @db.Text
+  stage_id       Int?
+  is_active      Boolean                    @default(true)
+  created_at     DateTime                   @default(now())
+  updated_at     DateTime                   @updatedAt
+  rr_state       AssignmentRoundRobinState?
+  integration    Integration                @relation(fields: [integration_id], references: [id])
+
+  @@unique([business_id, integration_id, form_id])
+  @@index([integration_id], map: "integration_assignment_rules_integration_id_fkey")
+  @@map("integration_assignment_rules")
+}
+
+/// Tracks the current round-robin index per rule so assignment is stateful
+model AssignmentRoundRobinState {
+  id            Int                       @id @default(autoincrement())
+  rule_id       Int                       @unique @map("rule_id")
+  current_index Int                       @default(0)
+  rule          IntegrationAssignmentRule @relation(fields: [rule_id], references: [id])
+
+  @@map("assignment_rr_state")
+}
