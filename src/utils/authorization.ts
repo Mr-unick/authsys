@@ -15,8 +15,8 @@ export interface UserInstance {
  * Admin users bypass all permission checks.
  */
 export const haspermission = (user: any, requiredPermission: string): boolean => {
-    const role = user?.role?.toLowerCase() || '';
-    if (['admin', 'tenant admin', 'business admin', 'buisness admin'].includes(role)) {
+    const role = (user?.role || '').toString().toLowerCase().replace(/\s+/g, '_');
+    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'super_admin', 'superadmin'].includes(role)) {
         return true;
     }
 
@@ -29,8 +29,8 @@ export const haspermission = (user: any, requiredPermission: string): boolean =>
  */
 export const hasroutepermission = (user: UserInstance, route: string): boolean => {
     // Admin users have access to all routes
-    const role = user.role?.toLowerCase() || '';
-    if (['admin', 'tenant admin', 'business admin', 'buisness admin'].includes(role)) {
+    const role = (user.role || '').toString().toLowerCase().replace(/\s+/g, '_');
+    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'super_admin', 'superadmin'].includes(role)) {
         return true;
     }
 

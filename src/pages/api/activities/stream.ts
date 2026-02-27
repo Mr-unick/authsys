@@ -70,8 +70,8 @@ export default async function handler(req: any, res: any) {
 
     const onActivity = (activity: any) => {
         // ... filter logic ...
-        const isSuperAdmin = (user.role === 'Admin' || user.role === 'Super Admin') && !user.business;
-        const isBusinessAdmin = (user.role === 'Admin' || user.role === 'Buisness Admin') && user.business;
+        const isSuperAdmin = (user.role === 'Admin' || user.role === 'Super Admin' || user.role === 'SUPER_ADMIN') && !user.business;
+        const isBusinessAdmin = (user.role === 'Admin' || user.role === 'Buisness Admin' || user.role === 'TENANT_ADMIN') && user.business;
 
         let shouldSend = false;
 

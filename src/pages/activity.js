@@ -134,7 +134,7 @@ const ActivityTab = ({ showHeader = true }) => {
                                     <div className="flex-grow min-w-0 flex flex-col gap-1.5">
                                         <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
                                             <span className="text-sm font-bold text-[#0F1626] shrink-0">
-                                                {activity.user?.name || 'System'}
+                                                {activity.superAdmin?.name || activity.user?.name || 'System'}
                                             </span>
                                             <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 self-center" />
                                             <p className="text-sm font-medium text-gray-600 flex-1 min-w-0 break-words">

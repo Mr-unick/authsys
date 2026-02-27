@@ -88,13 +88,26 @@ export default async function handler(req: any, res: any) {
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
+      const targetRoleId = role ? Number(role) : null;
+
+      // Security Check: Non-SuperAdmins cannot create other Business Admins
+      if (user.role !== 'SUPER_ADMIN' && targetRoleId) {
+        const targetRole = await prisma.role.findUnique({ where: { id: targetRoleId } });
+        const protectedNames = ['BUISNESS ADMIN', 'BUSINESS ADMIN', 'ADMIN'];
+        if (targetRole && protectedNames.includes(targetRole.name.trim().toUpperCase().replace(/\s+/g, ' '))) {
+          return res.status(403).json({
+            message: "Unauthorized: You do not have permission to assign this administrative role",
+            status: 403
+          });
+        }
+      }
 
       const newUser = await prisma.user.create({
         data: {
           name,
           password: hashedPassword,
           email,
-          role_id: role ? Number(role) : null,
+          role_id: targetRoleId,
           business_id: Number(businessId || user.business),
           created_at: new Date(),
           updated_at: new Date()

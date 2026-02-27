@@ -1,4 +1,5 @@
 import prisma from "@/app/lib/prisma";
+import fs from 'fs';
 
 export default async function handler(req: any, res: any) {
     if (req.method === "GET") {
@@ -7,6 +8,9 @@ export default async function handler(req: any, res: any) {
                 include: {
                     permissions: true
                 }
+            }).catch(err => {
+                fs.appendFileSync('policy_api_error.txt', `[${new Date().toISOString()}] DB ERROR: ${err.message}\n`);
+                return [];
             });
 
             return res.json({
@@ -15,6 +19,7 @@ export default async function handler(req: any, res: any) {
                 status: 200
             });
         } catch (error: any) {
+            fs.appendFileSync('policy_api_error.txt', `[${new Date().toISOString()}] HANDLER ERROR: ${error.stack}\n`);
             return res.status(500).json({
                 message: "Something went wrong",
                 status: 500,

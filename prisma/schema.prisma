@@ -26,14 +26,35 @@ model Business {
   owner_email          String
   business_description String?           @db.Text
   deleted_at           DateTime?         @map("deleted_at")
+  
+  // Subscription & Licensing
+  subscription_status  String?           @default("INACTIVE") 
+  subscription_plan    String?           @default("BASIC")
+  trial_expiry         DateTime?         @db.Timestamp(0)
+  is_on_trial          Boolean           @default(false)
+
   areasOfOperation     AreaOfOperation[]
   branches             Branch[]
   leadStages           LeadStage[]
   leads                Lead[]
   roles                Role[]
   users                User[]
+  supportTickets       SupportTicket[]
+  features             BusinessFeature[]
+  integrations         Integration[]
 
   @@map("business")
+}
+
+model BusinessFeature {
+  id          Int      @id @default(autoincrement())
+  business_id Int
+  feature_key String   @db.VarChar(100)
+  is_enabled  Boolean  @default(false)
+  business    Business @relation(fields: [business_id], references: [id])
+  
+  @@unique([business_id, feature_key])
+  @@map("business_feature")
 }
 
 model User {
@@ -52,6 +73,7 @@ model User {
   logs              LoginLogoutLog[]
   notifications     Notification[]
   pushSubscriptions PushSubscription[]
+  supportTickets    SupportTicket[]
   history           StageChangeHistory[]
   business          Business?            @relation(fields: [business_id], references: [id])
   role              Role?                @relation(fields: [role_id], references: [id])
@@ -116,6 +138,7 @@ model Role {
   branch          Branch?          @relation(fields: [branch_id], references: [id])
   business        Business?        @relation(fields: [business_id], references: [id])
   users           User[]
+  superAdmins     SuperAdmin[]
 
   @@index([branch_id], map: "roles_branchId_fkey")
   @@index([business_id], map: "roles_buisnesId_fkey")
@@ -251,18 +274,21 @@ model Comment {
 }
 
 model Activity {
-  id          Int       @id @default(autoincrement())
-  type        String
-  description String?   @db.Text
-  timestamp   DateTime  @default(now())
-  user_id     Int?      @map("userId")
-  lead_id     Int?      @map("leadId")
-  deleted_at  DateTime? @map("deleted_at")
-  lead        Lead?     @relation(fields: [lead_id], references: [id])
-  user        User?     @relation(fields: [user_id], references: [id])
+  id              Int         @id @default(autoincrement())
+  type            String
+  description     String?     @db.Text
+  timestamp       DateTime    @default(now())
+  user_id         Int?        @map("userId")
+  super_admin_id  Int?        @map("super_admin_id")
+  lead_id         Int?        @map("leadId")
+  deleted_at      DateTime?   @map("deleted_at")
+  lead            Lead?       @relation(fields: [lead_id], references: [id])
+  user            User?       @relation(fields: [user_id], references: [id])
+  superAdmin      SuperAdmin? @relation(fields: [super_admin_id], references: [id])
 
   @@index([lead_id], map: "activity_leadId_fkey")
   @@index([user_id], map: "activity_userId_fkey")
+  @@index([super_admin_id])
   @@map("activity")
 }
 
@@ -295,13 +321,17 @@ model Notification {
 }
 
 model SuperAdmin {
-  id         Int      @id @default(autoincrement())
+  id         Int        @id @default(autoincrement())
   name       String
-  email      String   @unique
+  email      String     @unique
   password   String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  role_id    Int?       @map("role_id")
+  role       Role?      @relation(fields: [role_id], references: [id])
+  activities Activity[]
 
+  @@index([role_id])
   @@map("super_admin")
 }
 
@@ -349,6 +379,7 @@ model Integration {
   config           Json?
   syncLogs         SyncLog[]
   webhookLogs      WebhookLog[]
+  business         Business                    @relation(fields: [business_id], references: [id])
 
   @@index([business_id, provider])
   @@map("integrations")
@@ -475,4 +506,37 @@ model AssignmentRoundRobinState {
   rule          IntegrationAssignmentRule @relation(fields: [rule_id], references: [id])
 
   @@map("assignment_rr_state")
+}
+
+model SupportTicket {
+  id          Int             @id @default(autoincrement())
+  subject     String
+  description String          @db.Text
+  status      String          @default("open") // open, in-progress, resolved, closed
+  priority    String          @default("medium") // low, medium, high, urgent
+  category    String?                          // technical, billing, feature, other
+  business_id Int             @map("business_id")
+  user_id     Int             @map("user_id") // the tenant user who raised it
+  created_at  DateTime        @default(now())
+  updated_at  DateTime        @updatedAt
+  messages    TicketMessage[]
+  business    Business        @relation(fields: [business_id], references: [id])
+  user        User            @relation(fields: [user_id], references: [id])
+
+  @@index([business_id])
+  @@index([user_id])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id         Int           @id @default(autoincrement())
+  ticket_id  Int           @map("ticket_id")
+  sender_id  Int           @map("sender_id") // User ID
+  is_admin   Boolean       @default(false)   // If true, sender is SuperAdmin (portal staff)
+  message    String        @db.Text
+  created_at DateTime      @default(now())
+  ticket     SupportTicket @relation(fields: [ticket_id], references: [id], onDelete: Cascade)
+
+  @@index([ticket_id])
+  @@map("ticket_messages")
 }

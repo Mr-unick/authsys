@@ -9,18 +9,21 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET") {
     try {
-      let stages;
+      const businessId = user.business;
 
-      if (user?.business) {
-        stages = await prisma.leadStage.findMany({
-          where: { business_id: user.business },
-          orderBy: { order: 'asc' }
-        });
-      } else {
-        stages = await prisma.leadStage.findMany({
-          orderBy: { order: 'asc' }
-        });
+      // Strict tenant isolation: require businessId unless platform admin (who might be viewing specific context)
+      // For now, if no businessId, we return empty as stages MUST belong to a business
+      if (!businessId && user.role !== 'SUPER_ADMIN') {
+        return res.status(200).json({ status: 200, data: { rows: [] }, message: "No business context" });
       }
+
+      const stages = await (prisma as any).leadStage.findMany({
+        where: {
+          business_id: businessId || undefined,
+          deleted_at: null
+        },
+        orderBy: { order: 'asc' }
+      });
 
       const tablerows = stages.map((stage: any) => ({
         id: stage.id,
@@ -54,6 +57,11 @@ export default async function handler(req: any, res: any) {
   if (req.method === "POST") {
     try {
       const { stage_name, discription, colour, order, stage_type } = req.body;
+      const businessId = user.business;
+
+      if (!businessId) {
+        return res.status(400).json({ message: "Business ID is required to create a stage", status: 400 });
+      }
 
       if (!stage_name) {
         return res.status(400).json({
@@ -63,14 +71,14 @@ export default async function handler(req: any, res: any) {
         });
       }
 
-      await prisma.leadStage.create({
+      await (prisma as any).leadStage.create({
         data: {
           stage_name,
           discription,
           colour,
           order: order ? Number(order) : 0,
           stage_type: stage_type || 'ONGOING',
-          business_id: user?.business
+          business_id: businessId
         }
       });
 
@@ -92,12 +100,25 @@ export default async function handler(req: any, res: any) {
     try {
       const { id } = req.query;
       const { stage_name, discription, colour, order, stage_type } = req.body;
+      const businessId = user.business;
 
       if (!id) {
         return res.status(400).json({ message: "Stage ID is required", status: 400 });
       }
 
-      await prisma.leadStage.update({
+      // Verify ownership before update
+      const existing = await (prisma as any).leadStage.findFirst({
+        where: {
+          id: Number(id),
+          business_id: businessId || undefined
+        }
+      });
+
+      if (!existing && user.role !== 'SUPER_ADMIN') {
+        return res.status(403).json({ message: "Unauthorized to update this stage", status: 403 });
+      }
+
+      await (prisma as any).leadStage.update({
         where: { id: Number(id) },
         data: {
           stage_name,
@@ -126,12 +147,20 @@ export default async function handler(req: any, res: any) {
   if (req.query.delete) {
     try {
       const ids = req.body.leads?.map((item: any) => item.id);
+      const businessId = user.business;
+
       if (!ids || ids.length === 0) {
         return res.status(400).json({ message: "No records specified for deletion", data: [], status: 400 });
       }
 
-      await prisma.leadStage.updateMany({
-        where: { id: { in: ids } },
+      // Super Admins can delete anything, others only their own business stages
+      const where: any = { id: { in: ids } };
+      if (user.role !== 'SUPER_ADMIN') {
+        where.business_id = businessId;
+      }
+
+      await (prisma as any).leadStage.updateMany({
+        where: where,
         data: { deleted_at: new Date() }
       });
 

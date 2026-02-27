@@ -1,0 +1,144 @@
+
+[2026-02-25T08:28:11.799Z] ACTIVITY API ERROR: PrismaClientValidationError: 
+Invalid `prisma.activity.findMany()` invocation:
+
+{
+  where: {
+    OR: [
+      {
+        user: {
+          business_id: 2
+        }
+      },
+      {
+        lead: {
+          business_id: 2
+        }
+      }
+    ],
+    user_id: 4
+  },
+  include: {
+    user: true,
+    lead: true,
+    superAdmin: true
+    ~~~~~~~~~~
+  },
+  orderBy: {
+    timestamp: "desc"
+  },
+  take: 30
+}
+
+Unknown field `superAdmin` for include statement on model `Activity`. Available options are marked with ?.
+    at Nn (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async getActivities (webpack-internal:///(api)/./src/pages/api/activities/index.ts:54:28)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:3901)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:5372)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:628:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:278:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:853:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:371:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:153:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:368:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:230:21)
+
+[2026-02-25T08:45:29.325Z] ACTIVITY API ERROR: PrismaClientValidationError: 
+Invalid `prisma.activity.findMany()` invocation:
+
+{
+  where: {
+    OR: [
+      {
+        user: {
+          business_id: 2
+        }
+      },
+      {
+        lead: {
+          business_id: 2
+        }
+      }
+    ],
+    user_id: 2
+  },
+  include: {
+    user: true,
+    lead: true,
+    superAdmin: true
+    ~~~~~~~~~~
+  },
+  orderBy: {
+    timestamp: "desc"
+  },
+  take: 30
+}
+
+Unknown field `superAdmin` for include statement on model `Activity`. Available options are marked with ?.
+    at Nn (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async getActivities (webpack-internal:///(api)/./src/pages/api/activities/index.ts:54:28)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:3901)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:5372)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:628:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:278:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:853:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:371:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:153:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:368:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:230:21)
+
+[2026-02-25T08:50:40.512Z] ACTIVITY API ERROR: PrismaClientValidationError: 
+Invalid `prisma.activity.findMany()` invocation:
+
+{
+  where: {
+    OR: [
+      {
+        user: {
+          business_id: 10
+        }
+      },
+      {
+        lead: {
+          business_id: 10
+        }
+      }
+    ],
+    user_id: 8
+  },
+  include: {
+    user: true,
+    lead: true,
+    superAdmin: true
+    ~~~~~~~~~~
+  },
+  orderBy: {
+    timestamp: "desc"
+  },
+  take: 30
+}
+
+Unknown field `superAdmin` for include statement on model `Activity`. Available options are marked with ?.
+    at Nn (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async getActivities (webpack-internal:///(api)/./src/pages/api/activities/index.ts:54:28)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:3901)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:5372)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:628:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:278:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:853:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:371:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:153:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:368:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:230:21)

@@ -2,6 +2,7 @@ import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+import fs from 'fs';
 
 export default async function handler(req: any, res: any) {
   const user = await VerifyToken(req, res, 'roles');
@@ -10,12 +11,29 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       const rolesData = await prisma.role.findMany({
-        where: { business_id: user.business }
+        where: {
+          business_id: user.business,
+          deleted_at: null,
+          // If not super admin, hidden the 'Buisness Admin' role to prevent editing or assignment escalation
+          ...(user.role !== 'SUPER_ADMIN' ? {
+            NOT: {
+              name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] }
+            }
+          } : {})
+        },
+        include: {
+          rolePermissions: {
+            include: {
+              permission: true
+            }
+          }
+        }
       });
 
       const tablerows = rolesData.map((data: any) => ({
         id: data.id,
         name: data.name,
+        permissions: data.rolePermissions.map((rp: any) => rp.permission.permission)
       }));
 
       const tabledata = new GenerateTable({
@@ -31,6 +49,7 @@ export default async function handler(req: any, res: any) {
 
       return res.status(200).json(response);
     } catch (e: any) {
+      fs.appendFileSync('roles_api_error.txt', `[${new Date().toISOString()}] ERROR: User: ${user.email}, Role: ${user.role}, Biz: ${user.business}, Err: ${e.stack}\n`);
       return res.status(500).json({
         message: "Something went wrong",
         data: [e.message],
@@ -48,6 +67,15 @@ export default async function handler(req: any, res: any) {
           message: "Role name is required",
           data: [],
           status: 400,
+        });
+      }
+
+      // Prevent non-SuperAdmins from hijacking the Business Admin identity
+      const protectedNames = ['BUISNESS ADMIN', 'BUSINESS ADMIN', 'ADMIN'];
+      if (user.role !== 'SUPER_ADMIN' && protectedNames.includes(name.trim().toUpperCase().replace(/\s+/g, ' '))) {
+        return res.status(403).json({
+          message: "Unauthorized: You cannot create a role with this administrative name",
+          status: 403
         });
       }
 
@@ -84,6 +112,55 @@ export default async function handler(req: any, res: any) {
         data: [e.message],
         status: 500,
       });
+    }
+  }
+
+  // Handle PUT for updating roles if needed (based on GenerateTable pattern)
+  if (req.method === "PUT") {
+    try {
+      const { id } = req.query;
+      const { name, permissions } = req.body;
+
+      if (!id) return res.status(400).json({ message: "ID required" });
+
+      const existingRole = await prisma.role.findUnique({ where: { id: Number(id) } });
+      if (!existingRole) return res.status(404).json({ message: "Role not found" });
+
+      const protectedNames = ['BUISNESS ADMIN', 'BUSINESS ADMIN', 'ADMIN'];
+      const isTargetProtected = protectedNames.includes(existingRole.name.trim().toUpperCase().replace(/\s+/g, ' '));
+      const isNewNameProtected = name && protectedNames.includes(name.trim().toUpperCase().replace(/\s+/g, ' '));
+
+      if (user.role !== 'SUPER_ADMIN' && (isTargetProtected || isNewNameProtected)) {
+        return res.status(403).json({
+          message: "Unauthorized: Access to this administrative role is restricted to Portal Staff",
+          status: 403
+        });
+      }
+
+      await prisma.$transaction(async (tx) => {
+        if (name) {
+          await tx.role.update({
+            where: { id: Number(id) },
+            data: { name, updated_at: new Date() }
+          });
+        }
+
+        if (permissions) {
+          await tx.rolePermission.deleteMany({ where: { role_id: Number(id) } });
+          if (permissions.length > 0) {
+            await tx.rolePermission.createMany({
+              data: permissions.map((pId: any) => ({
+                role_id: Number(id),
+                permission_id: Number(pId)
+              }))
+            });
+          }
+        }
+      });
+
+      return res.status(200).json({ message: "Role updated successfully", status: 200 });
+    } catch (e: any) {
+      return res.status(500).json({ message: e.message, status: 500 });
     }
   }
 

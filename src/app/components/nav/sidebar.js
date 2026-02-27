@@ -23,6 +23,7 @@ import {
   Loader2,
   Zap,
   Plug,
+  Fingerprint,
 } from "lucide-react";
 import { NavAccordion } from "../accrodian";
 import { usePathname } from "next/navigation";
@@ -51,6 +52,10 @@ const getIconForRoute = (title, unreadCount = 0) => {
     "Business Settings": <BriefcaseBusiness size={18} />,
     "Leads": <Users size={18} />,
     "Integrations": <Plug size={18} />,
+    "Support": <HelpCircle size={18} />,
+    "Businesses": <BriefcaseBusiness size={18} />,
+    "Manage Staff": <Users size={18} />,
+    "Staff Roles": <Fingerprint size={18} />,
   };
 
   return iconMap[title] || <Folder size={18} />;

@@ -36,7 +36,7 @@ export default async function handler(req: any, res: any) {
             data: {
                 type: 'FOLLOW_UP_SCHEDULED',
                 description: `Scheduled a follow-up for ${followUpDateTime.toLocaleString()}`,
-                user_id: user.id,
+                [user.role === 'SUPER_ADMIN' ? 'super_admin_id' : 'user_id']: user.id,
                 lead_id: Number(id)
             }
         });

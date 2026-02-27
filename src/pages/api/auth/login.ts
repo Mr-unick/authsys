@@ -24,7 +24,7 @@ export default async function handler(req: any, res: any) {
             });
         }
 
-        const user = await prisma.user.findUnique({
+        let user: any = await prisma.user.findUnique({
             where: { email },
             include: {
                 role: {
@@ -39,6 +39,16 @@ export default async function handler(req: any, res: any) {
                 business: true
             }
         });
+
+        let isSuperAdmin = false;
+        if (!user) {
+            user = await prisma.superAdmin.findUnique({
+                where: { email }
+            });
+            if (user) {
+                isSuperAdmin = true;
+            }
+        }
 
         if (!user) {
             return res.status(404).json({
@@ -57,15 +67,17 @@ export default async function handler(req: any, res: any) {
         }
 
         // Extract permissions
-        const permissions = user.role?.rolePermissions.map(p => p.permission.permission) || [];
+        const permissions = isSuperAdmin
+            ? ['*'] // Super admin has all permissions
+            : (user.role?.rolePermissions.map((p: any) => p.permission.permission) || []);
 
         // Build token payload (exclude password)
         const tokenPayload = {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: user.role?.name,
-            business: user.business_id,
+            role: isSuperAdmin ? 'SUPER_ADMIN' : user.role?.name,
+            business: isSuperAdmin ? null : user.business_id,
             permissions,
         };
 

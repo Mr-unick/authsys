@@ -15,7 +15,15 @@ export default async function handler(req: any, res: any) {
 
     try {
         const roles = await prisma.role.findMany({
-            where: { business_id: userContext.business }
+            where: {
+                business_id: userContext.business,
+                // Only SuperAdmins can see/assign the highest administrative roles
+                ...(userContext.role !== 'SUPER_ADMIN' ? {
+                    NOT: {
+                        name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] }
+                    }
+                } : {})
+            }
         });
 
         const roleOptions = roles.map((role: any) => ({

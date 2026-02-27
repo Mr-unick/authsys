@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import {
     Zap, Facebook, Linkedin, Globe, CheckCircle2, XCircle,
     AlertCircle, RefreshCw, Copy, Trash2, Settings, Clock,
-    ChevronRight, Plus, Loader2, ShieldCheck, Webhook, MessageCircle
+    ChevronRight, Plus, Loader2, ShieldCheck, Webhook, MessageCircle, Mail, Send
 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/components/ui/tabs';
@@ -63,6 +63,15 @@ const PROVIDERS = [
         bg: 'bg-emerald-50',
         connectUrl: null,
         badge: 'Automated',
+    },
+    {
+        key: 'email',
+        name: 'Bulk Email (SMTP)',
+        description: 'Configure your own SMTP to send bulk emails to your leads',
+        icon: <Mail size={22} className="text-blue-500" />,
+        bg: 'bg-blue-50',
+        connectUrl: null,
+        badge: 'SMTP',
     },
 ];
 
@@ -122,6 +131,8 @@ function IntegrationsPage() {
     const [saving, setSaving] = useState(false);
     const [assignment, setAssignment] = useState({ rule: null, users: [], stages: [] });
     const [whatsappConfig, setWhatsappConfig] = useState(null);
+    const [emailConfig, setEmailConfig] = useState(null);
+    const [bulkMail, setBulkMail] = useState({ subject: '', body: '' });
 
     const load = useCallback(async () => {
         try {
@@ -175,6 +186,18 @@ function IntegrationsPage() {
                     is_active: true
                 });
             }
+
+            if (provider.key === 'email') {
+                setEmailConfig(existing.config || {
+                    smtp_host: '',
+                    smtp_port: '587',
+                    smtp_user: '',
+                    smtp_pass: '',
+                    from_name: 'LeadConverter',
+                    from_email: '',
+                    is_active: true
+                });
+            }
         } else {
             setMappings([
                 { external_field: 'full_name', crm_field: 'name', transform: 'trim' },
@@ -189,6 +212,18 @@ function IntegrationsPage() {
                     welcome_message: 'Hello {{name}}, thanks for your interest!',
                     phone_number_id: '',
                     api_key: '',
+                    is_active: true
+                });
+            }
+
+            if (provider.key === 'email') {
+                setEmailConfig({
+                    smtp_host: '',
+                    smtp_port: '587',
+                    smtp_user: '',
+                    smtp_pass: '',
+                    from_name: 'LeadConverter',
+                    from_email: '',
                     is_active: true
                 });
             }
@@ -275,6 +310,52 @@ function IntegrationsPage() {
         }
     };
 
+    const handleSaveEmailConfig = async () => {
+        setSaving(true);
+        try {
+            await axios.post('/api/integrations/email/config', emailConfig);
+            toast.success('Email configuration saved');
+            await load();
+            const res = await axios.get('/api/integrations');
+            const updated = res.data.data.find(i => i.provider === 'email');
+            if (updated) setSelected(s => ({ ...s, integration: updated }));
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to save configuration');
+        } finally {
+            setSaving(false);
+        }
+    };
+
+    const handleSendBulkMail = async () => {
+        if (!bulkMail.subject || !bulkMail.body) {
+            toast.error("Subject and body are required");
+            return;
+        }
+        setSaving(true);
+        try {
+            // Fetch all leads to get recipients
+            const leadsRes = await axios.get('/api/leads');
+            const recipients = leadsRes.data.data.map(l => l.email).filter(e => !!e);
+
+            if (recipients.length === 0) {
+                toast.error("No recipients found with email addresses");
+                return;
+            }
+
+            const res = await axios.post('/api/mail/send-bulk', {
+                subject: bulkMail.subject,
+                body: bulkMail.body,
+                recipients: recipients
+            });
+            toast.success(`Bulk mail process started. ${res.data.data.successful} sent successfully.`);
+            setBulkMail({ subject: '', body: '' });
+        } catch (err) {
+            toast.error(err.response?.data?.message || 'Failed to send bulk mail');
+        } finally {
+            setSaving(false);
+        }
+    };
+
     const handleMockConnect = async () => {
         if (!selected) return;
         try {
@@ -321,7 +402,7 @@ function IntegrationsPage() {
                     }}
                     className="flex items-center gap-2 text-sm text-gray-500 hover:text-indigo-600 transition-colors mb-6"
                 >
-                    ← {selected.key === 'custom' && !listView && selected.integration ? 'Back to Custom Webhooks' : 'Back to Integrations'}
+                    ← {(selected.key === 'custom' && !listView && selected.integration) ? 'Back to Custom Webhooks' : 'Back to Integrations'}
                 </button>
 
                 {/* Header */}
@@ -434,10 +515,11 @@ function IntegrationsPage() {
                 )}
 
                 {/* Tabs */}
-                {(intg || selected.key === 'whatsapp') && !listView && (
+                {(intg || selected.key === 'whatsapp' || selected.key === 'email') && !listView && (
                     <Tabs value={activeTab} onValueChange={setActiveTab}>
                         <TabsList className="w-full mb-4">
                             <TabsTrigger value="overview" className="flex-1">Overview</TabsTrigger>
+                            {selected.key === 'email' && <TabsTrigger value="compose" className="flex-1">Compose</TabsTrigger>}
                             <TabsTrigger value="mappings" className="flex-1">Field Mapping</TabsTrigger>
                             <TabsTrigger value="assignment" className="flex-1">Auto Assignment</TabsTrigger>
                             <TabsTrigger value="logs" className="flex-1">Sync Logs</TabsTrigger>
@@ -569,6 +651,100 @@ function IntegrationsPage() {
                                         </div>
                                     )}
 
+                                    {selected.key === 'email' && (
+                                        <div className="space-y-6">
+                                            <div className="bg-blue-50 rounded-2xl p-4 border border-blue-100 flex items-start gap-3">
+                                                <div className="p-2 bg-white rounded-lg text-blue-600 shadow-sm"><Mail size={18} /></div>
+                                                <div>
+                                                    <p className="text-sm font-bold text-blue-900">SMTP Server Configuration</p>
+                                                    <p className="text-[11px] text-blue-700 mt-1 opacity-80">Setup your mail server details to enable bulk emailing features.</p>
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">SMTP Host</label>
+                                                    <input
+                                                        type="text"
+                                                        value={emailConfig?.smtp_host || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, smtp_host: e.target.value }))}
+                                                        placeholder="smtp.gmail.com"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">SMTP Port</label>
+                                                    <input
+                                                        type="text"
+                                                        value={emailConfig?.smtp_port || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, smtp_port: e.target.value }))}
+                                                        placeholder="587"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">SMTP Username</label>
+                                                    <input
+                                                        type="text"
+                                                        value={emailConfig?.smtp_user || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, smtp_user: e.target.value }))}
+                                                        placeholder="your-email@gmail.com"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">SMTP Password</label>
+                                                    <input
+                                                        type="password"
+                                                        value={emailConfig?.smtp_pass || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, smtp_pass: e.target.value }))}
+                                                        placeholder="••••••••••••"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all font-mono"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Sender Name</label>
+                                                    <input
+                                                        type="text"
+                                                        value={emailConfig?.from_name || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, from_name: e.target.value }))}
+                                                        placeholder="LeadConverter Team"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all"
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Sender Email</label>
+                                                    <input
+                                                        type="email"
+                                                        value={emailConfig?.from_email || ''}
+                                                        onChange={(e) => setEmailConfig(prev => ({ ...prev, from_email: e.target.value }))}
+                                                        placeholder="hello@leadconverter.ai"
+                                                        className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-indigo-400 transition-all"
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="flex items-center justify-between pt-4 border-t border-gray-50">
+                                                <div className="flex items-center gap-3">
+                                                    <button
+                                                        onClick={() => setEmailConfig(prev => ({ ...prev, is_active: !prev.is_active }))}
+                                                        className={`w-10 h-5 rounded-full relative transition-all ${emailConfig?.is_active ? 'bg-indigo-500' : 'bg-gray-200'}`}
+                                                    >
+                                                        <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full transition-all ${emailConfig?.is_active ? 'left-5' : 'left-1'}`} />
+                                                    </button>
+                                                    <span className="text-xs font-bold text-gray-600">Enable Bulk Mail</span>
+                                                </div>
+                                                <button
+                                                    onClick={handleSaveEmailConfig}
+                                                    disabled={saving}
+                                                    className="bg-[#0F1626] text-white px-8 py-2.5 rounded-xl text-xs font-bold shadow-lg hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2"
+                                                >
+                                                    {saving ? <Loader2 size={14} className="animate-spin" /> : 'Save SMTP Settings'}
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {selected.key === 'meta' && (
                                         <div className="space-y-2 text-sm text-gray-600">
                                             <div className="flex items-start gap-3 p-3 bg-blue-50 rounded-xl border border-blue-100">
@@ -589,6 +765,59 @@ function IntegrationsPage() {
                                 </CardContent>
                             </Card>
                         </TabsContent>
+
+                        {/* Compose Tab */}
+                        {selected.key === 'email' && (
+                            <TabsContent value="compose">
+                                <Card className="border-none shadow-sm rounded-2xl">
+                                    <CardContent className="p-6 space-y-6">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="p-2 bg-indigo-50 rounded-lg text-indigo-600 shadow-sm"><Send size={18} /></div>
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">Send Bulk Campaign</p>
+                                                <p className="text-[11px] text-gray-400">This will be sent to all active leads with valid email addresses.</p>
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-4">
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Email Subject</label>
+                                                <input
+                                                    type="text"
+                                                    value={bulkMail.subject}
+                                                    onChange={(e) => setBulkMail(prev => ({ ...prev, subject: e.target.value }))}
+                                                    placeholder="Amazing Offer for our valued customers"
+                                                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-400 transition-all font-bold"
+                                                />
+                                            </div>
+                                            <div className="space-y-2">
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Message Body (HTML enabled)</label>
+                                                <textarea
+                                                    rows={10}
+                                                    value={bulkMail.body}
+                                                    onChange={(e) => setBulkMail(prev => ({ ...prev, body: e.target.value }))}
+                                                    placeholder="<h1>Hello!</h1><p>We have a special announcement...</p>"
+                                                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-indigo-400 transition-all font-mono"
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex justify-end pt-4 border-t border-gray-50">
+                                            <button
+                                                onClick={handleSendBulkMail}
+                                                disabled={saving || !intg || intg.status !== 'connected'}
+                                                className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 text-white px-10 py-3 rounded-xl text-sm font-black uppercase tracking-widest shadow-lg shadow-indigo-100 transition-all flex items-center justify-center gap-3"
+                                            >
+                                                {saving ? <Loader2 size={18} className="animate-spin" /> : <><Send size={16} /> Send Now</>}
+                                            </button>
+                                        </div>
+                                        {!intg || intg.status !== 'connected' && (
+                                            <p className="text-[10px] text-center text-red-500 font-bold mt-2 uppercase tracking-tighter">Please configure and activate SMTP settings first</p>
+                                        )}
+                                    </CardContent>
+                                </Card>
+                            </TabsContent>
+                        )}
 
                         {/* Field Mapping Tab */}
                         <TabsContent value="mappings">
@@ -880,30 +1109,30 @@ function IntegrationsPage() {
                     <CardHeader className="pb-2">
                         <CardTitle className="text-sm font-bold text-gray-700">Today's Lead Summary</CardTitle>
                     </CardHeader>
-                    <CardContent className="p-5 pt-0">
-                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <CardContent className="p-4 pt-0 overflow-x-auto scrollbar-hide">
+                        <div className="flex flex-nowrap items-center justify-start gap-4">
                             {PROVIDERS.map((p) => {
                                 const leadsToday = integrations
                                     .filter((i) => i.provider === p.key)
                                     .reduce((acc, curr) => acc + (curr.leads_today ?? 0), 0);
                                 return (
-                                    <div key={p.key} className="text-center">
-                                        <div className={`w-8 h-8 rounded-xl ${p.bg} flex items-center justify-center mx-auto mb-2`}>
-                                            <span className="scale-[0.7]">{p.icon}</span>
+                                    <div key={p.key} className="flex-none w-[110px] text-center px-2 py-3 bg-gray-50/50 rounded-xl border border-transparent hover:border-gray-100 transition-all">
+                                        <div className={`w-7 h-7 rounded-lg ${p.bg} flex items-center justify-center mx-auto mb-1.5`}>
+                                            <span className="scale-[0.6]">{p.icon}</span>
                                         </div>
-                                        <p className="text-xl font-extrabold text-[#0F1626]">{leadsToday}</p>
-                                        <p className="text-[10px] text-gray-400">{p.key}</p>
+                                        <p className="text-lg font-black text-[#0F1626] leading-none mb-1">{leadsToday || 0}</p>
+                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tight truncate px-1">{p.key}</p>
                                     </div>
                                 );
                             })}
-                            <div className="text-center">
-                                <div className="w-8 h-8 rounded-xl bg-indigo-50 flex items-center justify-center mx-auto mb-2">
-                                    <Zap size={16} className="text-indigo-600" />
+                            <div className="flex-none w-[110px] text-center px-2 py-3 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
+                                <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center mx-auto mb-1.5">
+                                    <Zap size={14} className="text-indigo-600" />
                                 </div>
-                                <p className="text-xl font-extrabold text-[#0F1626]">
+                                <p className="text-lg font-black text-indigo-900 leading-none mb-1">
                                     {integrations.reduce((s, i) => s + (i.leads_today ?? 0), 0)}
                                 </p>
-                                <p className="text-[10px] text-gray-400">total</p>
+                                <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-tight">TOTAL</p>
                             </div>
                         </div>
                     </CardContent>

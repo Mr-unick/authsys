@@ -9,9 +9,17 @@ class ActivityClass {
     }
 
     // Create a new activity
-    async createActivity(activityData: any) {
+    async createActivity(activityData: any, userRole?: string) {
+        const data = { ...activityData };
+
+        // If it's a super admin role, move user_id to super_admin_id
+        if (userRole === 'SUPER_ADMIN' && data.user_id) {
+            data.super_admin_id = data.user_id;
+            delete data.user_id;
+        }
+
         return await prisma.activity.create({
-            data: activityData
+            data: data
         });
     }
 
