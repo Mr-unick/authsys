@@ -1,6 +1,7 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
+// Deployment Sync: 2024-03-04-15-20
 export default NextAuth({
   providers: [
     GoogleProvider({
