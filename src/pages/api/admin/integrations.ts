@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         display_name: intg.display_name,
                         status: intg.status,
                         leads_today: leadsToday,
-                        last_sync: lastSync?.completed_at ?? null,
+                        last_sync: lastSync?.finished_at ?? null,
                         last_sync_status: lastSync?.status ?? null,
                         created_at: intg.created_at
                     };
