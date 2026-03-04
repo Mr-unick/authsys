@@ -58,7 +58,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                         leads_today: leadsToday,
                         last_sync: lastSync?.finished_at ?? null,
                         last_sync_status: lastSync?.status ?? null,
-                        created_at: intg.created_at
+                        created_at: intg?.created_at
                     };
                 })
             );
