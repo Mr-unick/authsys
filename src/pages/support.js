@@ -8,7 +8,47 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/components/ui/tabs';
 
-export default function SupportPage() {
+import { VerifyToken as verifyTokenInternal } from '../utils/VerifyToken';
+
+export async function getServerSideProps(context) {
+    const { req, res } = context;
+    const mockRes = { status: () => ({ json: () => { } }), writableEnded: false };
+    const user = await verifyTokenInternal(req, mockRes, null);
+
+    if (!user || mockRes.writableEnded) {
+        return { redirect: { destination: '/signin', permanent: false } };
+    }
+
+    let isRestricted = false;
+    if (user.business) {
+        const role = (user.role || '').toUpperCase();
+        const isPortalAdmin = role.includes('SUPER') || role === 'ADMIN_PORTAL';
+
+        if (!isPortalAdmin) {
+            const prisma = (await import('@/app/lib/prisma')).default;
+            const feature = await prisma.businessFeature.findUnique({
+                where: {
+                    business_id_feature_key: {
+                        business_id: Number(user.business),
+                        feature_key: 'support_system'
+                    }
+                }
+            });
+            if (!feature || !feature.is_enabled) {
+                isRestricted = true;
+            }
+        }
+    }
+
+    return {
+        props: {
+            user: JSON.parse(JSON.stringify(user)),
+            isRestricted
+        }
+    };
+}
+
+export default function SupportPage({ isRestricted }) {
     const [tickets, setTickets] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedTicket, setSelectedTicket] = useState(null);
@@ -17,6 +57,31 @@ export default function SupportPage() {
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [role, setRole] = useState(null);
     const [newTicket, setNewTicket] = useState({ subject: '', description: '', priority: 'medium' });
+
+    if (isRestricted) {
+        return (
+            <div className="max-w-4xl mx-auto py-20 px-4">
+                <div className="bg-white rounded-[3rem] p-12 shadow-xl shadow-gray-100 border border-gray-50 flex flex-col items-center text-center gap-6">
+                    <div className="bg-indigo-50 p-6 rounded-[2rem] text-indigo-600">
+                        <LifeBuoy size={60} />
+                    </div>
+                    <div className="space-y-2">
+                        <h1 className="text-3xl font-black text-[#0F1626] tracking-tight">Support Desk Restricted</h1>
+                        <p className="text-sm text-gray-400 font-medium max-w-sm mx-auto leading-relaxed">
+                            Internal support ticketing is not enabled for your current business plan.
+                            Please contact your portal administrator to upgrade your access.
+                        </p>
+                    </div>
+                    <button
+                        onClick={() => window.location.href = '/'}
+                        className="bg-[#0F1626] text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-gray-200"
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     const loadTickets = useCallback(async () => {
         setLoading(true);
@@ -133,8 +198,8 @@ export default function SupportPage() {
                                 {messages.map((m) => (
                                     <div key={m.id} className={`flex ${m.is_admin ? 'justify-start' : 'justify-end'}`}>
                                         <div className={`max-w-[80%] rounded-2xl p-4 shadow-sm ${m.is_admin
-                                                ? 'bg-white border border-gray-100 rounded-tl-none'
-                                                : 'bg-indigo-600 text-white rounded-tr-none'
+                                            ? 'bg-white border border-gray-100 rounded-tl-none'
+                                            : 'bg-indigo-600 text-white rounded-tr-none'
                                             }`}>
                                             <p className="text-sm">{m.message}</p>
                                             <p className={`text-[9px] mt-2 font-bold uppercase tracking-tighter opacity-70`}>
@@ -286,7 +351,7 @@ export default function SupportPage() {
                                     className="w-full text-left p-5 hover:bg-gray-50 transition-all flex items-center gap-4 group"
                                 >
                                     <div className={`p-3 rounded-2xl ${t.status === 'resolved' ? 'bg-green-50 text-green-600' :
-                                            t.status === 'open' ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-400'
+                                        t.status === 'open' ? 'bg-blue-50 text-blue-600' : 'bg-gray-50 text-gray-400'
                                         }`}>
                                         <MessageSquare size={20} />
                                     </div>
@@ -342,8 +407,8 @@ export default function SupportPage() {
                                             key={p}
                                             onClick={() => setNewTicket({ ...newTicket, priority: p })}
                                             className={`py-2 rounded-xl text-[10px] font-black uppercase tracking-widest border transition-all ${newTicket.priority === p
-                                                    ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100'
-                                                    : 'bg-white text-gray-400 border-gray-100 hover:border-indigo-200'
+                                                ? 'bg-indigo-600 text-white border-indigo-600 shadow-lg shadow-indigo-100'
+                                                : 'bg-white text-gray-400 border-gray-100 hover:border-indigo-200'
                                                 }`}
                                         >
                                             {p}

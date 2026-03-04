@@ -22,9 +22,15 @@ export default async function handler(req: any, res: any) {
     }
 
     if (req.method === 'POST') {
+        const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
+        const role = rawRole.trim().toUpperCase().replace(/\s+/g, '_');
+        const businessId = user.business;
+
+        const isPortalAdmin = role === 'SUPER_ADMIN' || (role === 'ADMIN' && (!businessId || businessId === 0));
+
         // Only SuperAdmins can update platform settings
-        if (user.role !== 'SUPER_ADMIN' && req.body.platformDetails) {
-            return res.status(403).json({ message: 'Forbidden' });
+        if (!isPortalAdmin && req.body.platformDetails) {
+            return res.status(403).json({ message: 'Forbidden: Super Admin access required' });
         }
 
         // Logic to save settings would go here

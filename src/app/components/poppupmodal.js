@@ -97,7 +97,7 @@ export default function PopupModal({ modaltype, children, classname, data, url, 
                 </button>
 
             </DialogTrigger>
-            <DialogContent className="max-h-fit max-w-fit rounded-md ">
+            <DialogContent className="max-h-[90vh] sm:max-w-[45vw] w-[95vw] rounded-[1.5rem] p-6 sm:p-8 overflow-y-auto scrollbar-hide border-none shadow-2xl">
 
                 {loading ?
                     <div className="flex  w-[20rem] min-h-[15rem] items-center justify-center h-full">

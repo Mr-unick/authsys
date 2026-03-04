@@ -89,18 +89,18 @@ export default function FormComponent({ formdata, id, onSuccess }) {
 
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className={`flex flex-col gap-8 p-4 sm:p-6 max-sm:max-h-[35rem] overflow-y-auto ${data?.fields?.length <= 10 ? "w-full max-w-5xl px-6" : "w-full max-w-[1500px] px-6"}`}
+      className={`flex flex-col gap-6 max-h-[85vh] overflow-y-auto scrollbar-hide w-full ${data?.fields?.length <= 10 ? "max-w-4xl" : "max-w-[1200px]"}`}
     >
       <div className="mb-2">
-        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+        <h1 className="text-2xl font-black text-[#0F1626] tracking-tight">
           {data?.title}
         </h1>
-        <p className="text-sm text-gray-500 mt-1">Please provide the necessary information below.</p>
+        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Information Input Module</p>
       </div>
 
-      <div className={`grid gap-x-10 gap-y-5 max-sm:gap-y-4 ${data?.fields?.length <= 10 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 md:grid-cols-2"}`}>
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-x-8 gap-y-5">
         {data?.fields?.map((field, key) => {
-          const gridClasses = field.newRow ? "sm:col-span-2 lg:col-span-3" : "";
+          const gridClasses = field.newRow ? "sm:col-span-4" : "sm:col-span-2";
           const validationRules = field.required
             ? { required: `${field.name} is required` }
             : {};

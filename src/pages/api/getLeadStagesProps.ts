@@ -10,18 +10,25 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       const businessId = user.business;
+      const branchId = user.branch;
 
-      // Strict tenant isolation: require businessId unless platform admin (who might be viewing specific context)
-      // For now, if no businessId, we return empty as stages MUST belong to a business
+      // Strict tenant isolation: require businessId unless platform admin
       if (!businessId && user.role !== 'SUPER_ADMIN') {
         return res.status(200).json({ status: 200, data: { rows: [] }, message: "No business context" });
       }
 
+      const whereClause: any = {
+        business_id: businessId || undefined,
+        deleted_at: null
+      };
+
+      // Branch Isolation
+      if (branchId) {
+        whereClause.branch_id = branchId;
+      }
+
       const stages = await (prisma as any).leadStage.findMany({
-        where: {
-          business_id: businessId || undefined,
-          deleted_at: null
-        },
+        where: whereClause,
         orderBy: { order: 'asc' }
       });
 
@@ -56,7 +63,7 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     try {
-      const { stage_name, discription, colour, order, stage_type } = req.body;
+      const { stage_name, discription, colour, order, stage_type, branch } = req.body;
       const businessId = user.business;
 
       if (!businessId) {
@@ -78,7 +85,8 @@ export default async function handler(req: any, res: any) {
           colour,
           order: order ? Number(order) : 0,
           stage_type: stage_type || 'ONGOING',
-          business_id: businessId
+          business_id: businessId,
+          branch_id: branch ? Number(branch) : null
         }
       });
 
@@ -99,7 +107,7 @@ export default async function handler(req: any, res: any) {
   if (req.method === "PUT") {
     try {
       const { id } = req.query;
-      const { stage_name, discription, colour, order, stage_type } = req.body;
+      const { stage_name, discription, colour, order, stage_type, branch } = req.body;
       const businessId = user.business;
 
       if (!id) {
@@ -126,6 +134,7 @@ export default async function handler(req: any, res: any) {
           colour,
           order: order ? Number(order) : 0,
           stage_type: stage_type,
+          branch_id: branch ? Number(branch) : undefined
         }
       });
 

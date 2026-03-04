@@ -15,7 +15,7 @@ const AutocompleteComponent = ({
     const [input, setInput] = useState("");
     const [results, setResults] = useState([]);
     const [showDropdown, setShowDropdown] = useState(false);
-    const[selectedItem,setSelectedItem] = useState(null)
+    const [selectedItem, setSelectedItem] = useState(null)
 
     // Fetch results from API
     const fetchResults = async (query) => {
@@ -56,21 +56,20 @@ const AutocompleteComponent = ({
     };
 
     return (
-        <div className="relative">
+        <div className="relative w-full">
             <input
                 type="text"
                 value={input}
                 onChange={handleChange}
-                className="border p-2 w-full rounded-md text-sm outline-none focus-none mb-5"
+                className="h-14 w-full px-5 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all text-sm placeholder:text-slate-300 bg-white shadow-sm font-medium text-slate-600 outline-none mb-2"
                 placeholder={placeholder}
-               
             />
             {showDropdown && results.length > 0 && (
-                <ul className="absolute bg-white border w-full mt-1 shadow-md max-h-48 overflow-auto">
+                <ul className="absolute z-50 bg-white border border-slate-100 w-full mt-2 shadow-2xl rounded-2xl max-h-64 overflow-auto py-2 animate-in fade-in slide-in-from-top-2 duration-200">
                     {results.map((item) => (
                         <li
                             key={item.id}
-                            className="p-2 hover:bg-gray-200 cursor-pointer"
+                            className="px-5 py-3 hover:bg-slate-50 cursor-pointer text-sm font-medium text-slate-600 transition-colors border-b border-slate-50 last:border-0"
                             onClick={() => handleSelect(item)}
                         >
                             {renderItem(item)}

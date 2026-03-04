@@ -43,12 +43,21 @@ export default async function handler(req: any, res: any) {
         owner_contact: data.owner_contact,
         owner_email: data.owner_email,
         business_description: data.business_description,
+        max_branches: data.max_branches ?? '-',
+        max_users_per_branch: data.max_users_per_branch ?? '-',
       }));
 
-      const tabledata = new GenerateTable({
+      const table = new GenerateTable({
         name: "Business",
         data: tablerows,
-      }).policy(user, 'business').addform('buisnessform').gettable();
+      }).policy(user, 'business');
+
+      // Only allow Global Admins to see/use the edit form for Business Details
+      if (!user.is_branch_admin) {
+        table.addform('buisnessform');
+      }
+
+      const tabledata = table.gettable();
 
       return res.status(200).json({
         message: "Request successful",
@@ -94,10 +103,15 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     try {
+      if (user.is_branch_admin) {
+        return res.status(403).json({ message: "Forbidden", status: 403 });
+      }
+
       const {
-        business_name, gst_number, pan_number, business_address,
-        city, state, pin_code, contact_number, email, website,
+        business_name, gst_number, pan_number, business_address, city, state, pin_code,
+        contact_number, email, website,
         owner_name, owner_contact, owner_email, business_description,
+        max_branches, max_users_per_branch
       } = req.body;
 
       if (!business_name || !email) {
@@ -125,6 +139,8 @@ export default async function handler(req: any, res: any) {
             owner_contact,
             owner_email,
             business_description,
+            max_branches: max_branches ? Number(max_branches) : 1,
+            max_users_per_branch: max_users_per_branch ? Number(max_users_per_branch) : 10,
             created_at: new Date(),
             updated_at: new Date()
           }
@@ -189,14 +205,22 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "PUT") {
     try {
+      if (user.is_branch_admin) {
+        return res.status(403).json({ message: "Forbidden", status: 403 });
+      }
+
       const { id } = req.query;
       if (!id) {
         return res.status(400).json({ message: "Business ID is required", status: 400 });
       }
 
+      const updateData = { ...req.body };
+      if (updateData.max_branches) updateData.max_branches = Number(updateData.max_branches);
+      if (updateData.max_users_per_branch) updateData.max_users_per_branch = Number(updateData.max_users_per_branch);
+
       const updatedBusiness = await prisma.business.update({
         where: { id: parseInt(id as string) },
-        data: req.body
+        data: updateData
       });
 
       return res.status(200).json({

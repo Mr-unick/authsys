@@ -7,6 +7,10 @@ export default async function handler(req: any, res: any) {
     if (res.writableEnded) return;
 
     try {
+        const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
+        const role = rawRole.trim().toUpperCase().replace(/\s+/g, '_');
+        const isPortalAdmin = role.includes('SUPER') || (user.permissions || []).includes('*');
+
         if (req.query.id !== "undefined" && req.query.id) {
             const branch = await prisma.branch.findUnique({
                 where: { id: Number(req.query.id) }
@@ -34,6 +38,20 @@ export default async function handler(req: any, res: any) {
             return res.status(200).json(form.getForm());
         } else {
             const form = new GenerateForm('Add New Branch');
+
+            if (isPortalAdmin) {
+                // Fetch all businesses for Super Admin to select from
+                const businesses = await prisma.business.findMany({
+                    where: { deleted_at: null },
+                    select: { id: true, business_name: true }
+                });
+
+                form.addField('buisness', 'select')
+                    .options(businesses.map(b => ({ label: b.business_name, value: b.id.toString() })))
+                    .required()
+                    .label('Target Business');
+            }
+
             form.addField('name', 'text').required();
             form.addField('email', 'email').required();
             form.addField('branch_code', 'text').required();
@@ -43,7 +61,12 @@ export default async function handler(req: any, res: any) {
             form.addField('district', 'text').required();
             form.addField('city', 'text').required();
             form.addField('pincode', 'text').required();
-            form.addField('discription', 'textarea');
+            form.addField('discription', 'textarea').newRow();
+
+            // Branch Manager Details
+            form.addField('admin_name', 'text').required().newRow().label('Branch Manager Name');
+            form.addField('admin_email', 'email').required().label('Branch Manager Email');
+            form.addField('admin_password', 'password').required().label('Branch Manager Password');
 
             form.submiturl('getBranchProps');
             form.method('post');
@@ -51,6 +74,7 @@ export default async function handler(req: any, res: any) {
             return res.status(200).json(form.getForm());
         }
     } catch (error: any) {
+        console.error("[BranchForm Error]:", error);
         return res.status(500).json({ message: "Something went wrong", error: error.message, status: 500 });
     }
 }

@@ -17,16 +17,29 @@ export default async function generateDashboard(user: any) {
     // Detect if Super Admin (Admin with no business)
     const isSuperAdmin = (role === 'SUPER_ADMIN' || role === 'ADMIN') && (!businessId || businessId === 0);
 
-    // Detect if Tenant Admin (Buisness Admin or Admin with business)
-    const isTenantAdmin = (role === 'BUSINESS_ADMIN' || role === 'ADMIN' || role === 'TENANT_ADMIN') && businessId;
-    // ... rest of the logic remains similar but I'll update the data fetching
+    // Detect if Tenant Admin (Business Admin or Admin with business)
+    const isTenantAdmin = (role === 'BUSINESS_ADMIN' || role === 'BUISNESS_ADMIN' || role === 'ADMIN' || role === 'TENANT_ADMIN') && businessId;
+    const isBranchAdmin = user.is_branch_admin && user.branch;
+    const branchId = user.branch;
+
     try {
+        // Check if multi-branch is enabled
+        const multiBranchFeature = await prisma.businessFeature.findUnique({
+            where: { business_id_feature_key: { business_id: businessId || 0, feature_key: 'multi_branch' } }
+        });
+        const isMultiBranchActive = multiBranchFeature?.is_enabled || false;
+
         if (isSuperAdmin) {
             return await getSuperAdminData();
-        } else if (isTenantAdmin) {
-            return await getTenantAdminData(businessId);
+        } else if (isTenantAdmin && !isBranchAdmin) {
+            // Business Admin sees everything
+            return await getTenantAdminData(businessId, null);
+        } else if (isBranchAdmin) {
+            // Branch Admin sees their branch only
+            return await getTenantAdminData(businessId, branchId);
         } else {
-            return await getSalespersonData(userId, businessId);
+            // Salesperson sees their branch only (if multi-branch active)
+            return await getSalespersonData(userId, businessId, isMultiBranchActive ? branchId : null);
         }
     } catch (error) {
         fs.appendFileSync('dashboard_error.txt', `\n[${new Date().toISOString()}] DASHBOARD ERROR: ${error.stack || error.message}\n`);
@@ -138,15 +151,21 @@ async function getSuperAdminData() {
     }
 }
 
-async function getTenantAdminData(businessId: number) {
+async function getTenantAdminData(businessId: number, branchId: number | null) {
     try {
+        const queryFilter: any = { business_id: businessId, deleted_at: null };
+        if (branchId) queryFilter.branch_id = branchId;
+
         const leads = await (prisma as any).lead?.findMany({
-            where: { business_id: businessId, deleted_at: null },
+            where: queryFilter,
             include: { stage: true }
         }) || [];
 
+        const usersFilter: any = { business_id: businessId, deleted_at: null };
+        if (branchId) usersFilter.branch_id = branchId;
+
         const users = await (prisma as any).user?.findMany({
-            where: { business_id: businessId, deleted_at: null },
+            where: usersFilter,
             include: {
                 leadUsers: {
                     include: { lead: true }
@@ -154,8 +173,11 @@ async function getTenantAdminData(businessId: number) {
             }
         }) || [];
 
+        const stagesFilter: any = { business_id: businessId, deleted_at: null };
+        if (branchId) stagesFilter.branch_id = branchId;
+
         const stages = await (prisma as any).leadStage?.findMany({
-            where: { business_id: businessId, deleted_at: null },
+            where: stagesFilter,
             orderBy: { id: 'asc' }
         }) || [];
 
@@ -175,7 +197,7 @@ async function getTenantAdminData(businessId: number) {
         // Lead Sources
         const sources = await (prisma as any).lead?.groupBy({
             by: ['lead_source'],
-            where: { business_id: businessId, deleted_at: null },
+            where: queryFilter,
             _count: { _all: true }
         }) || [];
 
@@ -203,8 +225,7 @@ async function getTenantAdminData(businessId: number) {
 
         const remindersToday = await (prisma as any).lead?.findMany({
             where: {
-                business_id: businessId,
-                deleted_at: null,
+                ...queryFilter,
                 nextFollowUp: {
                     gte: startOfToday,
                     lte: endOfToday
@@ -214,11 +235,86 @@ async function getTenantAdminData(businessId: number) {
             orderBy: { nextFollowUp: 'asc' }
         }) || [];
 
+        // User Distribution by Role (Only for Business Admin)
+        let userDistribution: any[] = [];
+        if (!branchId) {
+            const roles = await prisma.role.findMany({
+                where: { business_id: businessId, deleted_at: null }
+            });
+            userDistribution = roles.map(r => ({
+                label: r.name,
+                value: users.filter((u: any) => u.role_id === r.id).length,
+                color: `#${Math.floor(Math.random() * 16777215).toString(16)}` // Random color or predefined map
+            }));
+            // Add branch admins to distribution
+            userDistribution.push({
+                label: 'Branch Admins',
+                value: users.filter((u: any) => u.is_branch_admin).length,
+                color: '#4E49F2'
+            });
+        }
+
+        // Recently Added Branches (Only for Business Admin)
+        let recentBranches: any[] = [];
+        if (!branchId) {
+            recentBranches = await (prisma.branch as any).findMany({
+                where: { business_id: businessId, deleted_at: null },
+                orderBy: { id: 'desc' },
+                take: 5
+            }) || [];
+        }
+
+        // Fetch enabled features for this business
+        const enabledFeatures = await prisma.businessFeature.findMany({
+            where: { business_id: businessId, is_enabled: true },
+            select: { feature_key: true }
+        });
+        const featureKeys = enabledFeatures.map(f => f.feature_key);
+
+        if (!branchId) {
+            // Business Admin (Super-Admin style dashboard)
+            return {
+                role: 'BUSINESS_ADMIN',
+                featureKeys,
+                summary: [
+                    { label: 'Total Business Leads', value: leads.length, icon: 'activity' },
+                    { label: 'Total Team Members', value: users.length, icon: 'users' },
+                    { label: 'Total Active Branches', value: await prisma.branch.count({ where: { business_id: businessId, deleted_at: null } }), icon: 'business' },
+                    { label: 'Total Conversions', value: teamPerformance.reduce((acc: any, curr: any) => acc + curr.conversions, 0), icon: 'zap' }
+                ],
+                charts: {
+                    leadGrowth: {
+                        title: 'Enterprise Lead Growth',
+                        data: leadTrend
+                    },
+                    userDistribution: {
+                        title: 'Team Composition',
+                        data: userDistribution.filter(d => d.value > 0)
+                    },
+                    leadSources: {
+                        title: 'Enterprise Lead Sources',
+                        data: mapLeadSourcesToChartData(sources.map((s: any) => ({ source: s.lead_source || 'Unknown', count: s._count?._all || 0 })))
+                    },
+                    pipeline: {
+                        title: 'Enterprise Pipeline',
+                        data: stageDistribution
+                    }
+                },
+                branches: {
+                    title: 'Recently Added Branches',
+                    recent: recentBranches
+                },
+                leaderboard: teamPerformance.slice(0, 5)
+            };
+        }
+
+        // Branch Admin (Standard Team Dashboard)
         return {
-            role: 'TENANT_ADMIN',
+            role: 'BRANCH_ADMIN',
+            featureKeys,
             summary: [
-                { label: 'Business Leads', value: leads.length, icon: 'activity' },
-                { label: 'Team Members', value: users.length, icon: 'users' },
+                { label: 'Branch Leads', value: leads.length, icon: 'activity' },
+                { label: 'Branch Team', value: users.length, icon: 'users' },
                 { label: 'Conversions', value: teamPerformance.reduce((acc: any, curr: any) => acc + curr.conversions, 0), icon: 'zap' },
                 { label: 'Avg Conversion', value: `${Math.round(teamPerformance.reduce((acc: any, curr: any) => acc + curr.rate, 0) / (teamPerformance.length || 1))}%`, icon: 'trending-up' }
             ],
@@ -254,10 +350,16 @@ async function getTenantAdminData(businessId: number) {
     }
 }
 
-async function getSalespersonData(userId: number, businessId: number) {
+async function getSalespersonData(userId: number, businessId: number, branchId: number | null) {
     try {
         const leadUsers = await (prisma as any).leadUser?.findMany({
-            where: { user_id: userId, lead: { deleted_at: null } },
+            where: {
+                user_id: userId,
+                lead: {
+                    deleted_at: null,
+                    ...(branchId ? { branch_id: branchId } : {})
+                }
+            },
             include: { lead: { include: { stage: true } } }
         }) || [];
 
@@ -316,8 +418,16 @@ async function getSalespersonData(userId: number, businessId: number) {
         const conversions = lastStageId ? leads.filter((l: any) => l.stage_id === lastStageId).length : 0;
         const rate = leads.length > 0 ? Math.round((conversions / leads.length) * 100) : 0;
 
+        // Fetch enabled features for this business
+        const enabledFeatures = await prisma.businessFeature.findMany({
+            where: { business_id: businessId, is_enabled: true },
+            select: { feature_key: true }
+        });
+        const featureKeys = enabledFeatures.map(f => f.feature_key);
+
         return {
             role: 'SALES_PERSON',
+            featureKeys,
             summary: [
                 { label: 'My Assigned Leads', value: leads.length, icon: 'users' },
                 { label: 'My Conversions', value: conversions, icon: 'zap' },

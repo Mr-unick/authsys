@@ -48,8 +48,13 @@ export class GenerateForm {
         return this;
     }
 
-    value(value: string | number | boolean | null | undefined): this {
+    value(value: string | number | boolean | null | undefined | number[] | string[]): this {
         this.field.value = value ?? null;
+        return this;
+    }
+
+    label(label: string): this {
+        this.field.label = label;
         return this;
     }
 

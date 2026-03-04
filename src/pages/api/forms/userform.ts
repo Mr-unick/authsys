@@ -26,6 +26,26 @@ export default async function handler(req: any, res: any) {
             }
         });
 
+        // Check if multi-branch is enabled
+        const multiBranchFeature = await prisma.businessFeature.findUnique({
+            where: {
+                business_id_feature_key: {
+                    business_id: userContext.business || 0,
+                    feature_key: 'multi_branch'
+                }
+            }
+        });
+        const isMultiBranchActive = multiBranchFeature?.is_enabled || false;
+
+        const branches = isMultiBranchActive ? await prisma.branch.findMany({
+            where: { business_id: userContext.business, deleted_at: null }
+        }) : [];
+
+        const branchOptions = branches.map((b: any) => ({
+            id: b.id,
+            name: b.name
+        }));
+
         const roleOptions = roles.map((role: any) => ({
             id: role.id,
             name: role.name
@@ -58,8 +78,22 @@ export default async function handler(req: any, res: any) {
                 { id: 'other', name: 'Other' },
             ]);
             form.addField('role', 'select').options(roleOptions).value(existingUser?.role_id).required();
+
+            if (isMultiBranchActive) {
+                // If Branch Admin, they cannot change their own branch or assign others to different branches
+                if (userContext.is_branch_admin) {
+                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id).disabled().required().newRow();
+                } else {
+                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id).required().newRow();
+                    form.addField('is_branch_admin', 'switch').value(existingUser?.is_branch_admin).newRow().label('Branch Manager (One per branch)');
+                }
+            }
+
             form.addField('old_password', 'password');
             form.addField('new_password', 'password');
+
+            form.submiturl('getUserProps');
+            form.method('put');
 
             return res.status(200).json(form.getForm());
         } else {
@@ -74,6 +108,16 @@ export default async function handler(req: any, res: any) {
                 { id: 'other', name: 'Other' },
             ]);
             form.addField('role', 'select').options(roleOptions).required();
+
+            if (isMultiBranchActive) {
+                if (userContext.is_branch_admin) {
+                    // Auto-bind to current branch
+                } else {
+                    form.addField('branch', 'select').options(branchOptions).required().newRow();
+                    form.addField('is_branch_admin', 'switch').value(false).newRow().label('Branch Manager (One per branch)');
+                }
+            }
+
             form.addField('password', 'password').required();
             form.addField('confirm_password', 'password').required();
 

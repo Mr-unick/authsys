@@ -103,12 +103,22 @@ export async function getServerSideProps(context) {
             };
         }
 
-        // Check if the user object returned has the required role/permission
-        // The VerifyToken utility calls haspermission internally if policy is provided.
-        // If it got here without mockRes.writableEnded being true, it's authorized.
+        // Fetch features
+        let featureKeys = [];
+        if (user.business) {
+            const prisma = (await import('@/app/lib/prisma')).default;
+            const features = await prisma.businessFeature.findMany({
+                where: { business_id: Number(user.business), is_enabled: true },
+                select: { feature_key: true }
+            });
+            featureKeys = features.map(f => f.feature_key);
+        }
 
         return {
-            props: { user: JSON.parse(JSON.stringify(user)) },
+            props: {
+                user: JSON.parse(JSON.stringify(user)),
+                featureKeys: featureKeys
+            },
         };
     } catch (err) {
         return {
@@ -120,10 +130,31 @@ export async function getServerSideProps(context) {
     }
 }
 
-function IntegrationsPage() {
+function IntegrationsPage({ user, featureKeys = [] }) {
     const [integrations, setIntegrations] = useState([]);
     const [loading, setLoading] = useState(true);
+    // ... other states ...
+
+    // Filter providers based on business features
+    const providers = Array.isArray(featureKeys) ? PROVIDERS.filter(p => {
+        const isPortalAdmin = (user.role || '').toUpperCase().includes('SUPER') || !user.business;
+        if (isPortalAdmin) return true;
+
+        // Parent Suite requirement
+        if (!featureKeys.includes('integration_suite')) return false;
+
+        if (p.key === 'meta') return featureKeys.includes('integration_facebook');
+        if (p.key === 'linkedin') return featureKeys.includes('integration_linkedin');
+        if (p.key === 'whatsapp') return featureKeys.includes('integration_whatsapp');
+        if (p.key === 'custom') return featureKeys.includes('integration_custom_webhook');
+        if (p.key === 'email') return featureKeys.includes('bulk_comm');
+
+        // Others default to true if the suite is on
+        return true;
+    }) : PROVIDERS;
+
     const [listView, setListView] = useState(false);
+    // ... rest of component using 'providers' instead of 'PROVIDERS' ...
     const [selected, setSelected] = useState(null);
     const [activeTab, setActiveTab] = useState('overview');
     const [mappings, setMappings] = useState([]);
@@ -1051,8 +1082,9 @@ function IntegrationsPage() {
             </div>
 
             {/* Provider cards */}
+            {/* Provider cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
-                {PROVIDERS.map((p) => {
+                {providers.map((p) => {
                     const matched = integrations.filter((i) => i.provider === p.key);
                     const intg = matched[0];
                     const count = matched.length;
@@ -1101,44 +1133,67 @@ function IntegrationsPage() {
                         </button>
                     );
                 })}
+
+                {providers.length === 0 && (
+                    <div className="col-span-full py-24 bg-gray-50/50 border-2 border-dashed border-gray-100 rounded-[3rem] flex flex-col items-center justify-center gap-6 animate-in fade-in zoom-in duration-500">
+                        <div className="p-6 bg-white rounded-[2rem] shadow-xl shadow-gray-200/50 text-gray-300">
+                            <ShieldCheck size={60} />
+                        </div>
+                        <div className="text-center max-w-md px-6">
+                            <h3 className="text-xl font-black text-[#0F1626] tracking-tight">Access Restricted</h3>
+                            <p className="text-sm text-gray-400 mt-2 font-medium leading-relaxed">
+                                Lead integrations and communication tools are not enabled for your business account.
+                                Please contact your platform administrator to upgrade your plan.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => window.location.href = '/support'}
+                            className="bg-[#0F1626] text-white px-8 py-3 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all"
+                        >
+                            Contact Support
+                        </button>
+                    </div>
+                )}
             </div>
 
             {/* Summary stats */}
-            {integrations.length > 0 && (
-                <Card className="border-none shadow-sm rounded-2xl">
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-bold text-gray-700">Today's Lead Summary</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0 overflow-x-auto scrollbar-hide">
-                        <div className="flex flex-nowrap items-center justify-start gap-4">
-                            {PROVIDERS.map((p) => {
-                                const leadsToday = integrations
-                                    .filter((i) => i.provider === p.key)
-                                    .reduce((acc, curr) => acc + (curr.leads_today ?? 0), 0);
-                                return (
-                                    <div key={p.key} className="flex-none w-[110px] text-center px-2 py-3 bg-gray-50/50 rounded-xl border border-transparent hover:border-gray-100 transition-all">
-                                        <div className={`w-7 h-7 rounded-lg ${p.bg} flex items-center justify-center mx-auto mb-1.5`}>
-                                            <span className="scale-[0.6]">{p.icon}</span>
+            {
+                integrations.length > 0 && (
+                    <Card className="border-none shadow-sm rounded-2xl">
+                        <CardHeader className="pb-2">
+                            <CardTitle className="text-sm font-bold text-gray-700">Today's Lead Summary</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0 overflow-x-auto scrollbar-hide">
+                            <div className="flex flex-nowrap items-center justify-start gap-4">
+                                {providers.map((p) => {
+                                    const leadsToday = integrations
+                                        .filter((i) => i.provider === p.key)
+                                        .reduce((acc, curr) => acc + (curr.leads_today ?? 0), 0);
+                                    return (
+                                        <div key={p.key} className="flex-none w-[110px] text-center px-2 py-3 bg-gray-50/50 rounded-xl border border-transparent hover:border-gray-100 transition-all">
+                                            <div className={`w-7 h-7 rounded-lg ${p.bg} flex items-center justify-center mx-auto mb-1.5`}>
+                                                <span className="scale-[0.6]">{p.icon}</span>
+                                            </div>
+                                            <p className="text-lg font-black text-[#0F1626] leading-none mb-1">{leadsToday || 0}</p>
+                                            <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tight truncate px-1">{p.key}</p>
                                         </div>
-                                        <p className="text-lg font-black text-[#0F1626] leading-none mb-1">{leadsToday || 0}</p>
-                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-tight truncate px-1">{p.key}</p>
+                                    );
+                                })}
+                                <div className="flex-none w-[110px] text-center px-2 py-3 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
+                                    <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center mx-auto mb-1.5">
+                                        <Zap size={14} className="text-indigo-600" />
                                     </div>
-                                );
-                            })}
-                            <div className="flex-none w-[110px] text-center px-2 py-3 bg-indigo-50/30 rounded-xl border border-indigo-100/50">
-                                <div className="w-7 h-7 rounded-lg bg-indigo-100 flex items-center justify-center mx-auto mb-1.5">
-                                    <Zap size={14} className="text-indigo-600" />
+                                    <p className="text-lg font-black text-indigo-900 leading-none mb-1">
+                                        {integrations.reduce((s, i) => s + (i.leads_today ?? 0), 0)}
+                                    </p>
+                                    <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-tight">TOTAL</p>
                                 </div>
-                                <p className="text-lg font-black text-indigo-900 leading-none mb-1">
-                                    {integrations.reduce((s, i) => s + (i.leads_today ?? 0), 0)}
-                                </p>
-                                <p className="text-[9px] font-bold text-indigo-400 uppercase tracking-tight">TOTAL</p>
                             </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            )}
-        </div>
+                        </CardContent>
+                    </Card>
+                )
+            }
+        </div >
     );
 }
 

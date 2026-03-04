@@ -2,6 +2,7 @@ import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+import bcrypt from "bcryptjs";
 
 export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, 'branches');
@@ -46,44 +47,102 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === "POST") {
         try {
-            const { name, email, branch_code, number, address, state, district, city, pincode, discription, buisness: buisnessId } = req.body;
+            const {
+                name, email, branch_code, number, address, state, district, city, pincode, discription,
+                buisness: buisnessId,
+                admin_name, admin_email, admin_password
+            } = req.body;
 
             if (!name) {
+                return res.status(400).json({ status: 400, message: "Branch name is required", data: [] });
+            }
+            if (!admin_email || !admin_password) {
+                return res.status(400).json({ status: 400, message: "Branch Manager email and password are required", data: [] });
+            }
+
+            const targetBusinessId = Number(buisnessId || user.business);
+
+            if (!targetBusinessId || isNaN(targetBusinessId)) {
                 return res.status(400).json({
                     status: 400,
-                    message: "Branch name is required",
+                    message: "A valid Business ID is required to create a branch.",
+                    data: []
+                });
+            }
+
+            // 1. Email check for manager
+            const existingUser = await prisma.user.findUnique({ where: { email: admin_email } });
+            if (existingUser) {
+                return res.status(400).json({ status: 400, message: "A user with this email already exists on the platform.", data: [] });
+            }
+
+            // 2. Enforcement: Check max_branches limit
+            const business = await prisma.business.findUnique({
+                where: { id: targetBusinessId },
+                include: { _count: { select: { branches: true } } }
+            });
+
+            if (business && business.max_branches > 0 && (business._count?.branches || 0) >= business.max_branches) {
+                return res.status(403).json({
+                    status: 403,
+                    message: `Branch limit reached. Your subscription allows up to ${business.max_branches} branches.`,
                     data: [],
                 });
             }
 
-            const targetBusinessId = buisnessId || user.business;
+            const result = await prisma.$transaction(async (tx) => {
+                // 3. Create the Branch
+                const branch = await tx.branch.create({
+                    data: {
+                        name,
+                        email,
+                        branch_code,
+                        number,
+                        address,
+                        state,
+                        district,
+                        city,
+                        pincode,
+                        discription: discription || '',
+                        location: '',
+                        business_id: targetBusinessId
+                    }
+                });
 
-            const newBranch = await prisma.branch.create({
-                data: {
-                    name,
-                    email,
-                    branch_code,
-                    number,
-                    address,
-                    state,
-                    district,
-                    city,
-                    pincode,
-                    discription,
-                    location: '',
-                    business_id: Number(targetBusinessId)
-                }
+                // 4. Resolve 'Buisness Admin' role for this business
+                const adminRole = await tx.role.findFirst({
+                    where: { business_id: targetBusinessId, name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] } }
+                });
+
+                // 5. Create Branch Admin User
+                const hashedPassword = bcrypt.hashSync(admin_password, 10);
+                await tx.user.create({
+                    data: {
+                        name: admin_name || 'Branch Manager',
+                        email: admin_email,
+                        password: hashedPassword,
+                        business_id: targetBusinessId,
+                        branch_id: branch.id,
+                        role_id: adminRole?.id || null,
+                        is_branch_admin: true,
+                        created_at: new Date(),
+                        updated_at: new Date()
+                    }
+                });
+
+                return branch;
             });
 
             return res.status(201).json({
                 status: 201,
-                message: "Branch created successfully",
-                data: newBranch,
+                message: "Branch and Manager account created successfully",
+                data: result,
             });
         } catch (error: any) {
+            console.error("[getBranchProps POST Error]:", error);
             return res.status(500).json({
                 status: 500,
-                message: "Something went wrong",
+                message: "Creation failed",
                 data: [error.message],
             });
         }

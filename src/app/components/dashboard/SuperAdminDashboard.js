@@ -6,16 +6,18 @@ import { StatCard } from "./StatCard";
 import { Building2, Globe, ShieldCheck } from "lucide-react";
 
 export const SuperAdminDashboard = ({ data }) => {
+    const isBusinessAdmin = data.role === 'BUSINESS_ADMIN';
+
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
-            {/* Platform Overview Header */}
+            {/* Contextual Header */}
             <div className="flex items-center gap-4 mb-2">
-                <div className="bg-indigo-600 p-3 rounded-2xl shadow-lg shadow-indigo-100">
+                <div className={`${isBusinessAdmin ? 'bg-blue-600' : 'bg-indigo-600'} p-3 rounded-2xl shadow-lg ${isBusinessAdmin ? 'shadow-blue-100' : 'shadow-indigo-100'}`}>
                     <ShieldCheck className="text-white h-6 w-6" />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-[#0F1626]">Platform Control Center</h2>
-                    <p className="text-sm text-gray-500 font-medium">Real-time cross-tenant monitoring and analytics</p>
+                    <h2 className="text-2xl font-bold text-[#0F1626]">{isBusinessAdmin ? 'Business Intelligence Center' : 'Platform Control Center'}</h2>
+                    <p className="text-sm text-gray-500 font-medium">{isBusinessAdmin ? 'Monitoring enterprise branches and team performance' : 'Real-time cross-tenant monitoring and analytics'}</p>
                 </div>
             </div>
 
@@ -32,21 +34,21 @@ export const SuperAdminDashboard = ({ data }) => {
 
             {/* Main Analytics: Growth & Distribution */}
             <div className="grid grid-cols-12 gap-8">
-                {/* Platform Growth */}
+                {/* Growth Chart */}
                 <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 flex flex-row items-center justify-between py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-indigo-50 rounded-lg">
                                 <Globe className="text-indigo-600" size={18} />
                             </div>
-                            {data.charts.leadAnalytics.title}
+                            {isBusinessAdmin ? data.charts.leadGrowth?.title : data.charts.leadAnalytics?.title}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-8">
                         <div className="h-[350px] w-full">
                             <LineChartComponent
-                                data={data.charts.leadAnalytics.data}
-                                chartConfig={{ count: { label: "Total Platform Leads", color: "#4E49F2" } }}
+                                data={isBusinessAdmin ? data.charts.leadGrowth?.data : data.charts.leadAnalytics?.data}
+                                chartConfig={{ count: { label: isBusinessAdmin ? "Business Leads" : "Platform Leads", color: "#4E49F2" } }}
                             />
                         </div>
                     </CardContent>
@@ -55,12 +57,12 @@ export const SuperAdminDashboard = ({ data }) => {
                 {/* User Distribution */}
                 <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
-                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.userDistribution.title}</CardTitle>
+                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.userDistribution?.title}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts.userDistribution.data} />
+                        <PieChartComponent radius={75} data={data.charts.userDistribution?.data} />
                         <div className="w-full mt-8 space-y-4">
-                            {data.charts.userDistribution.data.map((entry, idx) => (
+                            {data.charts.userDistribution?.data.map((entry, idx) => (
                                 <div key={idx} className="flex items-center justify-between px-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.color }} />
@@ -74,17 +76,17 @@ export const SuperAdminDashboard = ({ data }) => {
                 </Card>
             </div>
 
-            {/* Secondary Analytics: Lead Sources & Support Tickets */}
+            {/* Secondary Analytics */}
             <div className="grid grid-cols-12 gap-8">
-                {/* Lead Source Distribution */}
+                {/* Lead Sources */}
                 <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
-                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.leadSources.title}</CardTitle>
+                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.leadSources?.title}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts.leadSources.data} />
+                        <PieChartComponent radius={75} data={data.charts.leadSources?.data} />
                         <div className="w-full mt-8 space-y-4">
-                            {data.charts.leadSources.data.map((entry, idx) => (
+                            {data.charts.leadSources?.data.map((entry, idx) => (
                                 <div key={idx} className="flex items-center justify-between px-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full" style={{ backgroundColor: entry.fill }} />
@@ -97,57 +99,78 @@ export const SuperAdminDashboard = ({ data }) => {
                     </CardContent>
                 </Card>
 
-                {/* Support Status */}
-                <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                    <CardHeader className="bg-white border-b border-gray-50 py-6">
-                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketStatus.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts.ticketStatus.data} />
-                        <div className="w-full mt-8 grid grid-cols-2 gap-4">
-                            {data.charts.ticketStatus.data.map((entry, idx) => (
-                                <div key={idx} className="flex items-center justify-between px-2 bg-gray-50 p-2 rounded-xl">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{entry.label}</span>
+                {isBusinessAdmin ? (
+                    /* Pipeline for Business Admin */
+                    <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                        <CardHeader className="bg-white border-b border-gray-50 py-6">
+                            <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.pipeline?.title}</CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-8 flex flex-col items-center">
+                            <div className="w-full grid grid-cols-2 sm:grid-cols-4 gap-6">
+                                {data.charts.pipeline?.data.map((stage, idx) => (
+                                    <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
+                                        <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: stage.color }} />
+                                        <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{stage.label}</span>
+                                        <span className="text-xl font-black text-[#0F1626]">{stage.count}</span>
                                     </div>
-                                    <span className="text-sm font-black text-[#0F1626]">{entry.value}</span>
+                                ))}
+                            </div>
+                        </CardContent>
+                    </Card>
+                ) : (
+                    <>
+                        {/* Support Tickets for Super Admin */}
+                        <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                            <CardHeader className="bg-white border-b border-gray-50 py-6">
+                                <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketStatus?.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-8 flex flex-col items-center">
+                                <PieChartComponent radius={75} data={data.charts.ticketStatus?.data} />
+                                <div className="w-full mt-8 grid grid-cols-2 gap-4">
+                                    {data.charts.ticketStatus?.data.map((entry, idx) => (
+                                        <div key={idx} className="flex items-center justify-between px-2 bg-gray-50 p-2 rounded-xl">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{entry.label}</span>
+                                            </div>
+                                            <span className="text-sm font-black text-[#0F1626]">{entry.value}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                            </CardContent>
+                        </Card>
 
-                {/* Support Priority */}
-                <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                    <CardHeader className="bg-white border-b border-gray-50 py-6">
-                        <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketPriority.title}</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts.ticketPriority.data} />
-                        <div className="w-full mt-8 grid grid-cols-2 gap-4">
-                            {data.charts.ticketPriority.data.map((entry, idx) => (
-                                <div key={idx} className="flex items-center justify-between px-2 bg-gray-50 p-2 rounded-xl">
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
-                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{entry.label}</span>
-                                    </div>
-                                    <span className="text-sm font-black text-[#0F1626]">{entry.value}</span>
+                        <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                            <CardHeader className="bg-white border-b border-gray-50 py-6">
+                                <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketPriority?.title}</CardTitle>
+                            </CardHeader>
+                            <CardContent className="p-8 flex flex-col items-center">
+                                <PieChartComponent radius={75} data={data.charts.ticketPriority?.data} />
+                                <div className="w-full mt-8 grid grid-cols-2 gap-4">
+                                    {data.charts.ticketPriority?.data.map((entry, idx) => (
+                                        <div key={idx} className="flex items-center justify-between px-2 bg-gray-50 p-2 rounded-xl">
+                                            <div className="flex items-center gap-2">
+                                                <div className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">{entry.label}</span>
+                                            </div>
+                                            <span className="text-sm font-black text-[#0F1626]">{entry.value}</span>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                            </CardContent>
+                        </Card>
+                    </>
+                )}
             </div>
 
-            {/* Recently Added Tenants */}
+            {/* Jurisdictional Entities (Tenants or Branches) */}
             <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-gray-50 py-6">
                     <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                        <div className="p-2 bg-amber-50 rounded-lg">
-                            <Building2 className="text-amber-600" size={18} />
+                        <div className={`p-2 ${isBusinessAdmin ? 'bg-emerald-50' : 'bg-amber-50'} rounded-lg`}>
+                            <Building2 className={isBusinessAdmin ? 'text-emerald-600' : 'text-amber-600'} size={18} />
                         </div>
-                        Recently Added Tenants
+                        {isBusinessAdmin ? 'Recently Added Branches' : 'Recently Added Tenants'}
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -155,24 +178,26 @@ export const SuperAdminDashboard = ({ data }) => {
                         <table className="w-full text-left">
                             <thead className="bg-gray-50/50 text-[11px] font-bold text-gray-400 uppercase tracking-widest">
                                 <tr>
-                                    <th className="px-8 py-4">Business Name</th>
-                                    <th className="px-8 py-4">Owner</th>
+                                    <th className="px-8 py-4">{isBusinessAdmin ? 'Branch Name' : 'Business Name'}</th>
+                                    <th className="px-8 py-4">{isBusinessAdmin ? 'Branch Code' : 'Owner'}</th>
                                     <th className="px-8 py-4">Contact</th>
-                                    <th className="px-8 py-4">Joined Date</th>
+                                    <th className="px-8 py-4">{isBusinessAdmin ? 'Added On' : 'Joined Date'}</th>
                                     <th className="px-8 py-4">Status</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-gray-50">
-                                {data.tenants.recent.map((tenant) => (
-                                    <tr key={tenant.id} className="hover:bg-gray-50/50 transition-colors group">
+                                {(isBusinessAdmin ? data.branches.recent : data.tenants.recent).map((item) => (
+                                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
                                         <td className="px-8 py-5">
-                                            <div className="font-bold text-[#0F1626]">{tenant.business_name}</div>
+                                            <div className="font-bold text-[#0F1626]">{isBusinessAdmin ? item.name : item.business_name}</div>
                                         </td>
-                                        <td className="px-8 py-5 text-sm font-medium text-gray-600">{tenant.owner_name}</td>
-                                        <td className="px-8 py-5 text-sm text-gray-500">{tenant.email}</td>
-                                        <td className="px-8 py-5 text-sm text-gray-500">{new Date(tenant.created_at).toLocaleDateString()}</td>
+                                        <td className="px-8 py-5 text-sm font-medium text-gray-600">{isBusinessAdmin ? item.branch_code : item.owner_name}</td>
+                                        <td className="px-8 py-5 text-sm text-gray-500">{item.email}</td>
+                                        <td className="px-8 py-5 text-sm text-gray-500">
+                                            {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}
+                                        </td>
                                         <td className="px-8 py-5">
-                                            <span className="px-3 py-1 bg-green-50 text-green-600 text-[10px] font-bold rounded-full uppercase tracking-widest border border-green-100">
+                                            <span className={`px-3 py-1 ${isBusinessAdmin ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-green-50 text-green-600 border-green-100'} text-[10px] font-bold rounded-full uppercase tracking-widest border`}>
                                                 Active
                                             </span>
                                         </td>

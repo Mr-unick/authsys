@@ -69,15 +69,17 @@ export default async function handler(req: any, res: any) {
         // Extract permissions
         const permissions = isSuperAdmin
             ? ['*'] // Super admin has all permissions
-            : (user.role?.rolePermissions.map((p: any) => p.permission.permission) || []);
+            : (user.role?.rolePermissions?.map((p: any) => p.permission?.permission).filter(Boolean) || []);
 
         // Build token payload (exclude password)
         const tokenPayload = {
             id: user.id,
             name: user.name,
             email: user.email,
-            role: isSuperAdmin ? 'SUPER_ADMIN' : user.role?.name,
+            role: isSuperAdmin ? 'SUPER_ADMIN' : (user.is_branch_admin ? 'BRANCH_ADMIN' : (user.role?.name || 'USER')),
             business: isSuperAdmin ? null : user.business_id,
+            branch: isSuperAdmin ? null : (user.branch_id || null),
+            is_branch_admin: isSuperAdmin ? false : (user.is_branch_admin || false),
             permissions,
         };
 
@@ -96,13 +98,18 @@ export default async function handler(req: any, res: any) {
         res.setHeader('Set-Cookie', serializedCookie);
 
         // turbo
-        await activityLog(ActivityType.LOGIN, `${user.name} logged in`, user.id);
+        if (isSuperAdmin) {
+            await activityLog(ActivityType.LOGIN, `${user.name} logged in`, undefined, undefined, user.id);
+        } else {
+            await activityLog(ActivityType.LOGIN, `${user.name} logged in`, user.id);
+        }
 
         return res.status(200).json({
             message: 'Login successful',
             status: 200,
         });
     } catch (error: any) {
+        console.error("[Login API Error]:", error);
         return res.status(500).json({
             message: 'Login unsuccessful',
             error: error.message,

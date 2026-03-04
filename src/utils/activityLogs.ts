@@ -12,20 +12,23 @@ export const activityLog = async (
     type: string,
     description: string,
     userId?: number,
-    leadId?: number
+    leadId?: number,
+    superAdminId?: number
 ): Promise<void> => {
     try {
         const newActivity = await prisma.activity.create({
             data: {
                 type,
                 description,
-                user_id: userId,
-                lead_id: leadId,
+                user_id: userId || null,
+                super_admin_id: superAdminId || null,
+                lead_id: leadId || null,
                 timestamp: new Date()
             },
             include: {
                 user: true,
-                lead: true
+                lead: true,
+                superAdmin: true
             }
         });
 

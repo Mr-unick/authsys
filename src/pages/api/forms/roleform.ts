@@ -1,13 +1,10 @@
 import prisma from "@/app/lib/prisma";
-import { GenerateForm } from "../../../utils/generateForm";
+import { GenerateForm } from "@/utils/generateForm";
 import { VerifyToken } from "@/utils/VerifyToken";
 
 export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, null);
     if (res.writableEnded) return;
-
-    const { id } = req.query;
-    const form = new GenerateForm('Lead Form');
 
     try {
         // Check if multi-branch is enabled
@@ -30,27 +27,41 @@ export default async function handler(req: any, res: any) {
             name: b.name
         }));
 
-        if (id !== "undefined" && id) {
-            const lead = await prisma.lead.findUnique({
-                where: { id: Number(id) }
+        const permissions = await prisma.permission.findMany({
+            where: { deleted_at: null }
+        });
+
+        const permissionOptions = permissions.map(p => ({
+            id: p.id,
+            name: `${p.permission} (${p.action})`
+        }));
+
+        if (req.query.id !== "undefined" && req.query.id) {
+            const role = await prisma.role.findUnique({
+                where: { id: Number(req.query.id) },
+                include: { rolePermissions: true }
             });
 
-            form.addField('name', 'text').required().value(lead?.name || '').disabled();
-            form.addField('email', 'text').value(lead?.email || '').disabled();
+            if (!role) {
+                return res.status(404).json({ message: "Role not found", status: 404 });
+            }
+
+            const form = new GenerateForm('Edit Role');
+            form.addField('name', 'text').value(role.name).required();
 
             if (isMultiBranchActive) {
-                const bField = form.addField('branch', 'select').options(branchOptions).value((lead as any)?.branch_id).required();
+                const bField = form.addField('branch', 'select').options(branchOptions).value((role as any).branch_id).required().newRow();
                 if (user.is_branch_admin) bField.disabled();
             }
 
-            form.addField('phone', 'text').value(lead?.phone || '').disabled();
-            form.addField('second_phone', 'text').value(lead?.second_phone || '');
-            form.addField('address', 'textarea').newRow().value(lead?.address || '');
-            form.submiturl('getLeadProps');
+            form.addField('permissions', 'select').options(permissionOptions).value(role.rolePermissions.map(rp => rp.permission_id) as any).required();
+            form.submiturl('getRoleProps');
             form.method('put');
+
+            return res.status(200).json(form.getForm());
         } else {
+            const form = new GenerateForm('Create Role');
             form.addField('name', 'text').required();
-            form.addField('email', 'text');
 
             if (isMultiBranchActive) {
                 const bField = form.addField('branch', 'select').options(branchOptions).required();
@@ -59,14 +70,12 @@ export default async function handler(req: any, res: any) {
                 }
             }
 
-            form.addField('phone', 'text');
-            form.addField('second_phone', 'text');
-            form.addField('address', 'textarea');
-            form.submiturl('getLeadProps');
+            form.addField('permissions', 'select').options(permissionOptions).required();
+            form.submiturl('getRoleProps');
             form.method('post');
-        }
 
-        return res.json(form.getForm());
+            return res.status(200).json(form.getForm());
+        }
     } catch (error: any) {
         return res.status(500).json({ message: "Something went wrong", error: error.message, status: 500 });
     }

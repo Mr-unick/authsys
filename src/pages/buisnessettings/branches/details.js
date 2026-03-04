@@ -1,10 +1,8 @@
-
-
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import DataTable from "../../../app/components/tables/dataTable";
 import {
-    Building2, Globe, Mail, Phone, MapPin, Edit3,
+    Building2, Mail, Phone, MapPin, Edit3,
     ShieldCheck, Calendar, Info, Loader2, Sparkles,
     Briefcase, FileText, ChevronRight
 } from 'lucide-react';
@@ -12,81 +10,76 @@ import Modal from "../../../app/components/modal";
 import FormComponent from "../../../app/components/forms/form";
 import { toast } from 'react-toastify';
 
-export default function BuisnessDetails() {
-    const [business, setBusiness] = useState(null);
+export default function BranchDetails() {
+    const [branch, setBranch] = useState(null);
     const [loading, setLoading] = useState(true);
     const [editOpen, setEditOpen] = useState(false);
     const [tableResponse, setTableResponse] = useState(null);
 
-    const fetchBusinessData = async () => {
+    const fetchBranchData = async () => {
         setLoading(true);
         try {
-            const res = await axios.get('/api/getBuisnessProps');
+            const res = await axios.get('/api/getBranchDetailsProps');
             setTableResponse(res.data.data);
             const data = res.data.data.rows;
             if (data && data.length > 0) {
-                // If it's a single business (Business Admin view)
-                setBusiness(data.length === 1 ? data[0] : null);
+                setBranch(data[0]);
             }
         } catch (err) {
-            toast.error("Failed to load business details");
+            toast.error("Failed to load branch details");
         } finally {
             setLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchBusinessData();
+        fetchBranchData();
     }, []);
 
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
                 <Loader2 className="animate-spin text-indigo-600 h-10 w-10" />
-                <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] animate-pulse">Syncing Enterprise Data</p>
+                <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] animate-pulse">Syncing Branch Data</p>
             </div>
         );
     }
 
-    // If there are multiple businesses (e.g. for Super Admin accidentally reaching here), fallback to table
-    if (!business && tableResponse?.rows?.length > 1) {
-        return <DataTable url={'getBuisnessProps'} />;
-    }
-
-    if (!business) {
+    if (!branch) {
         return (
             <div className="p-12 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
                 <Info size={48} className="mx-auto text-gray-200 mb-4" />
-                <h2 className="text-xl font-black text-gray-400 uppercase tracking-widest">No business profile found</h2>
-                <p className="text-gray-400 mt-2">Initialize your business settings to see details here.</p>
+                <h2 className="text-xl font-black text-gray-400 uppercase tracking-widest">No branch profile found</h2>
+                <p className="text-gray-400 mt-2">Associate your account with a branch to see details here.</p>
             </div>
         );
     }
 
     const sections = [
         {
-            title: "Corporate Identity",
+            title: "Local Identity",
             fields: [
-                { label: "Entity Name", value: business.name, icon: <Building2 /> },
-                { label: "Business Email", value: business.email, icon: <Mail /> },
-                { label: "Primary Contact", value: business.contact_number, icon: <Phone /> },
-                { label: "Website", value: business.website || 'Not configured', icon: <Globe />, isLink: true },
+                { label: "Branch Name", value: branch.name, icon: <Building2 /> },
+                { label: "Branch Code", value: branch.branch_code || 'N/A', icon: <FileText />, mono: true },
+                { label: "Branch Email", value: branch.email || 'N/A', icon: <Mail /> },
+                { label: "Contact Number", value: branch.number || 'N/A', icon: <Phone /> },
             ]
         },
         {
-            title: "Compliance & Tax",
+            title: "Operational Address",
             fields: [
-                { label: "GST Number", value: business.gst_number || 'N/A', icon: <FileText />, mono: true },
-                { label: "PAN Number", value: business.pan_number || 'N/A', icon: <Briefcase />, mono: true },
-                { label: "Address", value: `${business.business_address}, ${business.city}, ${business.state}`, icon: <MapPin />, full: true },
+                { label: "City", value: branch.city || 'N/A', icon: <MapPin /> },
+                { label: "District", value: branch.district || 'N/A', icon: <MapPin /> },
+                { label: "State", value: branch.state || 'N/A', icon: <MapPin /> },
+                { label: "Pincode", value: branch.pincode || 'N/A', icon: <MapPin />, mono: true },
+                { label: "Full Address", value: branch.address || 'N/A', icon: <MapPin />, full: true },
             ]
         },
         {
-            title: "Owner Information",
+            title: "Branch Manager",
             fields: [
-                { label: "Registered Owner", value: business.owner_name, icon: <Sparkles /> },
-                { label: "Owner Email", value: business.owner_email, icon: <Mail /> },
-                { label: "Owner Phone", value: business.owner_contact, icon: <Phone /> },
+                { label: "Manager Name", value: branch.manager_name, icon: <Sparkles /> },
+                { label: "Manager Email", value: branch.manager_email, icon: <Mail /> },
             ]
         }
     ];
@@ -96,15 +89,15 @@ export default function BuisnessDetails() {
             {/* Minimal Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-8 border-b border-gray-100">
                 <div className="flex items-center gap-5">
-                    <div className="h-14 w-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
+                    <div className="h-14 w-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600">
                         <Building2 size={24} />
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50/50 px-2 py-0.5 rounded">Enterprise</span>
-                            <span className="text-gray-300 text-[10px] font-mono">#{business.id}</span>
+                            <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50/50 px-2 py-0.5 rounded">Active Branch</span>
+                            <span className="text-gray-300 text-[10px] font-mono">#BR-{branch.id}</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{business.name}</h1>
+                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{branch.name}</h1>
                     </div>
                 </div>
 
@@ -113,7 +106,7 @@ export default function BuisnessDetails() {
                         onClick={() => setEditOpen(true)}
                         className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-xs font-bold hover:bg-gray-800 transition-all flex items-center gap-2"
                     >
-                        <Edit3 size={14} /> Update Settings
+                        <Edit3 size={14} /> Update Details
                     </button>
                 )}
             </div>
@@ -133,16 +126,12 @@ export default function BuisnessDetails() {
                                     <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">{field.label}</label>
                                     <div className="flex items-center gap-3">
                                         {field.icon && (
-                                            <div className="text-gray-300 group-hover:text-indigo-500 transition-colors">
+                                            <div className="text-gray-300 group-hover:text-emerald-500 transition-colors">
                                                 {React.cloneElement(field.icon, { size: 14 })}
                                             </div>
                                         )}
                                         <div className={`text-sm font-semibold text-gray-700 ${field.mono ? 'font-mono' : ''}`}>
-                                            {field.isLink && field.value !== 'Not configured' ? (
-                                                <a href={field.value.startsWith('http') ? field.value : `https://${field.value}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">
-                                                    {field.value}
-                                                </a>
-                                            ) : field.value}
+                                            {field.value}
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +143,7 @@ export default function BuisnessDetails() {
 
             {/* Footer */}
             <div className="mt-20 pt-8 border-t border-gray-100 flex items-center justify-between text-gray-400">
-                <p className="text-[10px] font-medium">Enterprise Portal v4.2.0 • Last sync {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                <p className="text-[10px] font-medium">Branch Portal v4.2.0 • Last sync {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
                 <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
                     <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Secure Node</span>
@@ -164,18 +153,18 @@ export default function BuisnessDetails() {
             {/* Edit Modal */}
             {editOpen && (
                 <Modal
-                    title="Edit Business Profile"
+                    title="Edit Branch Details"
                     open={editOpen}
                     onOpenChange={setEditOpen}
                 >
                     <div className="p-2">
                         <FormComponent
-                            id={business.id}
+                            id={branch.id}
                             formdata={tableResponse?.updateform}
                             onSuccess={() => {
                                 setEditOpen(false);
-                                fetchBusinessData();
-                                toast.success("Business profile updated successfully");
+                                fetchBranchData();
+                                toast.success("Branch details updated successfully");
                             }}
                         />
                     </div>

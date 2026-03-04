@@ -8,11 +8,59 @@ import {
     CardHeader,
     CardTitle,
 } from "../components/components/ui/card";
+import prisma from "@/app/lib/prisma";
+import { VerifyToken } from "@/utils/VerifyToken";
 
-const ActivityTab = ({ showHeader = true }) => {
+export async function getServerSideProps(context) {
+    const user = await VerifyToken(context.req, context.res, null);
+    if (!user) return { props: {} };
+
+    const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
+    const role = rawRole.trim().toUpperCase();
+    const isSuperAdmin = role.includes('SUPER') || (role.includes('ADMIN') && (!user.business || user.business === 0));
+
+    if (isSuperAdmin) return { props: { restricted: false } };
+
+    const feature = await prisma.businessFeature.findFirst({
+        where: {
+            business_id: user.business,
+            feature_key: 'activity_log',
+            is_enabled: true
+        }
+    });
+
+    return {
+        props: {
+            restricted: !feature
+        }
+    };
+}
+
+const ActivityTab = ({ showHeader = true, restricted = false }) => {
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
+
+    if (restricted) {
+        return (
+            <div className="flex flex-col items-center justify-center p-20 text-center animate-in fade-in duration-700">
+                <div className="bg-orange-50 p-6 rounded-full mb-6">
+                    <Zap className="h-10 w-10 text-orange-500" />
+                </div>
+                <h2 className="text-2xl font-black text-[#0F1626] mb-2">Activity Stream Restricted</h2>
+                <p className="text-gray-500 max-w-md mx-auto font-medium">
+                    The real-time activity logging feature is not enabled for your subscription.
+                    Please contact your administrator to upgrade your plan.
+                </p>
+                <button
+                    onClick={() => window.location.href = '/'}
+                    className="mt-8 px-8 py-3 bg-[#0F1626] text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-gray-200"
+                >
+                    Return to Dashboard
+                </button>
+            </div>
+        );
+    }
 
     const fetchActivities = async () => {
         try {

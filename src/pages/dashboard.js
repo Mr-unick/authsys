@@ -23,8 +23,10 @@ const Dashboard = ({ data }) => {
   const renderDashboardByRole = () => {
     switch (data.role) {
       case 'SUPER_ADMIN':
+      case 'BUSINESS_ADMIN':
         return <SuperAdminDashboard data={data} />;
       case 'TENANT_ADMIN':
+      case 'BRANCH_ADMIN':
         return <TenantAdminDashboard data={data} />;
       case 'SALES_PERSON':
         return <SalespersonDashboard data={data} />;

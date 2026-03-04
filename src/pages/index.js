@@ -13,16 +13,28 @@ export default function Index() {
   const [dashboardprops, setDashboardProps] = useState(null);
   const router = useRouter();
   const getdashboardprops = async () => {
+    if (!router.isReady) return;
+
     try {
       setLoading(true);
-      const res = await axios.get('/api/getDashboardProps');
+      const res = await axios.get('/api/getDashboardProps', {
+        // Prevent axios from throwing on common status codes so we can handle them manually
+        validateStatus: (status) => (status >= 200 && status < 300) || status === 401
+      });
+
+      if (res.status === 401) {
+        console.warn("[Dashboard] Unauthorized, redirecting to sign-in.");
+        router.replace('/signin');
+        return;
+      }
+
       if (res.data?.status === 200) {
         setDashboardProps(res.data.data);
       }
     } catch (error) {
       console.error("Dashboard fetch error details:", error);
       // Silently handle 401 by redirecting to signin
-      if (error.response && error.response.status === 401) {
+      if (error && (error.response?.status === 401 || error.status === 401)) {
         router.replace('/signin');
       }
     } finally {
@@ -31,8 +43,10 @@ export default function Index() {
   };
 
   useEffect(() => {
-    getdashboardprops();
-  }, []);
+    if (router.isReady) {
+      getdashboardprops();
+    }
+  }, [router.isReady]);
 
   useEffect(() => {
     if (!dashboardprops) return;

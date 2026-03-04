@@ -214,21 +214,23 @@ export const TenantAdminDashboard = ({ data }) => {
             </div>
 
             {/* Live Performance Pulse */}
-            <div className="grid grid-cols-12 gap-8">
-                <Card className="col-span-12 lg:col-span-12 border-none shadow-sm rounded-2xl flex flex-col h-[550px] overflow-hidden">
-                    <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-5">
-                        <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-white rounded-lg shadow-sm">
-                                <Zap className="text-indigo-600 font-bold" size={18} />
-                            </div>
-                            Live Performance Pulse
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-1 overflow-y-auto scrollbar-hide">
-                        <ActivityTab showHeader={false} />
-                    </CardContent>
-                </Card>
-            </div>
+            {(data.featureKeys?.includes('activity_log') || data.role === 'SUPER_ADMIN') && (
+                <div className="grid grid-cols-12 gap-8">
+                    <Card className="col-span-12 lg:col-span-12 border-none shadow-sm rounded-2xl flex flex-col h-[550px] overflow-hidden">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-5">
+                            <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
+                                <div className="p-2 bg-white rounded-lg shadow-sm">
+                                    <Zap className="text-indigo-600 font-bold" size={18} />
+                                </div>
+                                Live Performance Pulse
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 overflow-y-auto scrollbar-hide">
+                            <ActivityTab showHeader={false} />
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div>
     );
 };

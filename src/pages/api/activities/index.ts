@@ -30,7 +30,7 @@ export default async function getActivities(req: any, res: any) {
             ];
 
             // If they aren't an admin, further restrict to their own ID
-            const isTenantAdmin = role === 'BUSINESS_ADMIN' || role === 'ADMIN' || role === 'TENANT_ADMIN';
+            const isTenantAdmin = role === 'BUSINESS_ADMIN' || role === 'BUISNESS_ADMIN' || role === 'ADMIN' || role === 'TENANT_ADMIN';
             if (!isTenantAdmin) {
                 whereClause.user_id = user.id;
             }

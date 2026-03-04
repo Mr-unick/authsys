@@ -98,45 +98,37 @@ export default function LoginPage() {
                     </div>
 
                     <div className="space-y-3">
-                        <h1 className="text-3xl font-black text-[#0F1626] tracking-tight">System Login</h1>
-                        <p className="text-slate-400 text-sm font-medium uppercase tracking-widest text-[10px]">Administrative Access Portal</p>
+                        <h1 className="text-2xl font-black text-[#0F1626] tracking-tight">System Login</h1>
+                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Administrative Access Portal</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
-                        <div className="space-y-5">
-                            <div className="space-y-2">
-                                <Label htmlFor="email" className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                                    Email Address
+                        <div className="space-y-4">
+                            <div className="space-y-1.5">
+                                <Label htmlFor="email" className="text-[13px] font-bold text-slate-700 ml-0.5">
+                                    Your Email
                                 </Label>
-                                <div className="relative group">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                                        <Mail size={16} />
-                                    </div>
-                                    <Input
-                                        id="email"
-                                        type="email"
-                                        placeholder="admin@leadconverter.ai"
-                                        className="h-12 pl-12 pr-4 bg-slate-50/50 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-500 focus:bg-white transition-all font-medium text-sm"
-                                        required
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                </div>
+                                <Input
+                                    id="email"
+                                    type="email"
+                                    placeholder="Ex. james@bond.com"
+                                    className="h-11 px-4 bg-white border-slate-100 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all font-medium text-sm placeholder:text-slate-300 shadow-sm"
+                                    required
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                />
                             </div>
 
-                            <div className="space-y-2">
-                                <Label htmlFor="password" className="text-[10px] font-black text-slate-500 uppercase tracking-widest ml-1">
-                                    Privacy Key
+                            <div className="space-y-1.5">
+                                <Label htmlFor="password" className="text-[13px] font-bold text-slate-700 ml-0.5">
+                                    Your Password
                                 </Label>
                                 <div className="relative group">
-                                    <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-indigo-500 transition-colors">
-                                        <Lock size={16} />
-                                    </div>
                                     <Input
                                         id="password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••••••"
-                                        className="h-12 pl-12 pr-12 bg-slate-50/50 border-slate-200 rounded-xl focus:ring-4 focus:ring-indigo-50/50 focus:border-indigo-500 focus:bg-white transition-all font-medium text-sm"
+                                        className="h-11 px-4 pr-12 bg-white border-slate-100 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all font-medium text-sm placeholder:text-slate-300 shadow-sm"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -152,16 +144,16 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="pt-2">
+                        <div className="pt-1">
                             <Button
                                 type="submit"
                                 disabled={loader}
-                                className="w-full h-12 bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 text-white font-black uppercase tracking-[0.15em] text-[11px] rounded-xl shadow-xl shadow-indigo-100 border border-white/10 transition-all transform hover:scale-[1.01] active:scale-[0.98] flex items-center justify-center gap-3"
+                                className="w-full h-12 bg-[#0F1626] hover:bg-slate-800 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-lg shadow-xl shadow-indigo-100/10 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2.5"
                             >
                                 {loader ? (
                                     <Loader2 className="h-5 w-5 animate-spin text-white" />
                                 ) : (
-                                    <>Authenicate <Plus size={14} strokeWidth={3} /></>
+                                    <>Sign In <Plus size={14} strokeWidth={3} /></>
                                 )}
                             </Button>
                         </div>

@@ -18,33 +18,26 @@ export const DatePickerComponent = forwardRef(
     };
 
     return (
-      <div className="flex flex-col gap-2">
-        <label className="text-sm text-gray-500">
-          {label}
-          {required ? "*" : " (optional)"}
+      <div className="flex flex-col gap-1.5 w-full">
+        <label className="text-[13px] font-bold text-slate-700 ml-0.5">
+          {label}{required ? <span className="text-red-500 ml-1">*</span> : <span className="text-slate-400 ml-1 text-[10px] font-medium tracking-tight">(optional)</span>}
         </label>
         <Popover>
-          <PopoverTrigger>
-            {/* You can use an input or a button as the trigger */}
-            <input
-              type="text"
-              value={selectedDate ? selectedDate.toLocaleDateString() : ""}
-              placeholder={placeholder}
-              readOnly
-              className="placeholder:text-gray-600 placeholder:text-xs border-[1px] border-gray-300 p-2"
-            />
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="h-11 w-full px-4 border-slate-200 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all text-sm placeholder:text-slate-300 bg-white shadow-sm font-medium text-slate-600 flex items-center justify-start"
+            >
+              {selectedDate ? selectedDate.toLocaleDateString() : <span className="text-slate-300">{placeholder}</span>}
+            </button>
           </PopoverTrigger>
-          <PopoverContent>
-            <div className="p-2">
-              <Calendar
-                {...rest}
-                ref={ref}
-                name={name}
-                value={selectedDate}
-                onChange={handleDateChange} // When a date is selected
-                className="border-[1px] border-gray-300 rounded-md"
-              />
-            </div>
+          <PopoverContent className="w-auto p-0 rounded-2xl border-slate-100 shadow-2xl">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={handleDateChange}
+              initialFocus
+            />
           </PopoverContent>
         </Popover>
       </div>

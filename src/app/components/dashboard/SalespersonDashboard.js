@@ -86,13 +86,13 @@ export const SalespersonDashboard = ({ data }) => {
                             <div className="p-2 bg-indigo-50 rounded-lg">
                                 <Trophy className="text-indigo-600" size={16} />
                             </div>
-                            {data.charts.personalTrend.title}
+                            {data.charts?.personalTrend?.title || "Monthly Performance"}
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-3 sm:p-8">
                         <div className="h-[220px] sm:h-[300px] w-full mt-2 sm:mt-4">
                             <LineChartComponent
-                                data={data.charts.personalTrend.data}
+                                data={data.charts?.personalTrend?.data || []}
                                 chartConfig={{ count: { label: "My Leads", color: "#4E49F2" } }}
                             />
                         </div>
@@ -110,9 +110,9 @@ export const SalespersonDashboard = ({ data }) => {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 sm:p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts.personalStages.data} />
+                        <PieChartComponent radius={75} data={data.charts?.personalStages?.data || []} />
                         <div className="w-full mt-6 sm:mt-8 space-y-2.5 sm:space-y-3">
-                            {data.charts.personalStages.data.map((entry, idx) => (
+                            {data.charts?.personalStages?.data?.map((entry, idx) => (
                                 <div key={idx} className="flex items-center justify-between text-xs px-2">
                                     <div className="flex items-center gap-2.5">
                                         <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
@@ -142,7 +142,7 @@ export const SalespersonDashboard = ({ data }) => {
                     </CardHeader>
                     <CardContent className="p-3 sm:p-4">
                         <div className="space-y-2 sm:space-y-3">
-                            {data.recentLeads.map((lead) => (
+                            {data.recentLeads?.map((lead) => (
                                 <NewLeadCard key={lead.id} data={lead} />
                             ))}
                         </div>
@@ -150,16 +150,18 @@ export const SalespersonDashboard = ({ data }) => {
                 </Card>
 
                 {/* My Activity Summary */}
-                <Card className="col-span-1 lg:col-span-6 border-none shadow-sm rounded-2xl flex flex-col h-[350px] sm:h-[400px] overflow-hidden">
-                    <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-4 sm:py-5 px-4 sm:px-6">
-                        <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            Personal Timeline
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 flex-1 overflow-y-auto scrollbar-hide">
-                        <ActivityTab showHeader={false} />
-                    </CardContent>
-                </Card>
+                {data.featureKeys?.includes('activity_log') && (
+                    <Card className="col-span-1 lg:col-span-6 border-none shadow-sm rounded-2xl flex flex-col h-[350px] sm:h-[400px] overflow-hidden">
+                        <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-4 sm:py-5 px-4 sm:px-6">
+                            <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
+                                Personal Timeline
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent className="p-0 flex-1 overflow-y-auto scrollbar-hide">
+                            <ActivityTab showHeader={false} />
+                        </CardContent>
+                    </Card>
+                )}
             </div>
         </div>
     );

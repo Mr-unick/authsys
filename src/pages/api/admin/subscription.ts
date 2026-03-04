@@ -9,7 +9,12 @@ export default async function handler(req: any, res: any) {
     // Only Portal Admins (Super Admins) should manage subscriptions
     const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
     const role = rawRole.trim().toUpperCase().replace(/\s+/g, '_');
-    const isPortalAdmin = role.includes('SUPER') || (user.permissions || []).includes('*');
+    const businessId = user.business;
+
+    // Portal Admin check: Role is SUPER_ADMIN, or it's ADMIN without a business, or they have global '*' permission
+    const isPortalAdmin = role === 'SUPER_ADMIN' ||
+        (role === 'ADMIN' && (!businessId || businessId === 0)) ||
+        (user.permissions || []).includes('*');
 
     if (!isPortalAdmin) {
         return res.status(403).json({ message: "Forbidden: Super Admin access required", status: 403 });

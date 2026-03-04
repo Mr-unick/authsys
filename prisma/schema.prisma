@@ -33,6 +33,10 @@ model Business {
   trial_expiry         DateTime?         @db.Timestamp(0)
   is_on_trial          Boolean           @default(false)
 
+  // Multi-branch limits
+  max_branches         Int               @default(1)
+  max_users_per_branch Int               @default(10)
+
   areasOfOperation     AreaOfOperation[]
   branches             Branch[]
   leadStages           LeadStage[]
@@ -64,8 +68,10 @@ model User {
   created_at        DateTime?            @default(now())
   updated_at        DateTime?            @updatedAt
   business_id       Int?                 @map("buisnesId")
+  branch_id         Int?                 @map("branchId")
   role_id           Int?                 @map("roleId")
   password          String
+  is_branch_admin   Boolean              @default(false)
   deleted_at        DateTime?            @map("deleted_at")
   activities        Activity[]
   comments          Comment[]
@@ -77,9 +83,11 @@ model User {
   history           StageChangeHistory[]
   business          Business?            @relation(fields: [business_id], references: [id])
   role              Role?                @relation(fields: [role_id], references: [id])
+  branch            Branch?              @relation(fields: [branch_id], references: [id])
 
   @@index([business_id], map: "users_buisnesId_fkey")
   @@index([role_id], map: "users_roleId_fkey")
+  @@index([branch_id], map: "users_branchId_fkey")
   @@map("users")
 }
 
@@ -93,6 +101,7 @@ model Lead {
   updated_at   DateTime             @updatedAt
   stage_id     Int?                 @map("stageId")
   business_id  Int?                 @map("businessId")
+  branch_id    Int?                 @map("branchId")
   address      String?
   status       String?              @default("active")
   second_phone String?
@@ -107,11 +116,13 @@ model Lead {
   comments     Comment[]
   leadUsers    LeadUser[]
   business     Business?            @relation(fields: [business_id], references: [id])
+  branch       Branch?              @relation(fields: [branch_id], references: [id])
   stage        LeadStage?           @relation(fields: [stage_id], references: [id])
   history      StageChangeHistory[]
 
   @@index([business_id], map: "leads_businessId_fkey")
   @@index([stage_id], map: "leads_stageId_fkey")
+  @@index([branch_id], map: "leads_branchId_fkey")
   @@map("leads")
 }
 
@@ -180,10 +191,10 @@ model Policy {
 }
 
 model Branch {
-  id          Int       @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   name        String
   location    String
-  business_id Int?      @map("buisnessId")
+  business_id Int?        @map("buisnessId")
   email       String
   branch_code String
   number      String
@@ -193,9 +204,14 @@ model Branch {
   city        String
   pincode     String
   discription String
-  deleted_at  DateTime? @map("deleted_at")
-  business    Business? @relation(fields: [business_id], references: [id])
+  created_at  DateTime?   @default(now())
+  updated_at  DateTime?   @updatedAt
+  deleted_at  DateTime?   @map("deleted_at")
+  business    Business?   @relation(fields: [business_id], references: [id])
   roles       Role[]
+  users       User[]
+  leads       Lead[]
+  leadStages  LeadStage[]
 
   @@index([business_id], map: "branch_buisnessId_fkey")
   @@map("branch")
@@ -225,16 +241,19 @@ model LeadStage {
   created_at  DateTime?            @default(now())
   updated_at  DateTime?            @updatedAt
   business_id Int?                 @map("buisnessId")
+  branch_id   Int?                 @map("branchId")
   discription String?
   deleted_at  DateTime?            @map("deleted_at")
   order       Int                  @default(0)
   stage_type  String               @default("ONGOING") @map("stage_type")
   business    Business?            @relation(fields: [business_id], references: [id])
+  branch      Branch?              @relation(fields: [branch_id], references: [id])
   leads       Lead[]
   history     StageChangeHistory[]
 
-  @@unique([stage_name, business_id])
+  @@unique([stage_name, business_id, branch_id])
   @@index([business_id], map: "lead_stages_buisnessId_fkey")
+  @@index([branch_id], map: "lead_stages_branchId_fkey")
   @@map("lead_stages")
 }
 

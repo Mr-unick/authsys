@@ -10,17 +10,22 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET") {
     try {
+      const branchId = user.branch;
+      const whereClause: any = {
+        business_id: user.business,
+        deleted_at: null,
+        // Scoping
+        ...(branchId ? { branch_id: branchId } : {}),
+        // If not super admin, hidden the 'Buisness Admin' role
+        ...(user.role !== 'SUPER_ADMIN' ? {
+          NOT: {
+            name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] }
+          }
+        } : {})
+      };
+
       const rolesData = await prisma.role.findMany({
-        where: {
-          business_id: user.business,
-          deleted_at: null,
-          // If not super admin, hidden the 'Buisness Admin' role to prevent editing or assignment escalation
-          ...(user.role !== 'SUPER_ADMIN' ? {
-            NOT: {
-              name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] }
-            }
-          } : {})
-        },
+        where: whereClause,
         include: {
           rolePermissions: {
             include: {
@@ -84,7 +89,7 @@ export default async function handler(req: any, res: any) {
           data: {
             name: name,
             business_id: user.business,
-            branch_id: branch ? Number(branch) : null,
+            branch_id: user.is_branch_admin ? user.branch : (branch ? Number(branch) : null),
             created_at: new Date()
           }
         });

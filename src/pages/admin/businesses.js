@@ -293,12 +293,17 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
     });
 
     const featureList = [
-        { key: 'ai_scoring', name: 'AI Lead Scoring', description: 'Intelligent lead behavior analysis & ranking' },
-        { key: 'bulk_comm', name: 'Bulk Marketing', description: 'Mass Email/WhatsApp/SMS capabilities' },
-        { key: 'adv_analytics', name: 'Advanced Analytics', description: 'Deep-dive performace dashboards' },
-        { key: 'api_access', name: 'API & Webhooks', description: 'External integration & data sync' },
-        { key: 'multi_office', name: 'Multi-Branch', description: 'Support for multiple office locations' },
-        { key: 'audit_logs', name: 'Audit Logs', description: 'Full staff activity tracking' },
+        { key: 'custom_lead_stages', name: 'Custom Lead Stages', description: 'Modify and create custom pipeline stages and colors' },
+        { key: 'area_of_operations', name: 'Area of Operations', description: 'Define and manage regions, zones, and sales areas' },
+        { key: 'multi_branch', name: 'Multi-Branch Management', description: 'Support for multiple office locations and branches' },
+        { key: 'bulk_comm', name: 'Bulk Communications', description: 'Mass WhatsApp & Bulk SMTP Email capabilities' },
+        { key: 'integration_suite', name: 'Integration Suite', description: 'Access to the core integrations and API dashboard' },
+        { key: 'integration_whatsapp', name: 'WhatsApp Business', description: 'Automated WhatsApp alerts and communication' },
+        { key: 'integration_facebook', name: 'Facebook Lead Ads', description: 'Real-time sync with Meta Ads Manager' },
+        { key: 'integration_linkedin', name: 'LinkedIn Lead Ads', description: 'Automated polling for LinkedIn Form submissions' },
+        { key: 'integration_custom_webhook', name: 'Custom Webhooks', description: 'Generic endpoints (Limited to essential sync)' },
+        { key: 'support_system', name: 'Premium Support Desk', description: 'Internal ticketing system for technical & billing help' },
+        { key: 'activity_log', name: 'Activity Logging', description: 'Real-time event stream and historical member actions' },
     ];
 
     useEffect(() => {

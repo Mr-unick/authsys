@@ -16,7 +16,20 @@ export interface UserInstance {
  */
 export const haspermission = (user: any, requiredPermission: string): boolean => {
     const role = (user?.role || '').toString().toLowerCase().replace(/\s+/g, '_');
-    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'super_admin', 'superadmin'].includes(role)) {
+
+    // Super Admin bypass
+    if (['super_admin', 'superadmin'].includes(role)) return true;
+
+    // Branch Admin Scoping: 
+    // - Allowed: Viewing their own branch (view_branches)
+    // - Blocked: Creating/Deleting branches, Managing global business details
+    const branchAdminBlocked = ['manage_branches', 'create_branch', 'delete_branch', 'manage_business', 'update_business', 'delete_business'];
+    if (user.is_branch_admin && branchAdminBlocked.includes(requiredPermission)) {
+        return false;
+    }
+
+    // Business/Tenant Admin bypass
+    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'branch_admin'].includes(role)) {
         return true;
     }
 
@@ -30,7 +43,7 @@ export const haspermission = (user: any, requiredPermission: string): boolean =>
 export const hasroutepermission = (user: UserInstance, route: string): boolean => {
     // Admin users have access to all routes
     const role = (user.role || '').toString().toLowerCase().replace(/\s+/g, '_');
-    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'super_admin', 'superadmin'].includes(role)) {
+    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'branch_admin', 'super_admin', 'superadmin'].includes(role)) {
         return true;
     }
 

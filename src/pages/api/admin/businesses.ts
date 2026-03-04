@@ -6,8 +6,14 @@ export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, null);
     if (res.writableEnded) return;
 
-    if (user.role !== 'SUPER_ADMIN') {
-        return res.status(403).json({ message: 'Forbidden' });
+    const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
+    const role = rawRole.trim().toUpperCase().replace(/\s+/g, '_');
+    const businessId = user.business;
+
+    const isPortalAdmin = role === 'SUPER_ADMIN' || (role === 'ADMIN' && (!businessId || businessId === 0));
+
+    if (!isPortalAdmin) {
+        return res.status(403).json({ message: 'Forbidden: Super Admin access required' });
     }
 
     if (req.method === 'GET') {
@@ -48,6 +54,8 @@ export default async function handler(req: any, res: any) {
                         owner_name: businessData.owner_name,
                         owner_contact: businessData.owner_contact,
                         owner_email: businessData.owner_email,
+                        max_branches: businessData.max_branches ? parseInt(businessData.max_branches) : 1,
+                        max_users_per_branch: businessData.max_users_per_branch ? parseInt(businessData.max_users_per_branch) : 10,
                         created_at: new Date(),
                     }
                 });
@@ -116,6 +124,8 @@ export default async function handler(req: any, res: any) {
                     owner_name: data.owner_name,
                     owner_contact: data.owner_contact,
                     owner_email: data.owner_email,
+                    max_branches: data.max_branches ? parseInt(data.max_branches) : undefined,
+                    max_users_per_branch: data.max_users_per_branch ? parseInt(data.max_users_per_branch) : undefined,
                 }
             });
             return res.status(200).json({ message: 'Business updated', data: business });

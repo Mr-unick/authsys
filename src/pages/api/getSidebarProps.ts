@@ -1,6 +1,7 @@
 import { haspermission } from "@/utils/authorization";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+import prisma from "@/app/lib/prisma";
 import fs from 'fs';
 
 interface NavItem {
@@ -127,10 +128,15 @@ export default async function handler(req: any, res: any) {
             permissionRequired: "view_roles",
           },
           {
-            title: "Business Details",
+            title: user.is_branch_admin ? "Enterprise Details" : "Business Details",
             url: `/buisnessettings/buisness/buisness`,
             permissionRequired: "view_business",
           },
+          ...(user.branch ? [{
+            title: "Branch Details",
+            url: `/buisnessettings/branches/details`,
+            permissionRequired: "view_branches",
+          }] : []),
           {
             title: "Area Of Operation",
             url: `/buisnessettings/areaofsales/areaofsales`,
@@ -170,10 +176,45 @@ export default async function handler(req: any, res: any) {
     if (role.includes('SUPER') || permissions.includes('*')) {
       data = data.filter(item => item.title !== 'Leads');
     }
+
+    // ── FEATURE CONTROL ──────────────────────────────────────────
+    // Fetch enabled features for this business
+    if (businessId) {
+      const enabledFeatures = await prisma.businessFeature.findMany({
+        where: { business_id: Number(businessId), is_enabled: true },
+        select: { feature_key: true }
+      });
+      const featureKeys = enabledFeatures.map(f => f.feature_key);
+
+      data = data.filter(item => {
+        if (item.title === 'Integrations') {
+          return featureKeys.includes('integration_suite');
+        }
+        if (item.title === 'Support') {
+          return featureKeys.includes('support_system');
+        }
+        if (item.title === 'Activity') {
+          return featureKeys.includes('activity_log');
+        }
+        return true;
+      });
+
+      // Filter nested items
+      data.forEach(item => {
+        if (item.nestedRoutes) {
+          item.nestedRoutes = item.nestedRoutes.filter(nested => {
+            if (nested.title === 'Branches' && (!featureKeys.includes('multi_branch') || user.is_branch_admin)) return false;
+            if (nested.title === 'Lead Stages' && !featureKeys.includes('custom_lead_stages')) return false;
+            if (nested.title === 'Area Of Operation' && !featureKeys.includes('area_of_operations')) return false;
+            return true;
+          });
+        }
+      });
+    }
   }
 
   // Filter based on user permissions for non-PortalAdmin roles
-  const filteredData = isPortalAdmin ? data : data.filter((nav: NavItem) => {
+  let filteredData = isPortalAdmin ? data : data.filter((nav: NavItem) => {
     // If no permission is required, show it to everyone
     if (!nav.permissionRequired) {
       return true;
@@ -194,6 +235,42 @@ export default async function handler(req: any, res: any) {
 
     return true;
   });
+
+  // Role-specific secondary filtering & Transformation
+  const isBusinessAdmin = (role === 'BUSINESS_ADMIN' || role === 'BUISNESS_ADMIN' || role === 'ADMIN' || role === 'TENANT_ADMIN') && businessId && !user.is_branch_admin;
+
+  if (isBusinessAdmin) {
+    const branchCount = await prisma.branch.count({ where: { business_id: Number(businessId), deleted_at: null } });
+
+    if (branchCount > 0) {
+      // Re-map the navigation to look like Super Admin but for this Business
+      const businessNav: NavItem[] = [
+        { title: "Dashboard", url: "/", permissionRequired: "view_dashboard" },
+        { title: "Branches", url: "/buisnessettings/branches/branches", permissionRequired: "view_branches" },
+        { title: "Activity", url: "/activity", permissionRequired: null },
+        { title: "Manage Team", url: "/user/users", permissionRequired: "view_users" },
+        { title: "Team Roles", url: "/buisnessettings/rolesadnpermissions/roles", permissionRequired: "view_roles" },
+        { title: "Support", url: "/support", permissionRequired: null },
+        { title: "Business Profile", url: "/buisnessettings/buisness/buisness", permissionRequired: "view_business" }
+      ];
+
+      // Filter by features (Activity/Support/etc)
+      const enabledFeatures = await prisma.businessFeature.findMany({
+        where: { business_id: Number(businessId), is_enabled: true },
+        select: { feature_key: true }
+      });
+      const featureKeys = enabledFeatures.map(f => f.feature_key);
+
+      filteredData = businessNav.filter(item => {
+        if (item.title === 'Activity' && !featureKeys.includes('activity_log')) return false;
+        if (item.title === 'Support' && !featureKeys.includes('support_system')) return false;
+        return true;
+      });
+    } else {
+      // Basic Business Admin filtering (if no branches yet)
+      filteredData = filteredData.filter(item => !['Settings', 'Notifications'].includes(item.title));
+    }
+  }
 
   const response: ResponseInstance = {
     message: "Request successful",

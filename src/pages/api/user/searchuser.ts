@@ -18,6 +18,8 @@ export default async function searchUsers(req: any, res: any) {
         const users = await prisma.user.findMany({
             where: {
                 business_id: user.business,
+                // Restriction: only see users in my branch if I am in one
+                ...(user.branch ? { branch_id: user.branch } : {}),
                 ...(query ? {
                     name: {
                         contains: query,

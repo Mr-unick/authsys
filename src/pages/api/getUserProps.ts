@@ -11,46 +11,39 @@ export default async function handler(req: any, res: any) {
   if (req.method === "GET") {
     try {
       let usersData;
+      const branchId = user.branch;
+      const isBranchAdmin = user.is_branch_admin;
 
+      const whereClause: any = { deleted_at: null };
       if (user?.business != null) {
-        usersData = await prisma.user.findMany({
-          where: {
-            business_id: user.business,
-            deleted_at: null
-          },
-          include: {
-            role: {
-              include: {
-                rolePermissions: {
-                  include: { permission: true }
-                }
-              }
-            },
-            business: true
-          }
-        });
-      } else {
-        usersData = await prisma.user.findMany({
-          where: {
-            deleted_at: null
-          },
-          include: {
-            role: {
-              include: {
-                rolePermissions: {
-                  include: { permission: true }
-                }
-              }
-            },
-            business: true
-          }
-        });
+        whereClause.business_id = user.business;
+        // Scoping: If Branch Admin or scoped user, only see their branch
+        if (branchId) {
+          whereClause.branch_id = branchId;
+        }
       }
+
+      usersData = await prisma.user.findMany({
+        where: whereClause,
+        include: {
+          role: {
+            include: {
+              rolePermissions: {
+                include: { permission: true }
+              }
+            }
+          },
+          business: true,
+          branch: true
+        }
+      });
 
       const tablerows = usersData.map((data: any) => ({
         id: data.id,
         name: data.name,
         role: data.role?.name ?? '-',
+        branch: data.branch?.name ?? (data.business_id ? 'Main / Unassigned' : '-'),
+        is_manager: data.is_branch_admin ? 'Yes' : 'No'
       }));
 
       const tabledata = new GenerateTable({
@@ -77,7 +70,7 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "POST") {
     try {
-      const { name, password, email, role, business: businessId } = req.body;
+      const { name, password, email, role, business: businessId, branch, is_branch_admin } = req.body;
 
       if (!name || !password || !email) {
         return res.status(400).json({
@@ -85,6 +78,46 @@ export default async function handler(req: any, res: any) {
           data: [],
           status: 400,
         });
+      }
+
+      const targetBusinessId = Number(businessId || user.business);
+      // Logic for Branch Admin: Force all created users to their branch
+      const targetBranchId = user.is_branch_admin ? user.branch : (branch ? Number(branch) : null);
+      const isBranchManager = user.is_branch_admin ? false : (is_branch_admin === true || is_branch_admin === "true");
+
+      // 1. Enforcement: Check max_users_per_branch limit
+      if (targetBranchId) {
+        const business = await prisma.business.findUnique({
+          where: { id: targetBusinessId }
+        });
+
+        const currentBranchUserCount = await prisma.user.count({
+          where: { branch_id: targetBranchId, deleted_at: null }
+        });
+
+        if (business && business.max_users_per_branch > 0 && currentBranchUserCount >= business.max_users_per_branch) {
+          return res.status(403).json({
+            message: `User limit reached for this branch. Max allowed: ${business.max_users_per_branch}`,
+            status: 403
+          });
+        }
+      }
+
+      // 2. Enforcement: Only ONE Branch Admin per branch
+      if (isBranchManager && targetBranchId) {
+        const existingManager = await prisma.user.findFirst({
+          where: {
+            branch_id: targetBranchId,
+            is_branch_admin: true,
+            deleted_at: null
+          }
+        });
+        if (existingManager) {
+          return res.status(400).json({
+            message: "There can only be one Branch Manager per branch.",
+            status: 400
+          });
+        }
       }
 
       const hashedPassword = bcrypt.hashSync(password, 10);
@@ -108,7 +141,9 @@ export default async function handler(req: any, res: any) {
           password: hashedPassword,
           email,
           role_id: targetRoleId,
-          business_id: Number(businessId || user.business),
+          business_id: targetBusinessId,
+          branch_id: targetBranchId,
+          is_branch_admin: isBranchManager,
           created_at: new Date(),
           updated_at: new Date()
         }
@@ -128,6 +163,56 @@ export default async function handler(req: any, res: any) {
         status: 500,
       };
       return res.status(500).json(response);
+    }
+  }
+
+  if (req.method === "PUT") {
+    try {
+      const { id, name, password, new_password, email, role, branch, is_branch_admin } = req.body;
+      const userId = Number(id || req.query.id);
+
+      const targetBranchId = branch ? Number(branch) : null;
+      const isBranchManager = is_branch_admin === true || is_branch_admin === "true";
+
+      // Enforcement: Only ONE Branch Admin per branch
+      if (isBranchManager && targetBranchId) {
+        const existingManager = await prisma.user.findFirst({
+          where: {
+            branch_id: targetBranchId,
+            is_branch_admin: true,
+            deleted_at: null,
+            NOT: { id: userId }
+          }
+        });
+        if (existingManager) {
+          return res.status(400).json({
+            message: "There can only be one Branch Manager per branch.",
+            status: 400
+          });
+        }
+      }
+
+      const updateData: any = {
+        name,
+        email,
+        role_id: role ? Number(role) : undefined,
+        branch_id: targetBranchId,
+        is_branch_admin: isBranchManager,
+        updated_at: new Date()
+      };
+
+      if (new_password) {
+        updateData.password = bcrypt.hashSync(new_password, 10);
+      }
+
+      await prisma.user.update({
+        where: { id: userId },
+        data: updateData
+      });
+
+      return res.status(200).json({ message: "User updated successfully", status: 200 });
+    } catch (e: any) {
+      return res.status(500).json({ message: e.message, status: 500 });
     }
   }
 

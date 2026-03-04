@@ -18,7 +18,7 @@ export default async function getUserPerformance(req, res) {
         if (!targetUser) return res.status(404).json({ message: "User not found" });
 
         const isSuperAdmin = (user.role === 'Admin' || user.role === 'Super Admin') && !user.business;
-        const isTenantAdmin = (user.role === 'Buisness Admin' || user.role === 'Admin') && user.business === targetUser.business_id;
+        const isTenantAdmin = (user.role === 'Buisness Admin' || user.role === 'Business Admin' || user.role === 'Tenant Admin' || user.role === 'Admin') && user.business === targetUser.business_id;
         const isSelf = user.id === targetUserId;
 
         if (!isSuperAdmin && !isTenantAdmin && !isSelf) {

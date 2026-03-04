@@ -7,8 +7,12 @@ export default async function handler(req: any, res: any) {
     if (res.writableEnded) return;
 
     try {
+        if (user.is_branch_admin) {
+            return res.status(403).json({ message: "Forbidden: Branch Managers are not permitted to modify business-level details.", status: 403 });
+        }
+
         if (req.query.id !== "undefined" && req.query.id) {
-            const business = await prisma.business.findUnique({
+            const business: any = await prisma.business.findUnique({
                 where: { id: Number(req.query.id) }
             });
 
@@ -32,6 +36,11 @@ export default async function handler(req: any, res: any) {
             form.addField('owner_email', 'email').value(business.owner_email);
             form.addField('business_description', 'textarea').value(business.business_description);
 
+            if (user.role === 'SUPER_ADMIN') {
+                form.addField('max_branches', 'number').value(business.max_branches).newRow();
+                form.addField('max_users_per_branch', 'number').value(business.max_users_per_branch).newRow();
+            }
+
             form.submiturl('getBuisnessProps');
             form.method('put');
 
@@ -52,6 +61,11 @@ export default async function handler(req: any, res: any) {
             form.addField('owner_contact', 'text');
             form.addField('owner_email', 'email');
             form.addField('business_description', 'textarea');
+
+            if (user.role === 'SUPER_ADMIN') {
+                form.addField('max_branches', 'number').value(1).newRow();
+                form.addField('max_users_per_branch', 'number').value(10).newRow();
+            }
 
             form.submiturl('getBuisnessProps');
             form.method('post');

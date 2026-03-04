@@ -40,7 +40,7 @@ export default function Modal({ children, title, icon, classname, customebutton,
         }
 
       </DialogTrigger>
-      <DialogContent className="max-h-fit max-w-fit rounded-md max-sm:p-3">
+      <DialogContent className="max-h-[90vh] sm:max-w-[45vw] w-[95vw] rounded-[1.5rem] p-6 sm:p-8 overflow-y-auto scrollbar-hide border-none shadow-2xl">
         {children}
       </DialogContent>
     </Dialog>

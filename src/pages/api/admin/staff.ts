@@ -6,12 +6,14 @@ export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, null);
     if (res.writableEnded) return;
 
-    // Only allow actual SuperAdmins (Owner) to manage staff
-    // In our simplified logic, role === 'SUPER_ADMIN' means they are platform level
-    // But maybe we only want the ROOT owner to manage other staff? 
-    // For now, any SUPER_ADMIN can manage others if they have permission.
-    if (user.role !== 'SUPER_ADMIN') {
-        return res.status(403).json({ message: 'Forbidden' });
+    const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
+    const role = rawRole.trim().toUpperCase().replace(/\s+/g, '_');
+    const businessId = user.business;
+
+    const isPortalAdmin = role === 'SUPER_ADMIN' || (role === 'ADMIN' && (!businessId || businessId === 0));
+
+    if (!isPortalAdmin) {
+        return res.status(403).json({ message: 'Forbidden: Super Admin access required' });
     }
 
     if (req.method === 'GET') {

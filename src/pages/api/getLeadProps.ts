@@ -21,6 +21,7 @@ export default async function handler(req: any, res: any) {
       }
 
       const targetBusinessId = businessId || user.business;
+      const targetBranchId = req.body.branch ? Number(req.body.branch) : (user.branch || null);
 
       const newLead = await prisma.$transaction(async (tx) => {
         const lead = await tx.lead.create({
@@ -30,6 +31,7 @@ export default async function handler(req: any, res: any) {
             phone: phone || null,
             lead_source: 'website',
             business_id: Number(targetBusinessId),
+            branch_id: targetBranchId,
             stage_id: stage ? Number(stage) : undefined,
           }
         });
@@ -76,14 +78,21 @@ export default async function handler(req: any, res: any) {
         deleted_at: null
       };
 
+      // Multi-branch filtering
+      if (user.branch) {
+        whereClause.branch_id = user.branch;
+      }
+
       // Role-based filtering
-      if (user.role === 'Buisness Admin') {
-        // Business Admin sees all leads for the business that have collaborators
-        whereClause.leadUsers = {
-          some: {}
-        };
-      } else if (user.role !== 'Admin') {
-        // Regular user sees only their leads
+      const isAdminRole = ['ADMIN', 'BUSINESS_ADMIN', 'BUISNESS_ADMIN', 'SUPER_ADMIN'].includes(user.role?.toUpperCase());
+      const isBranchBoss = user.role === 'BRANCH_ADMIN';
+
+      if (isAdminRole && !user.branch) {
+        // Global Business Admin/Super Admin sees all leads
+      } else if (isBranchBoss) {
+        // Branch Admin sees all leads within THEIR branch (already filtered by whereClause.branch_id)
+      } else {
+        // Regular user sees only their assigned leads
         whereClause.leadUsers = {
           some: {
             user_id: user.id
