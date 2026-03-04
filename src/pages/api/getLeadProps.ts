@@ -174,9 +174,10 @@ export default async function handler(req: any, res: any) {
   }
 
   // ---- SOFT DELETE ----
-  if (req.query.delete) {
+  if (req.method === "DELETE" || req.query.delete) {
     try {
-      const ids = req.body.leads?.map((lead: any) => lead.id);
+      const rowData = req.body.leads || req.body.data;
+      const ids = rowData?.map((lead: any) => lead.id);
 
       if (!ids || ids.length === 0) {
         return res.status(400).json({ message: "No leads specified for deletion", data: [], status: 400 });

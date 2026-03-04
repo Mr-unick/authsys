@@ -153,9 +153,10 @@ export default async function handler(req: any, res: any) {
   }
 
   // ---- SOFT DELETE ----
-  if (req.query.delete) {
+  if (req.method === "DELETE" || req.query.delete) {
     try {
-      const ids = req.body.leads?.map((item: any) => item.id);
+      const rowData = req.body.leads || req.body.data || (req.query.id ? [{ id: Number(req.query.id) }] : []);
+      const ids = rowData?.map((item: any) => item.id);
       const businessId = user.business;
 
       if (!ids || ids.length === 0) {

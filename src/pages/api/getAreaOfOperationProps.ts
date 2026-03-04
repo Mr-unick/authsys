@@ -38,9 +38,10 @@ export default async function handler(req: any, res: any) {
     }
 
     // ---- SOFT DELETE ----
-    if (req.query.delete) {
+    if (req.method === "DELETE" || req.query.delete) {
         try {
-            const ids = req.body.leads?.map((item: any) => item.id);
+            const rowData = req.body.leads || req.body.data || (req.query.id ? [{ id: Number(req.query.id) }] : []);
+            const ids = rowData?.map((item: any) => item.id);
             if (!ids || ids.length === 0) {
                 return res.status(400).json({ status: 400, message: "No records specified for deletion", data: [] });
             }

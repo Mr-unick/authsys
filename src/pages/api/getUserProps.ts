@@ -216,41 +216,11 @@ export default async function handler(req: any, res: any) {
     }
   }
 
-  if (req.method === "DELETE") {
-    try {
-      const id = req.query.id as string;
-      if (!id) {
-        return res.status(400).json({ message: "User ID is required", data: [], status: 400 });
-      }
-
-      await prisma.user.update({
-        where: { id: parseInt(id) },
-        data: {
-          deleted_at: new Date()
-        }
-      });
-
-      const response: ResponseInstance = {
-        message: "User deleted successfully",
-        data: [],
-        status: 200,
-      };
-
-      return res.status(200).json(response);
-    } catch (e: any) {
-      const response: ResponseInstance = {
-        message: "Something went wrong while deleting user",
-        data: [e.message],
-        status: 500,
-      };
-      return res.status(500).json(response);
-    }
-  }
-
   // ---- SOFT DELETE ----
-  if (req.query.delete) {
+  if (req.method === "DELETE" || req.query.delete) {
     try {
-      const ids = req.body.leads?.map((item: any) => item.id);
+      const rowData = req.body.leads || req.body.data || (req.query.id ? [{ id: Number(req.query.id) }] : []);
+      const ids = rowData?.map((item: any) => item.id);
       if (!ids || ids.length === 0) {
         return res.status(400).json({ message: "No records specified for deletion", data: [], status: 400 });
       }

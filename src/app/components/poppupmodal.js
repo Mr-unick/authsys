@@ -46,8 +46,8 @@ export default function PopupModal({ modaltype, children, classname, data, url, 
     const handleDelete = async () => {
         setLoading(true)
 
-        let response = await axios.post(`/api/${url}?delete=true`, {
-            leads: data,
+        let response = await axios.delete(`/api/${url}`, {
+            data: { leads: data },
         })
 
         if (response.status == 200) {
