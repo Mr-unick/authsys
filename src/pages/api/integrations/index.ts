@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/app/lib/prisma';
 import { VerifyToken } from '@/utils/VerifyToken';
 
+// Deployment Sync: 2024-03-04-14-55
+
 /** GET /api/integrations — list all integrations for the authenticated business */
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const user = await VerifyToken(req, res, 'integrations');
