@@ -1,17 +1,16 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { AUTH_CLIENT, AUTH_SECREAT} from "../../../../const";
 
 export default NextAuth({
   providers: [
     GoogleProvider({
-      clientId: AUTH_CLIENT ,
-      clientSecret: AUTH_SECREAT,
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   pages: {
     signIn: '/resume/resumeLanding', // Optional: Customize sign-in page
-    error: '/auth/error', 
+    error: '/auth/error',
     signOut: '/resume/resumeLanding'  // Optional: Customize error page
   },
   callbacks: {
