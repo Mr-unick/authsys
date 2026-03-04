@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/app/lib/prisma';
 import { VerifyToken } from '@/utils/VerifyToken';
 
-// Deployment Sync: 2024-03-04-14-55
+// Deployment Sync: 2024-03-04-15-10
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const user = await VerifyToken(req, res, null);
