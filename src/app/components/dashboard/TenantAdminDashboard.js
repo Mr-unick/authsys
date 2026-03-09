@@ -9,6 +9,7 @@ import ActivityTab from "../../../pages/activity";
 import { LayoutDashboard, Users, Zap, TrendingUp, Target, BarChart3, Bell, Clock, ArrowUpRight } from "lucide-react";
 import { LeadSourceAnalytics } from "./LeadSourceAnalytics";
 import Link from 'next/link';
+import { GettingStarted } from '../onboarding/GettingStarted';
 
 export const TenantAdminDashboard = ({ data }) => {
     const [selectedUserId, setSelectedUserId] = useState(null);
@@ -19,9 +20,12 @@ export const TenantAdminDashboard = ({ data }) => {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700">
+            {/* Getting Started / Onboarding Guide */}
+            {data.onboardingStats && <GettingStarted stats={data.onboardingStats} />}
+
             {/* Business Overview Header */}
             <div className="flex items-center gap-4 mb-2">
-                <div className="bg-blue-600 p-3 rounded-2xl shadow-lg shadow-blue-100">
+                <div className="bg-blue-600 p-3 rounded-2xl">
                     <LayoutDashboard className="text-white h-6 w-6" />
                 </div>
                 <div>
@@ -43,7 +47,7 @@ export const TenantAdminDashboard = ({ data }) => {
 
             {/* Today's Reminders Section */}
             {data.remindersToday && data.remindersToday.length > 0 && (
-                <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-[#0F1626] text-white">
+                <Card className="border border-white/10 rounded-2xl overflow-hidden bg-[#0F1626] text-white">
                     <CardHeader className="border-b border-white/5 py-4 sm:py-5 px-6 flex flex-row items-center justify-between">
                         <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-3">
                             <div className="p-2 bg-blue-500/20 rounded-lg text-blue-400">
@@ -89,7 +93,7 @@ export const TenantAdminDashboard = ({ data }) => {
             {/* Middle Section: Trends and Pipeline */}
             <div className="grid grid-cols-12 gap-8">
                 {/* Lead Trend */}
-                <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-12 lg:col-span-8 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-blue-50 rounded-lg">
@@ -109,7 +113,7 @@ export const TenantAdminDashboard = ({ data }) => {
                 </Card>
 
                 {/* Pipeline Distribution */}
-                <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-12 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-indigo-50 rounded-lg">
@@ -138,7 +142,7 @@ export const TenantAdminDashboard = ({ data }) => {
             {/* Team Performance Grid */}
             <div className="grid grid-cols-12 gap-8">
                 {/* Leaderboard */}
-                <Card className="col-span-12 lg:col-span-12 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-12 lg:col-span-12 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-green-50 rounded-lg">
@@ -216,7 +220,7 @@ export const TenantAdminDashboard = ({ data }) => {
             {/* Live Performance Pulse */}
             {(data.featureKeys?.includes('activity_log') || data.role === 'SUPER_ADMIN') && (
                 <div className="grid grid-cols-12 gap-8">
-                    <Card className="col-span-12 lg:col-span-12 border-none shadow-sm rounded-2xl flex flex-col h-[550px] overflow-hidden">
+                    <Card className="col-span-12 lg:col-span-12 border border-gray-100 rounded-2xl flex flex-col h-[550px] overflow-hidden">
                         <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-5">
                             <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                                 <div className="p-2 bg-white rounded-lg shadow-sm">

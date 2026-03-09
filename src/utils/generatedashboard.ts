@@ -153,6 +153,32 @@ async function getSuperAdminData() {
 
 async function getTenantAdminData(businessId: number, branchId: number | null) {
     try {
+        // Optimization: Fetch onboarding stats
+        const [
+            branchCount,
+            stageCount,
+            userCount,
+            leadCount,
+            integrationCount,
+            business
+        ] = await Promise.all([
+            prisma.branch.count({ where: { business_id: businessId, deleted_at: null } }),
+            prisma.leadStage.count({ where: { business_id: businessId, deleted_at: null } }),
+            prisma.user.count({ where: { business_id: businessId, deleted_at: null } }),
+            prisma.lead.count({ where: { business_id: businessId, deleted_at: null } }),
+            prisma.integration.count({ where: { business_id: businessId } }),
+            prisma.business.findUnique({ where: { id: businessId } })
+        ]);
+
+        const onboardingStats = {
+            branchCount,
+            stageCount,
+            userCount,
+            leadCount,
+            integrationCount,
+            hasBusinessProfile: !!(business?.business_name && business?.email)
+        };
+
         const queryFilter: any = { business_id: businessId, deleted_at: null };
         if (branchId) queryFilter.branch_id = branchId;
 
@@ -276,6 +302,7 @@ async function getTenantAdminData(businessId: number, branchId: number | null) {
             return {
                 role: 'BUSINESS_ADMIN',
                 featureKeys,
+                onboardingStats,
                 summary: [
                     { label: 'Total Business Leads', value: leads.length, icon: 'activity' },
                     { label: 'Total Team Members', value: users.length, icon: 'users' },
@@ -312,6 +339,7 @@ async function getTenantAdminData(businessId: number, branchId: number | null) {
         return {
             role: 'BRANCH_ADMIN',
             featureKeys,
+            onboardingStats,
             summary: [
                 { label: 'Branch Leads', value: leads.length, icon: 'activity' },
                 { label: 'Branch Team', value: users.length, icon: 'users' },

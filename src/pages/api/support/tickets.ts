@@ -10,28 +10,31 @@ export default async function handler(req: any, res: any) {
         try {
             const role = (user.role || 'USER').toUpperCase().replace(/\s+/g, '_');
             const businessId = user.business;
-            console.log(`[DEBUG] Fetching tickets for Role: ${role}, BusinessId: ${businessId}`);
 
             let tickets;
-
-            // Revised check for Super Admin / Portal Staff
             const isPortalAdmin = role === 'SUPER_ADMIN' || (role === 'ADMIN' && !businessId);
 
             if (isPortalAdmin) {
-                // Portal Admin sees all tickets
                 tickets = await prisma.supportTicket.findMany({
                     include: {
                         business: true,
-                        user: true
+                        user: true,
+                        assignee: true,
+                        _count: {
+                            select: { messages: true }
+                        }
                     },
-                    orderBy: { created_at: 'desc' }
+                    orderBy: [
+                        { status: 'asc' }, // Open tickets first
+                        { created_at: 'desc' }
+                    ]
                 });
             } else {
-                // Tenant users see tickets for their business
                 tickets = await prisma.supportTicket.findMany({
                     where: { business_id: Number(businessId) },
                     include: {
-                        user: true
+                        user: true,
+                        assignee: true
                     },
                     orderBy: { created_at: 'desc' }
                 });

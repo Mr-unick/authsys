@@ -23,18 +23,18 @@ export const StatCard = ({ label, value, trend, icon, color = "indigo" }) => {
     };
 
     return (
-        <Card className="border-none shadow-sm rounded-xl overflow-hidden hover:shadow-md transition-all duration-300">
+        <Card className="border border-gray-100 dark:border-white/5 bg-white dark:bg-white/5 rounded-xl overflow-hidden dark:hover:bg-white/10 transition-all duration-300">
             <CardContent className="p-3 sm:p-4">
                 <div className="flex items-center gap-3">
                     <div className={`p-2 rounded-lg border shrink-0 ${colors[color] || colors.indigo}`}>
                         {getIcon()}
                     </div>
                     <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest truncate leading-none mb-1">{label}</p>
+                        <p className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest truncate leading-none mb-1">{label}</p>
                         <div className="flex items-center gap-2">
-                            <h3 className="text-lg sm:text-xl font-extrabold text-[#0F1626] tracking-tight leading-none">{value}</h3>
+                            <h3 className="text-lg sm:text-xl font-extrabold text-[#0F1626] dark:text-white tracking-tight leading-none">{value}</h3>
                             {trend && (
-                                <div className="flex items-center gap-0.5 text-[9px] font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded-full border border-green-100">
+                                <div className="flex items-center gap-0.5 text-[9px] font-bold text-green-600 bg-green-50 dark:bg-green-500/10 px-1.5 py-0.5 rounded-full border border-green-100 dark:border-green-500/20">
                                     <TrendingUp size={8} />
                                     {trend}
                                 </div>

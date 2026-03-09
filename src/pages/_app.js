@@ -1,50 +1,47 @@
 import HomeLayout from "../app/components/layouts/homeLayouyt";
 import "../app/globals.css";
+import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/router";
 import { ToastContainer } from "react-toastify";
 import NotificationManager from "@/app/components/NotificationManager";
+import { ThemeProvider } from "next-themes";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
 
-  // Don't wrap login page in HomeLayout (sidebar/header)
-  if (router.pathname === "/signin") {
-    return (
-      <>
-        <Component {...pageProps} />
-        <ToastContainer
-          position="top-right"
-          autoClose={1000}
-          hideProgressBar={true}
-          newestOnTop={false}
-          closeOnClick={false}
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-      </>
-    );
-  }
+  const toastConfig = {
+    position: "top-right",
+    autoClose: 2500,
+    hideProgressBar: true,
+    newestOnTop: true,
+    closeOnClick: true,
+    rtl: false,
+    pauseOnFocusLoss: true,
+    draggable: true,
+    pauseOnHover: true,
+    theme: "light",
+    limit: 3,
+  };
 
-  return (
-    <HomeLayout>
+  const content = (
+    <>
       <NotificationManager />
       <Component {...pageProps} />
-      <ToastContainer
-        position="top-right"
-        autoClose={1000}
-        hideProgressBar={true}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
-    </HomeLayout>
+      <ToastContainer {...toastConfig} />
+    </>
+  );
+
+  return (
+    <ThemeProvider attribute="class" forcedTheme="light" enableSystem={false}>
+      {["/signin", "/"].includes(router.pathname) ? (
+        <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
+          <Component {...pageProps} />
+          <ToastContainer {...toastConfig} />
+        </div>
+      ) : (
+        <HomeLayout>{content}</HomeLayout>
+      )}
+    </ThemeProvider>
   );
 }
 

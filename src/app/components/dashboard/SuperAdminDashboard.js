@@ -5,20 +5,24 @@ import { PieChartComponent } from "../charts/donutchart";
 import { StatCard } from "./StatCard";
 import { Building2, Globe, ShieldCheck, Zap } from "lucide-react";
 import ActivityTab from "../../../pages/activity";
+import { GettingStarted } from '../onboarding/GettingStarted';
 
 export const SuperAdminDashboard = ({ data }) => {
     const isBusinessAdmin = data.role === 'BUSINESS_ADMIN';
 
     return (
         <div className="space-y-8 animate-in fade-in duration-700 pb-20">
+            {/* Onboarding Guide for Business Admins */}
+            {isBusinessAdmin && data.onboardingStats && <GettingStarted stats={data.onboardingStats} />}
+
             {/* Contextual Header */}
             <div className="flex items-center gap-4 mb-2">
-                <div className={`${isBusinessAdmin ? 'bg-blue-600' : 'bg-indigo-600'} p-3 rounded-2xl shadow-lg ${isBusinessAdmin ? 'shadow-blue-100' : 'shadow-indigo-100'}`}>
+                <div className={`${isBusinessAdmin ? 'bg-blue-600' : 'bg-indigo-600'} p-3 rounded-2xl ${isBusinessAdmin ? '' : ''}`}>
                     <ShieldCheck className="text-white h-6 w-6" />
                 </div>
                 <div>
-                    <h2 className="text-2xl font-bold text-[#0F1626]">{isBusinessAdmin ? 'Business Intelligence Center' : 'Platform Control Center'}</h2>
-                    <p className="text-sm text-gray-500 font-medium">{isBusinessAdmin ? 'Monitoring enterprise branches and team performance' : 'Real-time cross-tenant monitoring and analytics'}</p>
+                    <h2 className="text-2xl font-bold text-[#0F1626] dark:text-white">{isBusinessAdmin ? 'Business Intelligence Center' : 'Platform Control Center'}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">{isBusinessAdmin ? 'Monitoring enterprise branches and team performance' : 'Real-time cross-tenant monitoring and analytics'}</p>
                 </div>
             </div>
 
@@ -36,11 +40,11 @@ export const SuperAdminDashboard = ({ data }) => {
             {/* Main Analytics: Growth & Distribution */}
             <div className="grid grid-cols-12 gap-8">
                 {/* Growth Chart */}
-                <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-12 lg:col-span-8 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 flex flex-row items-center justify-between py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-indigo-50 rounded-lg">
-                                <Globe className="text-indigo-600" size={18} />
+                            <div className="p-2 bg-indigo-50 dark:bg-indigo-500/10 rounded-lg">
+                                <Globe className="text-indigo-600 dark:text-indigo-400" size={18} />
                             </div>
                             {isBusinessAdmin ? data.charts.leadGrowth?.title : data.charts.leadAnalytics?.title}
                         </CardTitle>
@@ -56,7 +60,7 @@ export const SuperAdminDashboard = ({ data }) => {
                 </Card>
 
                 {/* User Distribution */}
-                <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                <Card className="col-span-12 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden bg-white">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.userDistribution?.title}</CardTitle>
                     </CardHeader>
@@ -80,7 +84,7 @@ export const SuperAdminDashboard = ({ data }) => {
             {/* Secondary Analytics */}
             <div className="grid grid-cols-12 gap-8">
                 {/* Lead Sources */}
-                <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                <Card className="col-span-12 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden bg-white">
                     <CardHeader className="bg-white border-b border-gray-50 py-6">
                         <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.leadSources?.title}</CardTitle>
                     </CardHeader>
@@ -102,7 +106,7 @@ export const SuperAdminDashboard = ({ data }) => {
 
                 {isBusinessAdmin ? (
                     /* Pipeline for Business Admin */
-                    <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                    <Card className="col-span-12 lg:col-span-8 border border-gray-100 rounded-2xl overflow-hidden bg-white">
                         <CardHeader className="bg-white border-b border-gray-50 py-6">
                             <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.pipeline?.title}</CardTitle>
                         </CardHeader>
@@ -112,7 +116,7 @@ export const SuperAdminDashboard = ({ data }) => {
                                     <div key={idx} className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col items-center gap-2">
                                         <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: stage.color }} />
                                         <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{stage.label}</span>
-                                        <span className="text-xl font-black text-[#0F1626]">{stage.count}</span>
+                                        <span className="text-xl font-black text-[#0F1626] dark:text-white">{stage.count}</span>
                                     </div>
                                 ))}
                             </div>
@@ -121,7 +125,7 @@ export const SuperAdminDashboard = ({ data }) => {
                 ) : (
                     <>
                         {/* Support Tickets for Super Admin */}
-                        <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                        <Card className="col-span-12 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden bg-white">
                             <CardHeader className="bg-white border-b border-gray-50 py-6">
                                 <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketStatus?.title}</CardTitle>
                             </CardHeader>
@@ -141,7 +145,7 @@ export const SuperAdminDashboard = ({ data }) => {
                             </CardContent>
                         </Card>
 
-                        <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+                        <Card className="col-span-12 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden bg-white">
                             <CardHeader className="bg-white border-b border-gray-50 py-6">
                                 <CardTitle className="text-base font-bold text-[#0F1626]">{data.charts.ticketPriority?.title}</CardTitle>
                             </CardHeader>
@@ -167,10 +171,10 @@ export const SuperAdminDashboard = ({ data }) => {
             {/* Live Performance Pulse (Activity) */}
             {(data.featureKeys?.includes('activity_log') || data.role === 'SUPER_ADMIN') && (
                 <div className="grid grid-cols-12 gap-8">
-                    <Card className="col-span-12 lg:col-span-12 border-none shadow-sm rounded-2xl flex flex-col h-[550px] overflow-hidden">
+                    <Card className="col-span-12 lg:col-span-12 border border-gray-100 rounded-2xl flex flex-col h-[550px] overflow-hidden">
                         <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-5">
                             <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                                <div className="p-2 bg-white rounded-lg shadow-sm">
+                                <div className="p-2 bg-white rounded-lg">
                                     <Zap className="text-indigo-600 font-bold" size={18} />
                                 </div>
                                 Live Performance Pulse
@@ -184,7 +188,7 @@ export const SuperAdminDashboard = ({ data }) => {
             )}
 
             {/* Jurisdictional Entities (Tenants or Branches) */}
-            <Card className="border-none shadow-sm rounded-2xl overflow-hidden">
+            <Card className="border border-gray-100 rounded-2xl overflow-hidden">
                 <CardHeader className="bg-white border-b border-gray-50 py-6">
                     <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
                         <div className={`p-2 ${isBusinessAdmin ? 'bg-emerald-50' : 'bg-amber-50'} rounded-lg`}>
@@ -207,11 +211,11 @@ export const SuperAdminDashboard = ({ data }) => {
                             </thead>
                             <tbody className="divide-y divide-gray-50">
                                 {(isBusinessAdmin ? data.branches.recent : data.tenants.recent).map((item) => (
-                                    <tr key={item.id} className="hover:bg-gray-50/50 transition-colors group">
+                                    <tr key={item.id} className="hover:bg-gray-50/50 dark:hover:bg-white/5 transition-colors group">
                                         <td className="px-8 py-5">
-                                            <div className="font-bold text-[#0F1626]">{isBusinessAdmin ? item.name : item.business_name}</div>
+                                            <div className="font-bold text-[#0F1626] dark:text-white">{isBusinessAdmin ? item.name : item.business_name}</div>
                                         </td>
-                                        <td className="px-8 py-5 text-sm font-medium text-gray-600">{isBusinessAdmin ? item.branch_code : item.owner_name}</td>
+                                        <td className="px-8 py-5 text-sm font-medium text-gray-600 dark:text-gray-300">{isBusinessAdmin ? item.branch_code : item.owner_name}</td>
                                         <td className="px-8 py-5 text-sm text-gray-500">{item.email}</td>
                                         <td className="px-8 py-5 text-sm text-gray-500">
                                             {item.created_at ? new Date(item.created_at).toLocaleDateString() : 'N/A'}

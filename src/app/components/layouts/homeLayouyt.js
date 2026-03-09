@@ -1,5 +1,6 @@
 "use client";
 import { useRouter } from "next/router";
+import Link from 'next/link';
 import { NavBar } from "../nav/hamburgerNav";
 import SideBar from "../nav/sidebar";
 import HeaderBar from "../nav/header";
@@ -118,28 +119,28 @@ export default function HomeLayout({ children }) {
   };
 
   return (
-    <div className="w-screen h-screen flex overflow-hidden bg-[#F4F4F4] max-sm:bg-white">
+    <div className="w-screen h-screen flex overflow-hidden bg-background text-foreground transition-colors duration-300">
       {/* Desktop Sidebar — hidden on mobile */}
-      <div className="w-[17%] bg-[#0F1626] max-lg:hidden flex flex-col justify-start items-center">
+      <div className="w-[17%] bg-[#0F1626] dark:bg-black max-lg:hidden flex flex-col justify-start items-center border-r border-border/50">
         <SideBar />
       </div>
 
       <div className="w-[83%] max-lg:w-[100%] max-sm:w-[100%] relative flex flex-col">
         {/* Mobile Top Bar — only visible on mobile/tablet */}
-        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0F1626] shadow-lg z-50 shrink-0">
+        <div className="lg:hidden flex items-center justify-between px-4 py-3 bg-[#0F1626] dark:bg-black border-b border-white/5 z-50 shrink-0">
           <div className="flex items-center gap-2.5">
             <NavBar />
-            <div className="flex items-center gap-2 ml-2">
+            <Link href="/crm" className="flex items-center gap-2 ml-2 hover:opacity-90 transition-opacity">
               <div className="p-1.5 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/20">
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="4" width="9" height="9" rx="1" /><rect x="14" y="4" width="9" height="9" rx="1" /><rect x="1" y="14" width="9" height="9" rx="1" /><rect x="14" y="14" width="9" height="9" rx="1" /></svg>
               </div>
               <h1 className="text-sm font-black text-white tracking-tight">LEAD<span className="text-indigo-400">CONVERTER</span></h1>
-            </div>
+            </Link>
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="w-full flex-1 p-4 sm:p-6 max-sm:px-2 overflow-y-auto max-h-screen">
+        <div className="w-full flex-1 p-4 sm:p-6 max-sm:px-2 overflow-y-auto max-h-screen bg-slate-50 dark:bg-background">
           {children}
         </div>
       </div>

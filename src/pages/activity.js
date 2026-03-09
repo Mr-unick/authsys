@@ -9,11 +9,35 @@ import {
     CardTitle,
 } from "../components/components/ui/card";
 import prisma from "@/app/lib/prisma";
-import { VerifyToken } from "@/utils/VerifyToken";
+import { jwtVerify } from 'jose';
+import { env } from '@/config/env';
+import { useRouter } from 'next/router';
 
 export async function getServerSideProps(context) {
-    const user = await VerifyToken(context.req, context.res, null);
-    if (!user) return { props: {} };
+    const token = context.req.cookies.token;
+
+    if (!token) {
+        return {
+            redirect: {
+                destination: '/signin',
+                permanent: false,
+            },
+        };
+    }
+
+    let user;
+    try {
+        const secretKey = new TextEncoder().encode(env.JWT_SECRET);
+        const { payload } = await jwtVerify(token, secretKey);
+        user = payload;
+    } catch (error) {
+        return {
+            redirect: {
+                destination: '/signin',
+                permanent: false,
+            },
+        };
+    }
 
     const rawRole = (typeof user.role === 'string' ? user.role : (user.role?.name || 'USER'));
     const role = rawRole.trim().toUpperCase();
@@ -37,6 +61,7 @@ export async function getServerSideProps(context) {
 }
 
 const ActivityTab = ({ showHeader = true, restricted = false }) => {
+    const router = useRouter();
     const [selectedFilter, setSelectedFilter] = useState('all');
     const [activities, setActivities] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -70,6 +95,9 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
             }
         } catch (error) {
             console.error("Failed to fetch activities:", error);
+            if (error.response && error.response.status === 401) {
+                router.push('/signin');
+            }
         } finally {
             setLoading(false);
         }

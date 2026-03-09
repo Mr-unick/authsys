@@ -41,10 +41,13 @@ export default async function handler(req: any, res: any) {
             where: { business_id: userContext.business, deleted_at: null }
         }) : [];
 
-        const branchOptions = branches.map((b: any) => ({
-            id: b.id,
-            name: b.name
-        }));
+        const branchOptions = [
+            { id: 0, name: 'Main Branch' },
+            ...branches.map((b: any) => ({
+                id: b.id,
+                name: b.name
+            }))
+        ];
 
         const roleOptions = roles.map((role: any) => ({
             id: role.id,
@@ -82,9 +85,9 @@ export default async function handler(req: any, res: any) {
             if (isMultiBranchActive) {
                 // If Branch Admin, they cannot change their own branch or assign others to different branches
                 if (userContext.is_branch_admin) {
-                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id).disabled().required().newRow();
+                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id ?? 0).disabled().required().newRow();
                 } else {
-                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id).required().newRow();
+                    form.addField('branch', 'select').options(branchOptions).value(existingUser?.branch_id ?? 0).required().newRow();
                     form.addField('is_branch_admin', 'switch').value(existingUser?.is_branch_admin).newRow().label('Branch Manager (One per branch)');
                 }
             }
@@ -112,8 +115,9 @@ export default async function handler(req: any, res: any) {
             if (isMultiBranchActive) {
                 if (userContext.is_branch_admin) {
                     // Auto-bind to current branch
+                    form.addField('branch', 'select').options(branchOptions).value(userContext.branch).disabled().required().newRow();
                 } else {
-                    form.addField('branch', 'select').options(branchOptions).required().newRow();
+                    form.addField('branch', 'select').options(branchOptions).value(0).required().newRow();
                     form.addField('is_branch_admin', 'switch').value(false).newRow().label('Branch Manager (One per branch)');
                 }
             }

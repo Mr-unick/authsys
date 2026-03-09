@@ -20,14 +20,14 @@ export async function middleware(request) {
     return NextResponse.redirect(new URL('/signin', request.url));
   }
 
-  // Redirect unauthenticated users to signin
-  if (!token && pathname !== '/signin') {
+  // Redirect unauthenticated users to signin (except for public landing page)
+  if (!token && pathname !== '/signin' && pathname !== '/') {
     return NextResponse.redirect(new URL('/signin', request.url));
   }
 
-  // Redirect authenticated users away from signin page
+  // Redirect authenticated users away from signin page to CRM dashboard
   if (token && pathname === '/signin') {
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/crm', request.url));
   }
 
   // Verify token for authenticated routes

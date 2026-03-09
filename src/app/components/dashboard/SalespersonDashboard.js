@@ -13,7 +13,7 @@ export const SalespersonDashboard = ({ data }) => {
         <div className="space-y-5 sm:space-y-8 animate-in fade-in duration-700">
             {/* Personal Header */}
             <div className="flex items-center gap-3">
-                <div className="bg-indigo-600 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-lg shadow-indigo-100">
+                <div className="bg-indigo-600 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl">
                     <UserCircle className="text-white h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
                 <div>
@@ -35,7 +35,7 @@ export const SalespersonDashboard = ({ data }) => {
 
             {/* Today's Reminders Section */}
             {data.remindersToday && data.remindersToday.length > 0 && (
-                <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-[#0F1626] text-white">
+                <Card className="border border-white/10 rounded-2xl overflow-hidden bg-[#0F1626] text-white">
                     <CardHeader className="border-b border-white/5 py-4 sm:py-5 px-6 flex flex-row items-center justify-between">
                         <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-3">
                             <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
@@ -80,7 +80,7 @@ export const SalespersonDashboard = ({ data }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
                 {/* My Monthly Performance */}
-                <Card className="col-span-1 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-1 lg:col-span-8 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 py-4 sm:py-6 px-4 sm:px-6">
                         <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-indigo-50 rounded-lg">
@@ -100,7 +100,7 @@ export const SalespersonDashboard = ({ data }) => {
                 </Card>
 
                 {/* Leads by Stage */}
-                <Card className="col-span-1 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-1 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 py-4 sm:py-6 px-4 sm:px-6">
                         <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-green-50 rounded-lg">
@@ -128,7 +128,7 @@ export const SalespersonDashboard = ({ data }) => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
                 {/* Recent Leads Feed */}
-                <Card className="col-span-1 lg:col-span-6 border-none shadow-sm rounded-2xl overflow-hidden">
+                <Card className="col-span-1 lg:col-span-6 border border-gray-100 rounded-2xl overflow-hidden">
                     <CardHeader className="bg-white border-b border-gray-50 flex flex-row items-center justify-between py-4 sm:py-6 px-4 sm:px-6">
                         <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
                             <div className="p-2 bg-amber-50 rounded-lg">
@@ -151,7 +151,7 @@ export const SalespersonDashboard = ({ data }) => {
 
                 {/* My Activity Summary */}
                 {data.featureKeys?.includes('activity_log') && (
-                    <Card className="col-span-1 lg:col-span-6 border-none shadow-sm rounded-2xl flex flex-col h-[350px] sm:h-[400px] overflow-hidden">
+                    <Card className="col-span-1 lg:col-span-6 border border-gray-100 rounded-2xl flex flex-col h-[350px] sm:h-[400px] overflow-hidden">
                         <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-4 sm:py-5 px-4 sm:px-6">
                             <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
                                 Personal Timeline

@@ -33,7 +33,7 @@ export default async function handler(req: any, res: any) {
     data = [
       {
         title: "Dashboard",
-        url: `/`,
+        url: `/crm`,
         permissionRequired: null,
       },
       {
@@ -77,7 +77,7 @@ export default async function handler(req: any, res: any) {
     data = [
       {
         title: "Dashboard",
-        url: `/`,
+        url: `/crm`,
         permissionRequired: "view_dashboard",
       },
       {
@@ -245,7 +245,7 @@ export default async function handler(req: any, res: any) {
     if (branchCount > 0) {
       // Re-map the navigation to look like Super Admin but for this Business
       const businessNav: NavItem[] = [
-        { title: "Dashboard", url: "/", permissionRequired: "view_dashboard" },
+        { title: "Dashboard", url: "/crm", permissionRequired: "view_dashboard" },
         { title: "Branches", url: "/buisnessettings/branches/branches", permissionRequired: "view_branches" },
         { title: "Activity", url: "/activity", permissionRequired: null },
         { title: "Manage Team", url: "/user/users", permissionRequired: "view_users" },

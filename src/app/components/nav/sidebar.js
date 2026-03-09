@@ -64,8 +64,8 @@ const getIconForRoute = (title, unreadCount = 0) => {
 export const NavLink = ({ href, children, icon, onClick }) => {
   const router = useRouter();
   // Match exact for '/', prefix match for everything else
-  const isActive = href === '/'
-    ? router.pathname === '/'
+  const isActive = href === '/crm'
+    ? router.pathname === '/crm'
     : router.pathname.startsWith(href);
 
   return (
@@ -128,7 +128,7 @@ export default function SideBar({ setOpen }) {
   return (
     <div className="w-full h-full bg-[#0F1626] flex flex-col pt-8 pb-6 border-r border-gray-800/30 shadow-2xl overflow-y-auto">
       {/* Brand Header */}
-      <div className="px-6 mb-10">
+      <Link href="/crm" className="px-6 mb-10 block hover:opacity-90 transition-opacity">
         <div className="flex items-center gap-3">
           <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
             <Layers className="h-5 w-5 text-white" />
@@ -138,7 +138,7 @@ export default function SideBar({ setOpen }) {
             <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Lead Intelligence</p>
           </div>
         </div>
-      </div>
+      </Link>
 
       {/* Main Navigation */}
       <div className="flex-1 overflow-y-auto px-4 custom-scrollbar">

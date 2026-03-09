@@ -19,7 +19,7 @@ export default function LoginPage() {
             try {
                 const response = await axios.get('/api/auth/isauthenticated');
                 if (response.status === 200) {
-                    router.push('/');
+                    router.push('/crm');
                 }
             } catch (error) {
                 // Not authenticated, stay on login
@@ -36,7 +36,7 @@ export default function LoginPage() {
 
             if (response.data.status === 200) {
                 toast.success("Login successful!");
-                router.push('/');
+                router.push('/crm');
             } else {
                 toast.error(response.data.message || "Login failed");
             }

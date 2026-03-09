@@ -51,9 +51,9 @@ export default async function handler(req: any, res: any) {
         }
 
         if (!user) {
-            return res.status(404).json({
-                message: 'User not found',
-                status: 404,
+            return res.status(401).json({
+                message: 'Invalid email or password',
+                status: 401,
             });
         }
 

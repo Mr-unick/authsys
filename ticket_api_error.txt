@@ -43,3 +43,46 @@
     at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:408:24)
     at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:432:13)
     at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:146:13)
+
+[2026-03-05T12:25:48.723Z] TICKET API ERROR: Role: SUPER_ADMIN, Biz: null, Err: PrismaClientValidationError: 
+Invalid `prisma.supportTicket.findMany()` invocation:
+
+{
+  include: {
+    business: true,
+    user: true,
+    assignee: true,
+    ~~~~~~~~
+    _count: {
+      select: {
+        messages: true
+      }
+    },
+?   messages?: true
+  },
+  orderBy: [
+    {
+      status: "asc"
+    },
+    {
+      created_at: "desc"
+    }
+  ]
+}
+
+Unknown field `assignee` for include statement on model `SupportTicket`. Available options are marked with ?.
+    at Nn (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:29:1363)
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6911)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async handler (webpack-internal:///(api)/./src/pages/api/support/tickets.ts:25:27)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:3901)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api.runtime.dev.js:21:5372)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:628:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:278:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:853:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:371:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:153:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:368:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:230:21)
