@@ -23,6 +23,7 @@ import axios from 'axios';
 
 export default function Home() {
     const router = useRouter();
+    const [activeScreenshot, setActiveScreenshot] = React.useState("/dashboard.png");
 
     React.useEffect(() => {
         const checkAuth = async () => {
@@ -72,6 +73,8 @@ export default function Home() {
 
             {/* Hero Section */}
             <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+                {/* Background Grid & Glows */}
+                <div className="absolute inset-0 z-[-1] opacity-50" style={{ backgroundImage: 'radial-gradient(#e2e8f0 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
                 <div className="absolute top-0 right-0 -z-10 w-[600px] h-[600px] bg-indigo-50/50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 -z-10 w-[400px] h-[400px] bg-violet-50/50 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
 
@@ -93,6 +96,16 @@ export default function Home() {
                         <button className="w-full sm:w-auto bg-white border border-slate-200 px-8 py-4 rounded-2xl text-base font-bold flex items-center justify-center gap-2 hover:bg-slate-50 transition-all">
                             <PlayCircle className="h-5 w-5 text-indigo-600" /> Watch Walkthrough
                         </button>
+                    </div>
+
+                    {/* Trusted By */}
+                    <div className="mt-20 pt-10 border-t border-slate-100 animate-in fade-in duration-1000 delay-500">
+                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.3em] mb-8">Trusted by 500+ Enterprise Teams</p>
+                        <div className="flex flex-wrap justify-center items-center gap-8 lg:gap-16 opacity-40 grayscale contrast-125">
+                            {['Google Ads', 'Meta Ads', 'Whatapp', 'Salesforce', 'Hubspot'].map(brand => (
+                                <span key={brand} className="text-xl lg:text-3xl font-black tracking-tighter text-slate-400">{brand}</span>
+                            ))}
+                        </div>
                     </div>
                 </div>
             </section>
@@ -125,17 +138,37 @@ export default function Home() {
                             </div>
                         </div>
                         <div className="relative">
-                            <div className="absolute -inset-4 bg-gradient-to-tr from-indigo-500 to-violet-600 rounded-[2rem] blur-2xl opacity-10 animate-pulse" />
-                            <div className="relative bg-white p-8 rounded-[2rem] border border-slate-200 shadow-xl overflow-hidden">
-                                <div className="space-y-4">
-                                    <div className="h-3 w-1/3 bg-slate-100 rounded-full" />
-                                    <div className="grid grid-cols-3 gap-3">
-                                        <div className="h-20 bg-red-50 rounded-xl flex items-center justify-center text-red-400 font-bold text-lg animate-bounce">404</div>
-                                        <div className="h-20 bg-slate-50 rounded-xl" />
-                                        <div className="h-20 bg-slate-50 rounded-xl" />
+                            <div className="absolute -inset-4 bg-gradient-to-tr from-red-500 to-orange-600 rounded-[2rem] blur-2xl opacity-10 animate-pulse" />
+                            <div className="relative bg-white p-8 rounded-[3rem] border border-slate-200 shadow-2xl overflow-hidden group">
+                                <div className="space-y-6">
+                                    <div className="flex justify-between items-center">
+                                        <div className="h-3 w-1/3 bg-slate-100 rounded-full" />
+                                        <div className="flex gap-1">
+                                            <div className="w-2 h-2 rounded-full bg-red-400" />
+                                            <div className="w-2 h-2 rounded-full bg-orange-400" />
+                                            <div className="w-2 h-2 rounded-full bg-emerald-400" />
+                                        </div>
                                     </div>
-                                    <div className="h-32 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200 flex items-center justify-center p-6 text-center">
-                                        <p className="text-xs text-slate-400 font-medium uppercase tracking-[0.2em]">Disconnected Systems: -32% Efficiency</p>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 bg-red-50 rounded-2xl border border-red-100 relative overflow-hidden group-hover:shake">
+                                            <div className="flex items-center gap-2 mb-2 text-red-600 font-black text-[10px]">
+                                                <AlertCircle size={12} /> SYNC FAILED
+                                            </div>
+                                            <div className="h-2 w-full bg-red-200 rounded-full mb-2" />
+                                            <div className="h-2 w-2/3 bg-red-100 rounded-full" />
+                                        </div>
+                                        <div className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                            <div className="h-2 w-1/2 bg-slate-200 rounded-full mb-2" />
+                                            <div className="h-2 w-full bg-slate-100 rounded-full" />
+                                        </div>
+                                    </div>
+                                    <div className="p-6 bg-slate-900 rounded-[2rem] text-center relative overflow-hidden">
+                                        <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/20 rounded-full blur-xl animate-pulse" />
+                                        <p className="text-[10px] font-black text-red-400 uppercase tracking-widest leading-none mb-1">Lost Opportunity</p>
+                                        <p className="text-2xl font-black text-white leading-none">-$12,450</p>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        {[1, 2, 3, 4].map(i => <div key={i} className="h-2 flex-1 bg-slate-100 rounded-full" />)}
                                     </div>
                                 </div>
                             </div>
@@ -172,43 +205,102 @@ export default function Home() {
                             </div>
                         ))}
                     </div>
+
+                    {/* Premium Dashboard Preview */}
+                    <div className="mt-32 relative group">
+                        {/* High-Impact Glows */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/[0.03] rounded-full blur-[120px] pointer-events-none" />
+
+                        <div className="relative rounded-[3rem] overflow-hidden border border-slate-100 shadow-[0_50px_100px_-30px_rgba(79,70,229,0.15)] bg-white p-3 rotate-1 hover:rotate-0 transition-all duration-1000">
+                            <div className="rounded-[2.5rem] overflow-hidden border border-slate-50 relative">
+                                <img
+                                    src="/dashboard.png"
+                                    alt="Platform Dashboard Preview"
+                                    className="w-full h-auto transition-transform duration-1000 group-hover:scale-[1.01]"
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-t from-white/5 via-transparent to-transparent pointer-events-none" />
+                            </div>
+                        </div>
+
+                        {/* Interactive floating card */}
+                        <div className="absolute -bottom-12 -left-8 lg:-left-16 bg-white p-6 rounded-[2.5rem] shadow-2xl shadow-indigo-100 border border-indigo-50 hidden xl:flex items-center gap-5 translate-y-8 group-hover:translate-y-0 transition-transform duration-700">
+                            <div className="p-4 bg-emerald-500 rounded-2xl text-white shadow-xl shadow-emerald-200">
+                                <Zap size={24} strokeWidth={3} />
+                            </div>
+                            <div className="pr-6">
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1 leading-none">Intelligence</p>
+                                <p className="text-xl font-black text-slate-900 leading-none">Automated Lead Logic</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
 
             {/* Interface Section (Screenshots) */}
-            <section id="screenshots" className="py-24 bg-[#0F1626] text-white">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="text-center mb-20">
-                        <h2 className="text-4xl lg:text-5xl font-black tracking-tight mb-6">Built for High-Performance Teams</h2>
-                        <p className="text-slate-400 font-medium max-w-2xl mx-auto">Premium interface designed to minimize friction and maximize speed. No clutter, just performance.</p>
+            <section id="screenshots" className="py-24 bg-[#0F1626] text-white relative overflow-hidden">
+                {/* Background Ambient Glow */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-indigo-500/10 rounded-full blur-[120px] pointer-events-none" />
+
+                <div className="max-w-7xl mx-auto px-6 relative z-10">
+                    <div className="text-center mb-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                        <span className="text-indigo-400 font-black text-xs uppercase tracking-[0.3em] mb-4 block">Product Experience</span>
+                        <h2 className="text-4xl lg:text-6xl font-black tracking-tighter mb-6">Designed for <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Peak Performance</span></h2>
+                        <p className="text-slate-400 font-medium max-w-2xl mx-auto text-lg">A premium workspace that focuses on what matters: your conversion rate.</p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        {/* Interactive Features List */}
                         <div className="lg:col-span-4 space-y-4">
                             {[
-                                { title: "Executive Dashboard", desc: "High-level overview of enterprise-wide performance metrics." },
-                                { title: "Lead Lifecycle Manager", desc: "Intuitive pipeline views and stage tracking history." },
-                                { title: "Real-time Mobile View", desc: "Track conversions on the move with our responsive UI." }
+                                { id: 'dash', title: "Executive Dashboard", desc: "Monitor enterprise-wide health with real-time stats and growth trends.", img: "/crm_dashboard_mockup_1773057173663.png" },
+                                { id: 'lead', title: "Lead Lifecycle Manager", desc: "Visualize your entire pipeline with intuitive drag-and-drop lead boards.", img: "/lead_management_ui_1773057192835.png" },
+                                { id: 'mobile', title: "Mobile Control Center", desc: "Full-featured responsive UI to manage your business from anywhere.", img: "/crm_mobile_view_1773057211240.png" }
                             ].map((item, idx) => (
-                                <div key={idx} className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${idx === 0 ? 'border-indigo-500 bg-indigo-500/10' : 'border-slate-800 hover:border-slate-700 hover:bg-slate-800/20'}`}>
-                                    <h4 className="font-bold text-white mb-1">{item.title}</h4>
-                                    <p className="text-xs text-slate-400 font-medium leading-relaxed">{item.desc}</p>
-                                </div>
+                                <button
+                                    key={item.id}
+                                    onClick={() => setActiveScreenshot(item.img)}
+                                    className={`w-full text-left p-6 rounded-[1.5rem] border-2 transition-all duration-500 group relative overflow-hidden ${activeScreenshot === item.img ? 'border-indigo-500 bg-indigo-500/10 shadow-[0_0_30px_rgba(79,70,229,0.15)]' : 'border-slate-800 hover:border-slate-700 hover:bg-slate-800/20'}`}
+                                >
+                                    {activeScreenshot === item.img && (
+                                        <div className="absolute left-0 top-0 w-1 h-full bg-indigo-500" />
+                                    )}
+                                    <h4 className={`font-black text-lg mb-2 transition-colors ${activeScreenshot === item.img ? 'text-white' : 'text-slate-400 group-hover:text-slate-300'}`}>
+                                        {item.title}
+                                    </h4>
+                                    <p className="text-xs text-slate-500 font-bold uppercase tracking-widest leading-relaxed">
+                                        {item.desc}
+                                    </p>
+                                </button>
                             ))}
                         </div>
-                        <div className="lg:col-span-8">
-                            <div className="rounded-[2rem] overflow-hidden border-8 border-slate-800 shadow-2xl">
-                                <img src="/crm_dashboard_mockup_1773057173663.png" alt="CRM Dashboard" className="w-full h-auto" />
-                            </div>
-                        </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mt-12 pb-12 border-b border-slate-800">
-                        <div className="rounded-[1.5rem] overflow-hidden border-4 border-slate-800 shadow-xl">
-                            <img src="/lead_management_ui_1773057192835.png" alt="Lead UI" className="w-full h-auto" />
-                        </div>
-                        <div className="rounded-[1.5rem] overflow-hidden border-4 border-slate-800 shadow-xl max-w-[400px] mx-auto lg:mx-0">
-                            <img src="/crm_mobile_view_1773057211240.png" alt="Mobile UI" className="w-full h-auto" />
+                        {/* Image Showcase */}
+                        <div className="lg:col-span-8">
+                            <div className="relative group">
+                                {/* Decorative elements */}
+                                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-500 to-violet-500 rounded-[2.5rem] blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+
+                                <div className="relative rounded-[2rem] overflow-hidden border-8 border-slate-900 bg-slate-900 shadow-2xl transition-transform duration-700 hover:scale-[1.01]">
+                                    <div className="absolute inset-0 bg-gradient-to-t from-[#0F1626] via-transparent to-transparent opacity-40 z-10" />
+                                    <img
+                                        key={activeScreenshot}
+                                        src={activeScreenshot}
+                                        alt="CRM Screenshot"
+                                        className="w-full h-auto animate-in fade-in zoom-in-95 duration-500"
+                                    />
+                                </div>
+
+                                {/* Floating Badge */}
+                                <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-2xl shadow-2xl shadow-indigo-500/20 z-20 hidden md:flex items-center gap-3 border border-slate-100 animate-bounce">
+                                    <div className="p-2 bg-emerald-50 rounded-lg text-emerald-600">
+                                        <CheckCircle2 size={20} />
+                                    </div>
+                                    <div className="pr-4">
+                                        <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-1">Status</p>
+                                        <p className="text-sm font-black text-slate-900 leading-none">Live Sync Active</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
