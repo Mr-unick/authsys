@@ -8,26 +8,29 @@
       "esnext"
     ],
     "paths": {
-      "@components/*": ["src/components/*"],  // Alias for your components
-      "@shadcn/*": ["node_modules/@shadcn/react-ui/*"]  ,// Alias for ShadCN components
+      "@components/*": [
+        "src/components/*"
+      ], // Alias for your components
+      "@shadcn/*": [
+        "node_modules/@shadcn/react-ui/*"
+      ], // Alias for ShadCN components
       "@/*": [
         "./src/*"
-      ],
+      ]
     },
     "allowJs": true,
     "skipLibCheck": true,
-    
     "strict": false,
     "noEmit": true,
     "incremental": true,
     "module": "esnext",
     "esModuleInterop": true,
-    "experimentalDecorators": true, 
-    "emitDecoratorMetadata":true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "plugins": [
       {
         "name": "next"
@@ -39,8 +42,13 @@
     "next-env.d.ts",
     ".next/types/**/*.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "src/app/entity/LoginLogoutLog.ts", "src/pages/api/auth/[...nextauth].js", "src/app/components/cards/activitycard.js", "src/pages/leads/test.js"  ],
+    "**/*.tsx",
+    "src/app/entity/LoginLogoutLog.ts",
+    "src/pages/api/auth/[...nextauth].js",
+    "src/app/components/cards/activitycard.js",
+    "src/pages/leads/test.js",
+    ".next/dev/types/**/*.ts"
+  ],
   "exclude": [
     "node_modules"
   ]
