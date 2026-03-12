@@ -67,6 +67,11 @@ export default async function handler(req: any, res: any) {
         permissionRequired: null,
       },
       {
+        title: "Pricing",
+        url: `/admin/pricing`,
+        permissionRequired: null,
+      },
+      {
         title: "Settings",
         url: `/settings`,
         permissionRequired: null,

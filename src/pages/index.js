@@ -62,60 +62,184 @@ const STATS = [
     { number: "99.9%", label: "Uptime SLA" },
 ];
 
-const PRICING = [
+// ── Tier-based (quantity) features ──────────────────────────────────────────
+const TIER_FEATURES = [
     {
-        name: "Starter",
-        tier: "Small Teams",
-        price: "$29",
-        cta: "Start Free Trial",
-        href: "/signin",
-        featured: false,
-        features: [
-            "Single Branch Management",
-            "Unified Lead Dashboard",
-            "Table & Board Views",
-            "Lead Source Tracking",
-            "Email Support",
+        id: 'branches',
+        icon: <GitBranch size={16} />,
+        name: 'Branch Count',
+        desc: 'Number of business branches / locations.',
+        tiers: [
+            { label: '1 Branch', price: 0, value: 1 },
+            { label: '3 Branches', price: 799, value: 3 },
+            { label: '10 Branches', price: 1999, value: 10 },
+            { label: 'Unlimited', price: 3999, value: Infinity },
         ],
+        defaultTier: 0,
     },
     {
-        name: "Professional",
-        tier: "Growing Business",
-        price: "$79",
-        cta: "Start Growing Now",
-        href: "/signin",
-        featured: true,
-        badge: "Most Popular",
-        features: [
-            "Up to 5 Business Branches",
-            "Custom Lead Stages",
-            "Meta & Google Ads Sync",
-            "Integration Suite Access",
-            "Automated Round-Robin",
-            "Priority Ticket Support",
+        id: 'users',
+        icon: <Users size={16} />,
+        name: 'User Limit',
+        desc: 'Team members / sales agents on your account.',
+        tiers: [
+            { label: '3 Users', price: 0, value: 3 },
+            { label: '10 Users', price: 699, value: 10 },
+            { label: '25 Users', price: 1499, value: 25 },
+            { label: 'Unlimited', price: 2999, value: Infinity },
         ],
+        defaultTier: 0,
     },
     {
-        name: "Enterprise",
-        tier: "High Volume",
-        price: "Custom",
-        cta: "Talk to Sales",
-        href: "/signin",
-        featured: false,
-        features: [
-            "Unlimited Branch Network",
-            "Area of Operation Control",
-            "Real-time Activity Logs",
-            "Sales Territory Mapping",
-            "VIP Support & SLA",
-            "Dedicated Success Manager",
+        id: 'stages',
+        icon: <Layers size={16} />,
+        name: 'Custom Lead Stages',
+        desc: 'Pipeline stages tailored to your sales process.',
+        tiers: [
+            { label: '5 Stages', price: 0, value: 5 },
+            { label: '15 Stages', price: 399, value: 15 },
+            { label: 'Unlimited', price: 799, value: Infinity },
         ],
+        defaultTier: 0,
+    },
+    {
+        id: 'webhooks',
+        icon: <Zap size={16} />,
+        name: 'Webhooks',
+        desc: 'Outbound webhooks to connect with external apps.',
+        tiers: [
+            { label: '3 Webhooks', price: 0, value: 3 },
+            { label: '10 Webhooks', price: 399, value: 10 },
+            { label: 'Unlimited', price: 799, value: Infinity },
+        ],
+        defaultTier: 0,
     },
 ];
+
+// ── Toggle (on/off) integration features ─────────────────────────────────────
+const TOGGLE_FEATURES = [
+    {
+        id: 'fb',
+        icon: <span className="text-[13px] font-black">f</span>,
+        name: 'Facebook Lead Sync',
+        desc: 'Pull leads from Facebook Lead Ads in real-time.',
+        price: 799,
+        category: 'Social',
+    },
+    {
+        id: 'insta',
+        icon: <span className="text-[13px] font-black">IG</span>,
+        name: 'Instagram Lead Sync',
+        desc: 'Capture leads from Instagram Ads automatically.',
+        price: 799,
+        category: 'Social',
+    },
+    {
+        id: 'linkedin',
+        icon: <span className="text-[13px] font-black">in</span>,
+        name: 'LinkedIn Lead Gen',
+        desc: 'Import LinkedIn Lead Gen Form submissions.',
+        price: 999,
+        category: 'Social',
+    },
+    {
+        id: 'whatsapp',
+        icon: <span className="text-[13px] font-black">WA</span>,
+        name: 'WhatsApp Notifications',
+        desc: 'Send automated WhatsApp messages on lead events.',
+        price: 599,
+        category: 'Messaging',
+    },
+    {
+        id: 'analytics',
+        icon: <BarChart3 size={16} />,
+        name: 'Deep Analytics',
+        desc: 'Conversion leaderboards, pipeline reports, performance pulse.',
+        price: 1299,
+        category: 'Intelligence',
+    },
+    {
+        id: 'roundrobin',
+        icon: <Target size={16} />,
+        name: 'Round-Robin Engine',
+        desc: 'Auto-assign leads to agents fairly and instantly.',
+        price: 799,
+        category: 'Automation',
+    },
+    {
+        id: 'helpdesk',
+        icon: <MessageSquare size={16} />,
+        name: 'Help Desk',
+        desc: 'Full ticketing system with internal notes, audit trail & SLA.',
+        price: 999,
+        category: 'Support',
+    },
+    {
+        id: 'rbac',
+        icon: <Lock size={16} />,
+        name: 'RBAC & Permissions',
+        desc: 'Granular role-based access control for every team member.',
+        price: 699,
+        category: 'Security',
+    },
+];
+
+// Fallback / Initial default pricing data
+const DEFAULT_TIER_FEATURES = TIER_FEATURES;
+const DEFAULT_TOGGLE_FEATURES = TOGGLE_FEATURES;
+const DEFAULT_BASE_PRICE = 999;
 
 export default function Home() {
     const router = useRouter();
     const [activeTab, setActiveTab] = React.useState(0);
+
+    const [pricing, setPricing] = React.useState({
+        basePrice: DEFAULT_BASE_PRICE,
+        tierFeatures: DEFAULT_TIER_FEATURES,
+        toggleFeatures: DEFAULT_TOGGLE_FEATURES
+    });
+
+    // tier selections: { featureId -> tierIndex }
+    const [tierSelections, setTierSelections] = React.useState(
+        Object.fromEntries(DEFAULT_TIER_FEATURES.map(f => [f.id, 0]))
+    );
+    // toggle selections: Set of enabled feature IDs
+    const [enabledToggles, setEnabledToggles] = React.useState(new Set());
+
+    const setTier = (id, idx) => setTierSelections(prev => ({ ...prev, [id]: idx }));
+    const toggleAddon = (id) => setEnabledToggles(prev => {
+        const next = new Set(prev);
+        next.has(id) ? next.delete(id) : next.add(id);
+        return next;
+    });
+
+    const tierTotal = pricing.tierFeatures.reduce((sum, f) => {
+        const selIdx = tierSelections[f.id] || 0;
+        return sum + (f.tiers[selIdx]?.price || 0);
+    }, 0);
+    const toggleTotal = pricing.toggleFeatures.filter(f => enabledToggles.has(f.id)).reduce((sum, f) => sum + f.price, 0);
+    const totalPrice = pricing.basePrice + tierTotal + toggleTotal;
+    const enabledCount = enabledToggles.size;
+
+    React.useEffect(() => {
+        const loadPricing = async () => {
+            try {
+                const res = await axios.get('/api/get-pricing');
+                if (res.data.data) {
+                    const data = res.data.data;
+                    setPricing({
+                        basePrice: data.BASE_PRICE,
+                        tierFeatures: data.TIER_FEATURES,
+                        toggleFeatures: data.TOGGLE_FEATURES
+                    });
+                    // Re-sync icon mapping if needed, but here we assume icons are component-side
+                }
+            } catch (e) {
+                console.error("Failed to load live pricing, using defaults.");
+            }
+        };
+        loadPricing();
+    }, []);
 
     React.useEffect(() => {
         const checkAuth = async () => {
@@ -421,52 +545,210 @@ export default function Home() {
 
             {/* ── PRICING ── */}
             <section id="pricing" className="py-24 px-6 relative overflow-hidden">
-                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 60% 40% at 50% 0%, rgba(99,102,241,0.07) 0%, transparent 100%)' }} />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 50% at 50% 10%, rgba(99,102,241,0.08) 0%, transparent 100%)' }} />
 
                 <div className="max-w-6xl mx-auto relative">
+                    {/* Header */}
                     <div className="max-w-2xl mx-auto text-center mb-16">
-                        <div className="inline-flex items-center gap-2 border border-white/10 bg-white/5 rounded-full px-3 py-1 text-xs font-medium text-slate-400 mb-4">
-                            Pricing
+                        <div className="inline-flex items-center gap-2 border border-indigo-500/20 bg-indigo-500/10 rounded-full px-3 py-1 text-xs font-medium text-indigo-400 mb-4">
+                            Build Your Plan
                         </div>
                         <h2 className="text-4xl lg:text-5xl font-black tracking-tight mb-4">
-                            Built for every stage of growth.
+                            Pay only for what<br />you actually use.
                         </h2>
-                        <p className="text-slate-400 text-lg">Simple, transparent pricing. No surprises.</p>
+                        <p className="text-slate-400 text-lg">Configure every dimension — branches, users, integrations. Your stack, your price.</p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
-                        {PRICING.map((plan, i) => (
-                            <div key={i} className={`relative rounded-2xl p-8 flex flex-col ${plan.featured
-                                ? 'bg-indigo-600 border border-indigo-500/50 shadow-[0_0_80px_rgba(99,102,241,0.2)]'
-                                : 'bg-white/[0.03] border border-white/[0.08] hover:border-white/[0.15] transition-colors'
-                                }`}>
-                                {plan.badge && (
-                                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-400 text-slate-900 text-[10px] font-black uppercase tracking-wide px-3 py-1 rounded-full">
-                                        {plan.badge}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+
+                        {/* ── Left: Configurator panels ── */}
+                        <div className="lg:col-span-2 space-y-6">
+
+                            {/* Base */}
+                            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden">
+                                <div className="px-5 py-4 border-b border-white/[0.06] flex items-center justify-between">
+                                    <div>
+                                        <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">Base Plan</p>
+                                        <p className="text-sm font-semibold text-white mt-0.5">Core CRM</p>
                                     </div>
-                                )}
-                                <div className={`text-[10px] font-bold uppercase tracking-[0.15em] mb-1 ${plan.featured ? 'text-indigo-200' : 'text-slate-600'}`}>{plan.tier}</div>
-                                <h3 className="text-xl font-bold text-white mb-6">{plan.name}</h3>
-                                <div className="mb-8">
-                                    <span className="text-5xl font-black text-white">{plan.price}</span>
-                                    {plan.price !== 'Custom' && <span className={`text-sm font-medium ml-1.5 ${plan.featured ? 'text-indigo-200' : 'text-slate-500'}`}>/month</span>}
+                                    <div className="text-right">
+                                        <p className="text-xs text-slate-600">Always included</p>
+                                        <p className="text-base font-black text-indigo-400">₹{pricing.basePrice.toLocaleString('en-IN')}<span className="text-xs font-medium text-slate-500">/mo</span></p>
+                                    </div>
                                 </div>
-                                <ul className="space-y-3 mb-8 flex-1">
-                                    {plan.features.map((f, fi) => (
-                                        <li key={fi} className="flex items-center gap-2.5 text-sm">
-                                            <CheckCircle2 size={15} className={plan.featured ? 'text-indigo-200' : 'text-indigo-400'} />
-                                            <span className={plan.featured ? 'text-indigo-50' : 'text-slate-400'}>{f}</span>
-                                        </li>
+                                <div className="px-5 py-3 flex flex-wrap gap-2">
+                                    {['Lead Dashboard', 'Board & Table View', 'Source Tracking', 'Basic Reports', 'Email Support'].map(f => (
+                                        <span key={f} className="text-[11px] font-medium text-slate-500 bg-white/5 border border-white/[0.07] px-2.5 py-1 rounded-full">{f}</span>
                                     ))}
-                                </ul>
-                                <Link href={plan.href} className={`flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-semibold transition-all ${plan.featured
-                                    ? 'bg-white text-indigo-600 hover:bg-indigo-50'
-                                    : 'bg-white/5 border border-white/10 text-white hover:bg-white/10'
-                                    }`}>
-                                    {plan.cta} <ArrowRight size={14} />
-                                </Link>
+                                </div>
                             </div>
-                        ))}
+
+                            {/* Capacity Tier Selectors */}
+                            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden">
+                                <div className="px-5 py-4 border-b border-white/[0.06]">
+                                    <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">Capacity</p>
+                                    <p className="text-sm text-slate-400 mt-0.5">Scale each dimension to your team size.</p>
+                                </div>
+                                <div className="divide-y divide-white/[0.05]">
+                                    {pricing.tierFeatures.map((feat) => {
+                                        const selIdx = tierSelections[feat.id] || 0;
+                                        // Map the icons back since they come as JSX in the original array but maybe not from API
+                                        const iconMap = {
+                                            'branches': <GitBranch size={16} />,
+                                            'users': <Users size={16} />,
+                                            'stages': <Layers size={16} />,
+                                            'webhooks': <Zap size={16} />
+                                        };
+                                        const icon = iconMap[feat.id] || <Layers size={16} />;
+
+                                        return (
+                                            <div key={feat.id} className="px-5 py-4">
+                                                <div className="flex items-start justify-between mb-3 gap-4">
+                                                    <div className="flex items-center gap-2.5">
+                                                        <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-slate-400 flex-shrink-0">
+                                                            {icon}
+                                                        </div>
+                                                        <div>
+                                                            <p className="text-sm font-semibold text-white leading-none">{feat.name}</p>
+                                                            <p className="text-[11px] text-slate-600 mt-0.5">{feat.desc}</p>
+                                                        </div>
+                                                    </div>
+                                                    <div className="text-right flex-shrink-0">
+                                                        {(feat.tiers[selIdx]?.price || 0) === 0
+                                                            ? <span className="text-sm font-bold text-emerald-400">Free</span>
+                                                            : <span className="text-sm font-bold text-white">+₹{(feat.tiers[selIdx]?.price || 0).toLocaleString('en-IN')}<span className="text-xs font-normal text-slate-500">/mo</span></span>
+                                                        }
+                                                    </div>
+                                                </div>
+                                                {/* Tier pills */}
+                                                <div className="flex flex-wrap gap-2">
+                                                    {feat.tiers.map((tier, i) => (
+                                                        <button
+                                                            key={i}
+                                                            onClick={() => setTier(feat.id, i)}
+                                                            className={`px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all ${selIdx === i
+                                                                ? 'bg-indigo-600 border-indigo-500 text-white shadow-[0_0_15px_rgba(99,102,241,0.3)]'
+                                                                : 'bg-white/5 border-white/[0.08] text-slate-400 hover:border-white/20 hover:text-white'
+                                                                }`}
+                                                        >
+                                                            {tier.label}
+                                                            {tier.price === 0 && i !== 0 ? '' : ''}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+
+                            {/* Add-on Integrations & Features */}
+                            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.02] overflow-hidden">
+                                <div className="px-5 py-4 border-b border-white/[0.06]">
+                                    <p className="text-xs font-bold uppercase tracking-[0.15em] text-slate-500">Add-ons & Integrations</p>
+                                    <p className="text-sm text-slate-400 mt-0.5">Toggle what you need. Click to add or remove.</p>
+                                </div>
+                                <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                    {TOGGLE_FEATURES.map((feat) => {
+                                        const on = enabledToggles.has(feat.id);
+                                        return (
+                                            <button
+                                                key={feat.id}
+                                                onClick={() => toggleAddon(feat.id)}
+                                                className={`relative text-left p-4 rounded-xl border transition-all duration-150 ${on
+                                                    ? 'border-indigo-500/40 bg-indigo-500/8'
+                                                    : 'border-white/[0.07] bg-white/[0.01] hover:border-white/[0.15]'
+                                                    }`}
+                                            >
+                                                {/* Toggle dot */}
+                                                <div className={`absolute top-3.5 right-3.5 w-8 h-4.5 rounded-full border flex items-center transition-all px-0.5 ${on ? 'border-indigo-500 bg-indigo-600' : 'border-white/20 bg-white/5'}`}
+                                                    style={{ height: '18px', width: '32px' }}>
+                                                    <div className={`w-3 h-3 rounded-full bg-white shadow transition-all duration-200 ${on ? 'translate-x-3.5' : 'translate-x-0'}`} />
+                                                </div>
+
+                                                <div className="flex items-center gap-2 mb-2 pr-10">
+                                                    <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[11px] border transition-colors ${on ? 'bg-indigo-500/20 border-indigo-500/30 text-indigo-300' : 'bg-white/5 border-white/10 text-slate-500'}`}>
+                                                        {feat.icon}
+                                                    </div>
+                                                    <p className="text-xs font-bold text-white">{feat.name}</p>
+                                                </div>
+                                                <p className="text-[11px] text-slate-600 leading-relaxed mb-2">{feat.desc}</p>
+                                                <p className={`text-xs font-bold ${on ? 'text-indigo-300' : 'text-slate-600'}`}>
+                                                    +₹{feat.price.toLocaleString('en-IN')}<span className="font-normal">/mo</span>
+                                                </p>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ── Right: Live Summary Panel ── */}
+                        <div className="lg:sticky lg:top-24 space-y-4">
+                            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] overflow-hidden">
+                                {/* Header */}
+                                <div className="px-5 py-4 border-b border-white/[0.06]">
+                                    <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-500 mb-1">Your Configuration</p>
+                                    <p className="text-sm text-slate-400">{enabledCount} add-on{enabledCount !== 1 ? 's' : ''} active</p>
+                                </div>
+
+                                {/* Breakdown */}
+                                <div className="px-5 py-4 space-y-2.5">
+                                    {/* Base */}
+                                    <div className="flex justify-between text-sm">
+                                        <span className="text-slate-400 font-medium">Core CRM</span>
+                                        <span className="text-slate-400 tabular-nums">₹{pricing.basePrice.toLocaleString('en-IN')}</span>
+                                    </div>
+                                    {/* Tier lines */}
+                                    {pricing.tierFeatures.map(f => {
+                                        const t = f.tiers[tierSelections[f.id] || 0];
+                                        if (!t || t.price === 0) return null;
+                                        return (
+                                            <div key={f.id} className="flex justify-between text-sm">
+                                                <span className="text-slate-400 font-medium">{f.name} <span className="text-slate-600">({t.label})</span></span>
+                                                <span className="text-slate-400 tabular-nums">+₹{t.price.toLocaleString('en-IN')}</span>
+                                            </div>
+                                        );
+                                    })}
+                                    {/* Toggle lines */}
+                                    {pricing.toggleFeatures.filter(f => enabledToggles.has(f.id)).map(f => (
+                                        <div key={f.id} className="flex justify-between text-sm">
+                                            <span className="text-slate-400 font-medium">{f.name}</span>
+                                            <span className="text-slate-400 tabular-nums">+₹{f.price.toLocaleString('en-IN')}</span>
+                                        </div>
+                                    ))}
+                                    {tierTotal === 0 && enabledCount === 0 && (
+                                        <p className="text-xs text-slate-700 italic">Upgrade capacity or add integrations above.</p>
+                                    )}
+                                </div>
+
+                                {/* Total */}
+                                <div className="px-5 py-4 border-t border-white/[0.06] bg-white/[0.02]">
+                                    <div className="flex items-end justify-between mb-1">
+                                        <p className="text-xs text-slate-500 font-medium">Monthly Total</p>
+                                        {totalPrice > pricing.basePrice && (
+                                            <p className="text-[10px] text-emerald-400 font-bold">Save 10% annually</p>
+                                        )}
+                                    </div>
+                                    <div className="flex items-baseline gap-1 mb-5">
+                                        <span className="text-4xl font-black text-white">₹{totalPrice.toLocaleString('en-IN')}</span>
+                                        <span className="text-slate-500 text-sm">/mo</span>
+                                    </div>
+                                    <Link
+                                        href="/signin"
+                                        className="flex items-center justify-center gap-2 w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold transition-all shadow-[0_0_25px_rgba(99,102,241,0.3)]"
+                                    >
+                                        Get started <ArrowRight size={14} />
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Trust */}
+                            <div className="flex items-start gap-2 px-1">
+                                <Shield size={13} className="text-slate-700 mt-0.5 flex-shrink-0" />
+                                <p className="text-xs text-slate-700 leading-relaxed">No contracts. Switch or cancel anytime. 14-day free trial on all plans.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

@@ -1,166 +1,175 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "../../../components/components/ui/card";
 import { LineChartComponent } from "../charts/linechart";
 import { PieChartComponent } from "../charts/donutchart";
 import { StatCard } from "./StatCard";
 import NewLeadCard from "../cards/newLeadCard";
 import ActivityTab from "../../../pages/activity";
-import { UserCircle, Target, Trophy, Clock, ArrowUpRight, Bell } from "lucide-react";
+import { UserCircle, Target, Trophy, Clock, ArrowUpRight, Bell, Zap } from "lucide-react";
 import Link from 'next/link';
+
+// ── Reusable section card ─────────────────────────────────────────────────────
+function SectionCard({ icon, iconBg, iconColor, title, action, children, className = "" }) {
+    return (
+        <div className={`bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm ${className}`}>
+            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50">
+                <div className="flex items-center gap-3">
+                    <div className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
+                        {React.cloneElement(icon, { size: 16, className: iconColor })}
+                    </div>
+                    <h3 className="text-sm font-bold text-slate-800">{title}</h3>
+                </div>
+                {action}
+            </div>
+            {children}
+        </div>
+    );
+}
+
+// ── Legend row used in pie charts ─────────────────────────────────────────────
+function LegendRow({ color, label, value }) {
+    return (
+        <div className="flex items-center justify-between py-2 group">
+            <div className="flex items-center gap-2.5">
+                <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+                <span className="text-xs text-slate-500 font-medium">{label}</span>
+            </div>
+            <span className="text-xs font-bold text-slate-700">{value}</span>
+        </div>
+    );
+}
 
 export const SalespersonDashboard = ({ data }) => {
     return (
-        <div className="space-y-5 sm:space-y-8 animate-in fade-in duration-700">
-            {/* Personal Header */}
-            <div className="flex items-center gap-3">
-                <div className="bg-indigo-600 p-2.5 sm:p-3 rounded-xl sm:rounded-2xl">
-                    <UserCircle className="text-white h-5 w-5 sm:h-6 sm:w-6" />
+        <div className="space-y-8 animate-in fade-in duration-500 pb-20">
+            {/* ── Page Header ── */}
+            <div className="flex items-center gap-4">
+                <div className="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-200">
+                    <UserCircle className="text-white" size={20} />
                 </div>
                 <div>
-                    <h2 className="text-lg sm:text-2xl font-bold text-[#0F1626]">Personal Performance</h2>
-                    <p className="text-xs sm:text-sm text-gray-500 font-medium hidden sm:block">Tracking your leads and monthly targets</p>
+                    <h1 className="text-xl font-black text-slate-800 tracking-tight">Personal Performance</h1>
+                    <p className="text-xs text-slate-400 font-medium mt-0.5">Tracking your leads and monthly targets</p>
                 </div>
             </div>
 
-            {/* Summary Row — 2 cols on mobile, 4 on desktop */}
-            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+            {/* ── Stat Cards ── */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 {data.summary.map((stat, idx) => (
                     <StatCard
                         key={idx}
                         {...stat}
-                        color={idx === 0 ? 'indigo' : idx === 1 ? 'green' : idx === 2 ? 'blue' : 'amber'}
+                        color={['indigo', 'green', 'blue', 'amber'][idx] || 'indigo'}
                     />
                 ))}
             </div>
 
-            {/* Today's Reminders Section */}
+            {/* ── Reminders Section ── */}
             {data.remindersToday && data.remindersToday.length > 0 && (
-                <Card className="border border-white/10 rounded-2xl overflow-hidden bg-[#0F1626] text-white">
-                    <CardHeader className="border-b border-white/5 py-4 sm:py-5 px-6 flex flex-row items-center justify-between">
-                        <CardTitle className="text-sm sm:text-base font-bold flex items-center gap-3">
-                            <div className="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
-                                <Bell className="h-4 w-4" />
-                            </div>
-                            Action Required: Today's Reminders
-                        </CardTitle>
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 animate-pulse">
+                <SectionCard
+                    icon={<Bell />}
+                    iconBg="bg-rose-50"
+                    iconColor="text-rose-600"
+                    title="Action Required: Today's Reminders"
+                    action={
+                        <span className="text-[10px] font-black uppercase tracking-[0.15em] text-rose-500 animate-pulse">
                             {data.remindersToday.length} Pending
                         </span>
-                    </CardHeader>
-                    <CardContent className="p-2 sm:p-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-                            {data.remindersToday.map((reminder) => (
-                                <Link
-                                    key={reminder.id}
-                                    href={`/leads/details/${reminder.id}`}
-                                    className="group flex items-center justify-between p-4 rounded-xl bg-white/5 border border-white/5 hover:bg-white/10 hover:border-indigo-500/30 transition-all"
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <div className="h-10 w-10 rounded-lg bg-indigo-500/20 flex items-center justify-center text-indigo-300 font-bold group-hover:scale-110 transition-transform">
-                                            {reminder.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <p className="text-sm font-bold truncate max-w-[120px]">{reminder.name}</p>
-                                            <div className="flex items-center gap-2 mt-0.5">
-                                                <div className="flex items-center gap-1 text-[10px] text-slate-400 font-semibold">
-                                                    <Clock size={10} /> {new Date(reminder.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                </div>
-                                            </div>
+                    }
+                >
+                    <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {data.remindersToday.map((reminder) => (
+                            <Link
+                                key={reminder.id}
+                                href={`/leads/details/${reminder.id}`}
+                                className="group flex items-center justify-between p-4 rounded-xl bg-slate-50 border border-slate-100 hover:border-rose-200 hover:bg-rose-50/30 transition-all"
+                            >
+                                <div className="flex items-center gap-3">
+                                    <div className="h-9 w-9 rounded-xl bg-white border border-slate-100 flex items-center justify-center text-slate-400 font-bold text-sm shadow-sm group-hover:text-rose-600 group-hover:border-rose-200 transition-all">
+                                        {reminder.name.charAt(0)}
+                                    </div>
+                                    <div>
+                                        <p className="text-sm font-bold text-slate-800 truncate max-w-[120px]">{reminder.name}</p>
+                                        <div className="flex items-center gap-1 text-[10px] text-slate-400 font-medium mt-0.5">
+                                            <Clock size={9} />
+                                            {new Date(reminder.time).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </div>
                                     </div>
-                                    <div className="h-8 w-8 rounded-lg flex items-center justify-center text-slate-500 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all">
-                                        <ArrowUpRight size={16} />
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                                </div>
+                                <ArrowUpRight size={14} className="text-slate-300 group-hover:text-rose-500 group-hover:translate-x-0.5 transition-all" />
+                            </Link>
+                        ))}
+                    </div>
+                </SectionCard>
             )}
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
-                {/* My Monthly Performance */}
-                <Card className="col-span-1 lg:col-span-8 border border-gray-100 rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-white border-b border-gray-50 py-4 sm:py-6 px-4 sm:px-6">
-                        <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-indigo-50 rounded-lg">
-                                <Trophy className="text-indigo-600" size={16} />
-                            </div>
-                            {data.charts?.personalTrend?.title || "Monthly Performance"}
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-3 sm:p-8">
-                        <div className="h-[220px] sm:h-[300px] w-full mt-2 sm:mt-4">
-                            <LineChartComponent
-                                data={data.charts?.personalTrend?.data || []}
-                                chartConfig={{ count: { label: "My Leads", color: "#4E49F2" } }}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+            {/* ── Charts Row ── */}
+            <div className="grid grid-cols-12 gap-6">
+                <SectionCard
+                    className="col-span-12 lg:col-span-8"
+                    icon={<Trophy />}
+                    iconBg="bg-indigo-50"
+                    iconColor="text-indigo-600"
+                    title={data.charts?.personalTrend?.title || "Monthly Performance"}
+                >
+                    <div className="p-6 h-[320px]">
+                        <LineChartComponent
+                            data={data.charts?.personalTrend?.data || []}
+                            chartConfig={{ count: { label: "My Leads", color: "#6366f1" } }}
+                        />
+                    </div>
+                </SectionCard>
 
-                {/* Leads by Stage */}
-                <Card className="col-span-1 lg:col-span-4 border border-gray-100 rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-white border-b border-gray-50 py-4 sm:py-6 px-4 sm:px-6">
-                        <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-green-50 rounded-lg">
-                                <Target className="text-green-600" size={16} />
-                            </div>
-                            Pipeline Distribution
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 sm:p-8 flex flex-col items-center">
-                        <PieChartComponent radius={75} data={data.charts?.personalStages?.data || []} />
-                        <div className="w-full mt-6 sm:mt-8 space-y-2.5 sm:space-y-3">
+                <SectionCard
+                    className="col-span-12 lg:col-span-4"
+                    icon={<Target />}
+                    iconBg="bg-green-50"
+                    iconColor="text-green-600"
+                    title="Pipeline Distribution"
+                >
+                    <div className="p-6">
+                        <PieChartComponent radius={70} data={data.charts?.personalStages?.data || []} />
+                        <div className="mt-4 divide-y divide-slate-50">
                             {data.charts?.personalStages?.data?.map((entry, idx) => (
-                                <div key={idx} className="flex items-center justify-between text-xs px-2">
-                                    <div className="flex items-center gap-2.5">
-                                        <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: entry.color }} />
-                                        <span className="text-gray-500 font-medium">{entry.label}</span>
-                                    </div>
-                                    <span className="font-bold text-[#0F1626]">{entry.value}</span>
-                                </div>
+                                <LegendRow key={idx} color={entry.color} label={entry.label} value={entry.value} />
                             ))}
                         </div>
-                    </CardContent>
-                </Card>
+                    </div>
+                </SectionCard>
             </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-8">
-                {/* Recent Leads Feed */}
-                <Card className="col-span-1 lg:col-span-6 border border-gray-100 rounded-2xl overflow-hidden">
-                    <CardHeader className="bg-white border-b border-gray-50 flex flex-row items-center justify-between py-4 sm:py-6 px-4 sm:px-6">
-                        <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-amber-50 rounded-lg">
-                                <Clock className="text-amber-600" size={16} />
-                            </div>
-                            My Recent Leads
-                        </CardTitle>
-                        <button className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1 hover:underline">
+            {/* ── Bottom Section: Recent Leads + Activities ── */}
+            <div className="grid grid-cols-12 gap-6">
+                <SectionCard
+                    className="col-span-12 lg:col-span-6"
+                    icon={<Clock />}
+                    iconBg="bg-amber-50"
+                    iconColor="text-amber-600"
+                    title="My Recent Leads"
+                    action={
+                        <Link href="/leads" className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest flex items-center gap-1 hover:underline">
                             View All <ArrowUpRight size={12} />
-                        </button>
-                    </CardHeader>
-                    <CardContent className="p-3 sm:p-4">
-                        <div className="space-y-2 sm:space-y-3">
-                            {data.recentLeads?.map((lead) => (
-                                <NewLeadCard key={lead.id} data={lead} />
-                            ))}
-                        </div>
-                    </CardContent>
-                </Card>
+                        </Link>
+                    }
+                >
+                    <div className="p-4 space-y-3 h-[400px] overflow-y-auto">
+                        {data.recentLeads?.map((lead) => (
+                            <NewLeadCard key={lead.id} data={lead} />
+                        ))}
+                    </div>
+                </SectionCard>
 
-                {/* My Activity Summary */}
                 {data.featureKeys?.includes('activity_log') && (
-                    <Card className="col-span-1 lg:col-span-6 border border-gray-100 rounded-2xl flex flex-col h-[350px] sm:h-[400px] overflow-hidden">
-                        <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-4 sm:py-5 px-4 sm:px-6">
-                            <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-3">
-                                Personal Timeline
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0 flex-1 overflow-y-auto scrollbar-hide">
+                    <SectionCard
+                        className="col-span-12 lg:col-span-6"
+                        icon={<Zap />}
+                        iconBg="bg-slate-50"
+                        iconColor="text-slate-600"
+                        title="Personal Timeline"
+                    >
+                        <div className="h-[400px] overflow-y-auto">
                             <ActivityTab showHeader={false} />
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </SectionCard>
                 )}
             </div>
         </div>

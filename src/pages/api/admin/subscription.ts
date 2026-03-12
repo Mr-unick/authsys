@@ -39,7 +39,11 @@ export default async function handler(req: any, res: any) {
                     plan: business.subscription_plan,
                     trial_expiry: business.trial_expiry,
                     is_on_trial: business.is_on_trial,
-                    features: business.features
+                    features: business.features,
+                    max_branches: business.max_branches,
+                    total_user_limit: business.total_user_limit,
+                    max_lead_stages: business.max_lead_stages,
+                    max_webhooks: business.max_webhooks,
                 },
                 status: 200
             });
@@ -50,7 +54,10 @@ export default async function handler(req: any, res: any) {
 
     if (req.method === "POST" || req.method === "PUT") {
         try {
-            const { business_id, plan, status, trial_months, features } = req.body;
+            const {
+                business_id, plan, status, trial_months, features,
+                max_branches, total_user_limit, max_lead_stages, max_webhooks
+            } = req.body;
 
             if (!business_id) return res.status(400).json({ message: "Business ID is required", status: 400 });
 
@@ -65,14 +72,18 @@ export default async function handler(req: any, res: any) {
             }
 
             await prisma.$transaction(async (tx) => {
-                // Update Business subscription fields
+                // Update Business subscription fields and limits
                 await tx.business.update({
                     where: { id: Number(business_id) },
                     data: {
                         subscription_plan: plan,
                         subscription_status: status || 'ACTIVE',
                         trial_expiry: trial_expiry,
-                        is_on_trial: is_on_trial
+                        is_on_trial: is_on_trial,
+                        max_branches: max_branches !== undefined ? Number(max_branches) : undefined,
+                        total_user_limit: total_user_limit !== undefined ? Number(total_user_limit) : undefined,
+                        max_lead_stages: max_lead_stages !== undefined ? Number(max_lead_stages) : undefined,
+                        max_webhooks: max_webhooks !== undefined ? Number(max_webhooks) : undefined,
                     }
                 });
 

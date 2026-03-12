@@ -289,7 +289,11 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
         plan: 'BASIC',
         status: 'ACTIVE',
         trial_months: 0,
-        features: []
+        features: [],
+        max_branches: 1,
+        total_user_limit: 10,
+        max_lead_stages: 5,
+        max_webhooks: 1
     });
 
     const featureList = [
@@ -318,7 +322,11 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                 plan: d.plan || 'BASIC',
                 status: d.status || 'ACTIVE',
                 trial_months: 0,
-                features: d.features.map(f => f.feature_key)
+                features: d.features.map(f => f.feature_key),
+                max_branches: d.max_branches || 1,
+                total_user_limit: d.total_user_limit || 10,
+                max_lead_stages: d.max_lead_stages || 5,
+                max_webhooks: d.max_webhooks || 1
             });
         } catch (err) {
             toast.error("Failed to load subscription data");
@@ -407,6 +415,46 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                                 <option value={6}>6 Months Extended Trial</option>
                                 <option value={12}>1 Year Full Trial</option>
                             </select>
+                        </div>
+                    </div>
+
+                    {/* Granular Limits */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Branches</label>
+                            <input
+                                type="number"
+                                value={data.max_branches}
+                                onChange={e => setData({ ...data, max_branches: e.target.value })}
+                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Total Users</label>
+                            <input
+                                type="number"
+                                value={data.total_user_limit}
+                                onChange={e => setData({ ...data, total_user_limit: e.target.value })}
+                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Stages</label>
+                            <input
+                                type="number"
+                                value={data.max_lead_stages}
+                                onChange={e => setData({ ...data, max_lead_stages: e.target.value })}
+                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Webhooks</label>
+                            <input
+                                type="number"
+                                value={data.max_webhooks}
+                                onChange={e => setData({ ...data, max_webhooks: e.target.value })}
+                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                            />
                         </div>
                     </div>
 

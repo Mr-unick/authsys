@@ -33,9 +33,12 @@ model Business {
   trial_expiry         DateTime?         @db.Timestamp(0)
   is_on_trial          Boolean           @default(false)
 
-  // Multi-branch limits
+  // Multi-tenant quotas & limits
   max_branches         Int               @default(1)
   max_users_per_branch Int               @default(10)
+  total_user_limit     Int               @default(10)
+  max_lead_stages      Int               @default(5)
+  max_webhooks         Int               @default(1)
 
   areasOfOperation     AreaOfOperation[]
   branches             Branch[]
@@ -592,4 +595,12 @@ model TicketActivity {
 
   @@index([ticket_id])
   @@map("ticket_activity_logs")
+}
+
+model GlobalConfig {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value Json
+  
+  @@map("global_config")
 }
