@@ -3,8 +3,10 @@ import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
 import bcrypt from "bcryptjs";
+import fs from 'fs';
 
 export default async function handler(req: any, res: any) {
+  console.log('API REQUEST (USER):', req.method, req.url, 'TOKEN PRESENT:', !!req.cookies?.token);
   const user = await VerifyToken(req, res, 'users');
   if (res.writableEnded) return;
 
@@ -82,7 +84,11 @@ export default async function handler(req: any, res: any) {
 
       const targetBusinessId = Number(businessId || user.business);
       // Logic for Branch Admin: Force all created users to their branch
-      const targetBranchId = user.is_branch_admin ? user.branch : (branch ? Number(branch) : null);
+      // Interpret branch "0" as null (Main Branch/Business Level)
+      let targetBranchId = user.is_branch_admin ? user.branch : (branch && branch !== "0" && branch !== 0 ? Number(branch) : null);
+
+      // If targetBranchId is still logically invalid (0 or less), force null
+      if (targetBranchId !== null && targetBranchId <= 0) targetBranchId = null;
       const isBranchManager = user.is_branch_admin ? false : (is_branch_admin === true || is_branch_admin === "true");
 
       // 1. Enforcement: Check max_users_per_branch limit
@@ -138,32 +144,32 @@ export default async function handler(req: any, res: any) {
       const newUser = await prisma.user.create({
         data: {
           name,
-          password: hashedPassword,
           email,
-          role_id: targetRoleId,
+          password: hashedPassword,
           business_id: targetBusinessId,
           branch_id: targetBranchId,
-          is_branch_admin: isBranchManager,
+          role_id: targetRoleId,
+          is_branch_admin: !!isBranchManager,
           created_at: new Date(),
           updated_at: new Date()
         }
       });
 
-      const response: ResponseInstance = {
+      return res.status(201).json({
         message: "User created successfully",
-        data: [],
+        data: newUser,
         status: 201,
-      };
-
-      return res.status(201).json(response);
-    } catch (e: any) {
-      const response: ResponseInstance = {
-        message: "Something went wrong while creating user",
-        data: [e.message],
+      });
+    } catch (error: any) {
+      console.error("[getUserProps POST ERROR]:", error);
+      fs.appendFileSync('user_api_error.txt', `[${new Date().toISOString()}] POST ERROR: ${error.stack}\nBody: ${JSON.stringify(req.body)}\nUser: ${JSON.stringify(user)}\n`);
+      return res.status(500).json({
+        message: "Something went wrong during user creation",
+        data: [error.message],
         status: 500,
-      };
-      return res.status(500).json(response);
+      });
     }
+
   }
 
   if (req.method === "PUT") {
@@ -171,7 +177,8 @@ export default async function handler(req: any, res: any) {
       const { id, name, password, new_password, email, role, branch, is_branch_admin } = req.body;
       const userId = Number(id || req.query.id);
 
-      const targetBranchId = branch ? Number(branch) : null;
+      let targetBranchId = branch && branch !== "0" && branch !== 0 ? Number(branch) : null;
+      if (targetBranchId !== null && targetBranchId <= 0) targetBranchId = null;
       const isBranchManager = is_branch_admin === true || is_branch_admin === "true";
 
       // Enforcement: Only ONE Branch Admin per branch

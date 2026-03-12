@@ -20,21 +20,20 @@ export const haspermission = (user: any, requiredPermission: string): boolean =>
     // Super Admin bypass
     if (['super_admin', 'superadmin'].includes(role)) return true;
 
-    // Branch Admin Scoping: 
-    // - Allowed: Viewing their own branch (view_branches)
-    // - Blocked: Creating/Deleting branches, Managing global business details
-    const branchAdminBlocked = ['manage_branches', 'create_branch', 'delete_branch', 'manage_business', 'update_business', 'delete_business'];
-    if (user.is_branch_admin && branchAdminBlocked.includes(requiredPermission)) {
-        return false;
-    }
-
-    // Business/Tenant Admin bypass
-    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'branch_admin'].includes(role)) {
+    // Business/Tenant Admin bypass - Usually they have full access in their business
+    if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin'].includes(role)) {
         return true;
     }
 
+    // Branch Admin bypass - They have full access but scoped to their branch (scoping is handled in API whereClause)
+    if (['branch_admin'].includes(role)) {
+        return true;
+    }
+
+    // Check specific permissions for other roles (e.g., Sales, Manager)
     return user?.permissions?.includes(requiredPermission) ?? false;
 };
+
 
 /**
  * Checks if a user has permission to access a specific route.

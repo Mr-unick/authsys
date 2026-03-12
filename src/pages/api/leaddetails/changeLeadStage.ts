@@ -6,7 +6,7 @@ import { ActivityType } from "@/utils/activityTypes";
 
 export default async function changeLeadStage(req: any, res: any) {
     try {
-        let user = await VerifyToken(req, res, 'stage');
+        let user = await VerifyToken(req, res, 'stages');
         if (res.writableEnded) return;
 
         const { stage, reason } = req.body;

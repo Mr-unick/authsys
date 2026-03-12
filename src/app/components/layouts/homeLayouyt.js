@@ -35,16 +35,21 @@ export default function HomeLayout({ children }) {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get("/api/auth/isauthenticated");
-        if (res.data?.status === 200 && res.data?.data) {
+        const res = await axios.get("/api/auth/isauthenticated", {
+          validateStatus: (status) => (status >= 200 && status < 300) || status === 401
+        });
+        if (res.status === 200 && res.data?.data) {
           setCurrentUser({
             name: res.data.data.name || "User",
             role: res.data.data.role || "User",
             profileImg: "https://images.pexels.com/photos/8367793/pexels-photo-8367793.jpeg",
           });
         }
-      } catch {
-        // Silently fail — user may not be authenticated yet
+      } catch (err) {
+        // Silently fail for 401, but log other network errors
+        if (err.response?.status !== 401) {
+          console.error("HomeLayout user fetch error:", err);
+        }
       }
     };
     fetchUser();

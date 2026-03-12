@@ -39,7 +39,7 @@ export default async function handler(req: any, res: any) {
             form.addField('email', 'text').value(lead?.email || '').disabled();
 
             if (isMultiBranchActive) {
-                const bField = form.addField('branch', 'select').options(branchOptions).value((lead as any)?.branch_id).required();
+                const bField = form.addField('branch', 'select').options(branchOptions).value((lead as any)?.branch_id);
                 if (user.is_branch_admin) bField.disabled();
             }
 
@@ -53,7 +53,7 @@ export default async function handler(req: any, res: any) {
             form.addField('email', 'text');
 
             if (isMultiBranchActive) {
-                const bField = form.addField('branch', 'select').options(branchOptions).required();
+                const bField = form.addField('branch', 'select').options(branchOptions);
                 if (user.is_branch_admin) {
                     bField.value(user.branch).disabled();
                 }

@@ -1,4 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-toastify';
 import {
   ChevronDown,
   ChevronUp,
@@ -12,10 +14,7 @@ import {
 import { PERMISSIONS2, ROOT_URL } from '../../../../const';
 import axios from 'axios';
 
-const BRANCHES = [
-  { id: '1', name: 'Main Office', location: 'Headquarters' },
-
-];
+// Removed hardcoded BRANCHES constants to use dynamic fetching
 
 const RolePermissionsForm = () => {
   const [roleName, setRoleName] = useState('');
@@ -24,6 +23,9 @@ const RolePermissionsForm = () => {
   const [expandedPolicies, setExpandedPolicies] = useState({});
   const [branchDropdownOpen, setBranchDropdownOpen] = useState(false);
   const [policyProps, setPolicyProps] = useState([]);
+  const [branches, setBranches] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Toggle individual permission
   const togglePermission = useCallback((permission) => {
@@ -70,35 +72,66 @@ const RolePermissionsForm = () => {
     }
   }
 
+  const handleFetchBranches = async () => {
+    try {
+      let response = await axios.get(`${ROOT_URL}api/getBranchProps`);
+      if (response.status === 200) {
+        // Extract rows from GenerateTable structure
+        setBranches(response.data.data.rows || []);
+      }
+    } catch (error) {
+      console.error("Failed to fetch branches:", error);
+    }
+  }
+
   const handleSubmit = async (e) => {
-
     e.preventDefault();
+    if (isSubmitting) return;
 
-    // Filter enabled permissions and map to their IDs
-    const enabledPermissionIds = Object.entries(permissions)
-      .filter(([key, value]) => !key.startsWith('permission_id_') && value === true)
-      .map(([key]) => permissions[`permission_id_${key}`]);
-
-    const roleData = {
-      name: roleName,
-      branch: selectedBranch?.id || null,
-      permissions: enabledPermissionIds
-    };
-
-    console.log(roleData, 'this is role data');
-
-    let response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData);
-
-    if (response.status === 200) {
-      alert('Role created successfully');
-    } else {
-      alert('Role creation failed');
+    // Validate role name
+    if (!roleName.trim()) {
+      toast.error('Please enter a role name');
+      return;
     }
 
+    setIsSubmitting(true);
+
+    try {
+      // Filter enabled permissions and map to their IDs
+      const enabledPermissionIds = Object.entries(permissions)
+        .filter(([key, value]) => !key.startsWith('permission_id_') && value === true)
+        .map(([key]) => permissions[`permission_id_${key}`])
+        .filter(id => id !== undefined && id !== null); // Ensure no nulls
+
+      const roleData = {
+        name: roleName.trim(),
+        branch: selectedBranch?.id || null,
+        permissions: enabledPermissionIds
+      };
+
+      console.log('Submitting role data:', roleData);
+
+      let response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData);
+
+      if (response.status === 200 || response.status === 201) {
+        toast.success('Role created successfully!');
+        // Redirect back to roles list
+        router.push('/buisnessettings/rolesadnpermissions/roles');
+      } else {
+        toast.error(`Error ${response.status}: ${response.data?.message || 'Role creation failed'}`);
+      }
+    } catch (error) {
+      console.error('Submission error:', error);
+      const errorMsg = error.response?.data?.message || error.message || 'An unexpected error occurred';
+      toast.error(`Role creation failed: ${errorMsg}`);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   useEffect(() => {
     handlefetchPermissions();
+    handleFetchBranches();
   }, [])
 
 
@@ -154,38 +187,71 @@ const RolePermissionsForm = () => {
                   className="w-full pl-12 pr-4 py-3 bg-gray-50/50 border border-transparent hover:border-indigo-200 focus:border-indigo-500 rounded-xl flex items-center justify-between cursor-pointer transition-all font-medium"
                 >
                   {selectedBranch ?
-                    <div className="flex items-center">
-                      <span className="font-bold text-[#0F1626]">{selectedBranch.name}</span>
-                      <span className="text-gray-400 ml-2 text-xs">({selectedBranch.location})</span>
+                    <div className="flex items-center group/item w-full">
+                      <div className="flex items-center flex-1">
+                        <span className="font-bold text-[#0F1626]">{selectedBranch.name}</span>
+                        <span className="text-gray-400 ml-2 text-xs">({selectedBranch.city || selectedBranch.location})</span>
+                      </div>
+                      <X
+                        size={14}
+                        className="text-gray-400 hover:text-red-500 mr-2 opacity-0 group-hover/item:opacity-100 transition-opacity"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBranch(null);
+                        }}
+                      />
                     </div> :
-                    <span className="text-gray-400">Select business branch</span>
+                    <span className="text-gray-400">Global - All Branches</span>
                   }
                   {branchDropdownOpen ? <ChevronUp size={18} className="text-indigo-500" /> : <ChevronDown size={18} className="text-gray-400" />}
                 </div>
               </div>
 
               {branchDropdownOpen && (
-                <div className="absolute z-20 w-full bg-white border border-gray-100 rounded-2xl mt-2 shadow-2xl p-2 animate-in zoom-in-95 duration-200">
-                  {BRANCHES.map(branch => (
+                <div className="absolute z-20 w-full bg-white border border-gray-100 rounded-2xl mt-2 shadow-2xl p-2 animate-in zoom-in-95 duration-200 overflow-hidden">
+                  <div className="max-h-[240px] overflow-y-auto custom-scrollbar">
                     <div
-                      key={branch.id}
                       onClick={() => {
-                        setSelectedBranch(branch);
+                        setSelectedBranch(null);
                         setBranchDropdownOpen(false);
                       }}
-                      className="px-4 py-3 hover:bg-indigo-50/50 rounded-xl cursor-pointer flex justify-between items-center transition-colors group"
+                      className="px-4 py-3 hover:bg-gray-50 rounded-xl cursor-pointer flex justify-between items-center transition-colors group"
                     >
                       <div className="flex flex-col">
-                        <span className="font-bold text-sm text-gray-700 group-hover:text-indigo-600 transition-colors">{branch.name}</span>
-                        <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">{branch.location}</span>
+                        <span className="font-bold text-sm text-gray-500">Global Coverage</span>
+                        <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">No branch restriction</span>
                       </div>
-                      {selectedBranch?.id === branch.id && (
-                        <div className="bg-indigo-600 p-1 rounded-full">
+                      {!selectedBranch && (
+                        <div className="bg-gray-400 p-1 rounded-full">
                           <Check className="text-white" size={12} />
                         </div>
                       )}
                     </div>
-                  ))}
+                    {branches.length > 0 ? branches.map(branch => (
+                      <div
+                        key={branch.id}
+                        onClick={() => {
+                          setSelectedBranch(branch);
+                          setBranchDropdownOpen(false);
+                        }}
+                        className="px-4 py-3 hover:bg-indigo-50/50 rounded-xl cursor-pointer flex justify-between items-center transition-colors group"
+                      >
+                        <div className="flex flex-col">
+                          <span className="font-bold text-sm text-gray-700 group-hover:text-indigo-600 transition-colors">{branch.name}</span>
+                          <span className="text-gray-400 text-[10px] uppercase font-bold tracking-widest">{branch.city || branch.location || 'Unknown'}</span>
+                        </div>
+                        {selectedBranch?.id === branch.id && (
+                          <div className="bg-indigo-600 p-1 rounded-full">
+                            <Check className="text-white" size={12} />
+                          </div>
+                        )}
+                      </div>
+                    )) : (
+                      <div className="px-4 py-8 text-center">
+                        <p className="text-xs text-gray-400 font-medium italic">No branches found for this business</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -218,14 +284,14 @@ const RolePermissionsForm = () => {
                     <div
                       onClick={() => togglePolicyPermissions(policy, !isPolicyEnabled(policy))}
                       className={`w-12 h-6 rounded-full transition-all relative cursor-pointer ${isPolicyEnabled(policy)
-                          ? 'bg-indigo-500 shadow-[0_0_15px_-3px_rgba(99,102,241,0.5)]'
-                          : 'bg-gray-700'
+                        ? 'bg-indigo-500 shadow-[0_0_15px_-3px_rgba(99,102,241,0.5)]'
+                        : 'bg-gray-700'
                         }`}
                     >
                       <div
                         className={`absolute top-1/2 -translate-y-1/2 w-4 h-4 bg-white rounded-full shadow-lg transition-all ${isPolicyEnabled(policy)
-                            ? 'right-1'
-                            : 'left-1'
+                          ? 'right-1'
+                          : 'left-1'
                           }`}
                       />
                     </div>
@@ -250,14 +316,14 @@ const RolePermissionsForm = () => {
                         <div
                           onClick={() => togglePermission(permission)}
                           className={`w-10 h-5 rounded-full transition-all relative cursor-pointer flex-shrink-0 ${permissions[permission.permission]
-                              ? 'bg-indigo-500 shadow-[0_0_10px_-2px_rgba(99,102,241,0.4)]'
-                              : 'bg-gray-200'
+                            ? 'bg-indigo-500 shadow-[0_0_10px_-2px_rgba(99,102,241,0.4)]'
+                            : 'bg-gray-200'
                             }`}
                         >
                           <div
                             className={`absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-sm transition-all ${permissions[permission.permission]
-                                ? 'right-1 text-indigo-600'
-                                : 'left-1 text-gray-400'
+                              ? 'right-1 text-indigo-600'
+                              : 'left-1 text-gray-400'
                               }`}
                           />
                         </div>
@@ -273,9 +339,22 @@ const RolePermissionsForm = () => {
           <div className="flex justify-end pt-8">
             <button
               type="submit"
-              className="px-10 py-4 font-bold bg-indigo-600 text-white rounded-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1 transition-all flex items-center uppercase tracking-widest text-xs"
+              disabled={isSubmitting}
+              className={`px-10 py-4 font-bold rounded-xl shadow-xl transition-all flex items-center uppercase tracking-widest text-xs ${isSubmitting
+                ? 'bg-gray-400 cursor-not-allowed opacity-70'
+                : 'bg-indigo-600 text-white shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-1'
+                }`}
             >
-              <Check className="mr-3" size={18} /> Finalize Role Assignment
+              {isSubmitting ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin mr-3" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Check className="mr-3" size={18} /> Finalize Role Assignment
+                </>
+              )}
             </button>
           </div>
         </form>

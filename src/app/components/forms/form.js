@@ -43,40 +43,36 @@ export default function FormComponent({ formdata, id, onSuccess }) {
   }, [change]);
 
   const onSubmit = async (data) => {
-
     setloder(true)
-
-    if (res.method === "post") {
-      let response = await axios.post(`/api/${res.submiturl}`, data);
-      if (response.status >= 200 && response.status < 300) {
-        toast.success(response.data.message);
-        if (onSuccess) onSuccess(response.data);
-        // router.reload()
-        setloder(false)
+    try {
+      if (res.method === "post") {
+        let response = await axios.post(`/api/${res.submiturl}`, data);
+        if (response.status >= 200 && response.status < 300) {
+          toast.success(response.data.message || "Saved successfully");
+          if (onSuccess) onSuccess(response.data);
+        } else {
+          toast.error(response.data.message || "Failed to save");
+        }
+      } else if (res.method === "put") {
+        let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
+        if (response.status >= 200 && response.status < 300) {
+          toast.success(response.data.message || "Updated successfully");
+          if (onSuccess) onSuccess(response.data);
+        } else {
+          toast.error(response.data.message || "Failed to update");
+        }
       } else {
-        toast.error(response.data.message);
-        setloder(false)
+        toast.error("Unsupported method");
       }
-
-    } else if (res.method === "put") {
-      let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
-      if (response.status >= 200 && response.status < 300) {
-        toast.success(response.data.message);
-        if (onSuccess) onSuccess(response.data);
-        //  router.reload()
-        setloder(false)
-      } else {
-        toast.error(response.data.message);
-        setloder(false)
-      }
-
-    } else {
-      toast.error("Something went wrong");
-      setloder(false)
+    } catch (error) {
+      console.error("Submission error:", error);
+      const errorMsg = error.response?.data?.message || error.message || "Submission failed";
+      toast.error(errorMsg);
+    } finally {
+      setloder(false);
     }
-    setloder(false)
-
   };
+
 
   useEffect(() => {
     handleFetchdata();

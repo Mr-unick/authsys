@@ -6,14 +6,37 @@
 // ---------- Permissions ----------
 export const permissions = [
     'view_dashboard',
+    'view_leads',
+    'create_lead',
+    'edit_lead',
+    'delete_lead',
+    'assign_leads',
+    'import_leads',
+    'view_lead_details',
+    'view_users',
+    'create_user',
+    'edit_user',
+    'delete_user',
+    'view_branches',
+    'create_branch',
+    'edit_branch',
+    'delete_branch',
+    'view_roles',
+    'create_role',
+    'edit_role',
+    'delete_role',
+    'view_stages',
+    'create_stage',
+    'edit_stage',
+    'delete_stage',
+    'view_integrations',
+    'manage_integrations',
     'view_settings',
-    'view_about',
-    'view_contact',
-    'view_nested_dashboard',
-    'create_post',
-    'posts_edit',
-    'view_user',
-    'view_notifications',
+    'update_settings',
+    'view_area_of_operation',
+    'create_area_of_operation',
+    'edit_area_of_operation',
+    'delete_area_of_operation',
 ] as const;
 
 export type Permission = (typeof permissions)[number];
@@ -26,13 +49,18 @@ export interface Gate {
 
 export const Gates: Gate[] = [
     { route: '/', permissionRequired: 'view_dashboard' },
-    { route: 'boardleads', permissionRequired: 'view_dashboard' },
-    { route: 'tableleads', permissionRequired: 'view_nested_dashboard' },
-    { route: 'users', permissionRequired: 'view_contact' },
+    { route: 'boardleads', permissionRequired: 'view_leads' },
+    { route: 'tableleads', permissionRequired: 'view_leads' },
+    { route: 'leaddetails', permissionRequired: 'view_lead_details' },
+    { route: 'users', permissionRequired: 'view_users' },
     { route: 'branches', permissionRequired: 'view_branches' },
-    { route: 'leadstages', permissionRequired: 'view_leadstages' },
+    { route: 'leadstages', permissionRequired: 'view_stages' },
+    { route: 'roles', permissionRequired: 'view_roles' },
     { route: 'settings', permissionRequired: 'view_settings' },
+    { route: 'integrations', permissionRequired: 'view_integrations' },
+    { route: 'areaofsales', permissionRequired: 'view_area_of_operation' },
 ];
+
 
 // ---------- Lead Stages (default stage definitions) ----------
 export const DefaultStages = [

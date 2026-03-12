@@ -21,7 +21,7 @@ export default async function handler(req: any, res: any) {
       }
 
       const targetBusinessId = businessId || user.business;
-      const targetBranchId = req.body.branch ? Number(req.body.branch) : (user.branch || null);
+      const targetBranchId = (req.body.branch && req.body.branch !== "") ? Number(req.body.branch) : (user.branch || null);
 
       const newLead = await prisma.$transaction(async (tx) => {
         const lead = await tx.lead.create({
@@ -160,8 +160,14 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ message: "Lead ID is required", data: [], status: 400 });
       }
 
+      const { branch, ...rest } = req.body;
+      const updateData = {
+        ...rest,
+        branch_id: (branch && branch !== "") ? Number(branch) : (user.branch || null)
+      };
+
       const leadClass = new LeadClass(parseInt(id as string));
-      const lead = await leadClass.updateLead(req.body);
+      const lead = await leadClass.updateLead(updateData);
 
       return res.status(200).json({
         message: "Updated successfully",

@@ -3,6 +3,7 @@ import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
 import bcrypt from "bcryptjs";
+import fs from 'fs';
 
 export default async function handler(req: any, res: any) {
     const user = await VerifyToken(req, res, 'branches');
@@ -103,28 +104,29 @@ export default async function handler(req: any, res: any) {
                         district,
                         city,
                         pincode,
-                        discription: discription || '',
-                        location: '',
-                        business_id: targetBusinessId
+                        discription,
+                        location: city || state || 'Main',
+                        business_id: targetBusinessId,
+                        created_at: new Date(),
+                        updated_at: new Date()
                     }
                 });
 
-                // 4. Resolve 'Buisness Admin' role for this business
-                const adminRole = await tx.role.findFirst({
-                    where: { business_id: targetBusinessId, name: { in: ['Buisness Admin', 'Business Admin', 'Admin'] } }
+                // 4. Create Branch Manager User
+                const hashedPassword = await bcrypt.hash(admin_password, 10);
+                const managerRole = await tx.role.findFirst({
+                    where: { name: { contains: 'Branch Admin' } }
                 });
 
-                // 5. Create Branch Admin User
-                const hashedPassword = bcrypt.hashSync(admin_password, 10);
                 await tx.user.create({
                     data: {
-                        name: admin_name || 'Branch Manager',
+                        name: admin_name,
                         email: admin_email,
                         password: hashedPassword,
                         business_id: targetBusinessId,
                         branch_id: branch.id,
-                        role_id: adminRole?.id || null,
                         is_branch_admin: true,
+                        role_id: managerRole?.id || null,
                         created_at: new Date(),
                         updated_at: new Date()
                     }
@@ -135,18 +137,21 @@ export default async function handler(req: any, res: any) {
 
             return res.status(201).json({
                 status: 201,
-                message: "Branch and Manager account created successfully",
+                message: "Branch and Manager created successfully",
                 data: result,
             });
+
         } catch (error: any) {
-            console.error("[getBranchProps POST Error]:", error);
+            console.error("[getBranchProps POST ERROR]:", error);
+            fs.appendFileSync('branch_api_error.txt', `[${new Date().toISOString()}] POST ERROR: ${error.stack}\nBody: ${JSON.stringify(req.body)}\nUser: ${JSON.stringify(user)}\n`);
             return res.status(500).json({
                 status: 500,
-                message: "Creation failed",
+                message: "Something went wrong during branch creation",
                 data: [error.message],
             });
         }
     }
+
 
     // ---- SOFT DELETE ----
     if (req.method === "DELETE" || req.query.delete) {

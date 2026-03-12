@@ -1,0 +1,31 @@
+[2026-03-12T10:19:15.322Z] POST ERROR: PrismaClientKnownRequestError: 
+Invalid `tx.role.create()` invocation in
+C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__36c3440f._.js:518:44
+
+  515     });
+  516 }
+  517 const newRole = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].$transaction(async (tx)=>{
+→ 518     const role = await tx.role.create(
+Foreign key constraint violated on the fields: (`branchId`)
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:7268)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__36c3440f._.js:518:30
+    at async Proxy._transactionWithCallback (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:8120)
+    at async handler (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__36c3440f._.js:517:29)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:4425)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:5955)
+    at async Module.handler (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__fc153733._.js:2952:13)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:747:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:392:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:929:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:387:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:157:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:383:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:248:21)
+    at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:447:24)
+    at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:496:13)
+    at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:226:13)
+Body: {"name":"b","branch":"1","permissions":[1,3,4,5,6,7]}
+User: {"id":1,"name":"Nikhil","email":"nikhil@gmail.com","role":"Buisness Admin","business":1,"branch":null,"is_branch_admin":false,"permissions":[],"iat":1773308325,"exp":1773394725}

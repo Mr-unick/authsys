@@ -1,6 +1,7 @@
 import { serialize } from 'cookie';
-import { VerifyToken } from '@/utils/VerifyToken';
 import { AUTH_COOKIE_NAME } from '@/config/constants';
+import { env } from '@/config/env';
+import { jwtVerify } from 'jose';
 import { activityLog } from "@/utils/activityLogs";
 import { ActivityType } from "@/utils/activityTypes";
 
@@ -17,7 +18,19 @@ export default async function handler(req: any, res: any) {
             path: '/',
         });
 
-        const user = await VerifyToken(req, res, null);
+        // Try to get user for logging, but don't fail if token is missing/invalid
+        const token = req.cookies[AUTH_COOKIE_NAME];
+        let user: any = null;
+        if (token) {
+            try {
+                const secretKey = new TextEncoder().encode(env.JWT_SECRET);
+                const { payload } = await jwtVerify(token, secretKey);
+                user = payload;
+            } catch (err) {
+                // Token invalid/expired, ignore for logout
+            }
+        }
+
         if (user) {
             await activityLog(ActivityType.LOGOUT, `${user.name} logged out`, user.id);
         }

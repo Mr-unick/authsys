@@ -93,17 +93,28 @@ export default function SideBar({ setOpen }) {
   useEffect(() => {
     setLoading(true);
 
+    const config = {
+      validateStatus: (status) => (status >= 200 && status < 300) || status === 401
+    };
+
     // Fetch user and sidebar in parallel
     Promise.all([
-      axios.get(`/api/getSidebarProps`),
-      axios.get('/api/auth/isauthenticated'),
-      axios.get('/api/notifications/get')
+      axios.get(`/api/getSidebarProps`, config),
+      axios.get('/api/auth/isauthenticated', config),
+      axios.get('/api/notifications/get', config)
     ]).then(([sidebarRes, authRes, notifRes]) => {
-      setSideBarData(sidebarRes.data.data);
-      setUser(authRes.data.data);
-      const unread = notifRes.data.data.filter(n => n.status === 'unread').length;
-      setUnreadCount(unread);
-    }).catch(err => console.error("Sidebar catch:", err))
+      if (sidebarRes.status === 200) setSideBarData(sidebarRes.data.data);
+      if (authRes.status === 200) setUser(authRes.data.data);
+      if (notifRes.status === 200 && notifRes.data.data) {
+        const unread = notifRes.data.data.filter(n => n.status === 'unread').length;
+        setUnreadCount(unread);
+      }
+    }).catch(err => {
+      // If we still get a real network error, log it
+      if (err.response?.status !== 401) {
+        console.error("Sidebar fetch error:", err);
+      }
+    })
       .finally(() => setLoading(false));
   }, []);
 

@@ -2,9 +2,10 @@ import prisma from "@/app/lib/prisma";
 import { GenerateTable } from "../../utils/generateTable";
 import { ResponseInstance } from "../../utils/instances";
 import { VerifyToken } from "@/utils/VerifyToken";
+import fs from 'fs';
 
 export default async function handler(req: any, res: any) {
-  const user = await VerifyToken(req, res, 'leadstages');
+  const user = await VerifyToken(req, res, 'stages');
   if (res.writableEnded) return;
 
   if (req.method === "GET") {
@@ -43,7 +44,7 @@ export default async function handler(req: any, res: any) {
       const tabledata = new GenerateTable({
         name: "Lead Stages",
         data: tablerows,
-      }).policy(user, 'leadstages').addform('leadstageform').gettable();
+      }).policy(user, 'stage').addform('leadstageform').gettable();
 
       const response: ResponseInstance = {
         message: "Success",
@@ -78,30 +79,33 @@ export default async function handler(req: any, res: any) {
         });
       }
 
-      await (prisma as any).leadStage.create({
+      const newStage = await (prisma as any).leadStage.create({
         data: {
           stage_name,
           discription,
-          colour,
-          order: order ? Number(order) : 0,
+          colour: colour || '#3B82F6',
+          order: isNaN(parseInt(order)) ? 0 : parseInt(order),
           stage_type: stage_type || 'ONGOING',
           business_id: businessId,
-          branch_id: branch ? Number(branch) : null
+          branch_id: branch && Number(branch) > 0 ? Number(branch) : null
         }
       });
 
       return res.status(201).json({
         message: "Stage created successfully",
-        data: [],
+        data: newStage,
         status: 201,
       });
     } catch (error: any) {
+      console.error("[getLeadStagesProps POST ERROR]:", error);
+      fs.appendFileSync('stage_post_error.txt', `[${new Date().toISOString()}] POST ERROR: ${error.stack}\nBody: ${JSON.stringify(req.body)}\nUser: ${JSON.stringify(user)}\n`);
       return res.status(500).json({
-        message: "Something went wrong",
+        message: "Something went wrong while creating stage",
         data: [error.message],
         status: 500,
       });
     }
+
   }
 
   if (req.method === "PUT") {
@@ -134,7 +138,7 @@ export default async function handler(req: any, res: any) {
           colour,
           order: order ? Number(order) : 0,
           stage_type: stage_type,
-          branch_id: branch ? Number(branch) : undefined
+          branch_id: branch && Number(branch) > 0 ? Number(branch) : null
         }
       });
 

@@ -7,13 +7,19 @@ export default function NotificationManager() {
 
     useEffect(() => {
         // 1. Get current user
-        axios.get('/api/auth/isauthenticated')
+        axios.get('/api/auth/isauthenticated', {
+            validateStatus: (status) => (status >= 200 && status < 300) || status === 401
+        })
             .then(res => {
-                if (res.data.status === 200) {
+                if (res.status === 200 && res.data.status === 200) {
                     setCurrentUser(res.data.data);
                 }
             })
-            .catch(err => console.error("Not logged in"));
+            .catch(err => {
+                if (err.response?.status !== 401) {
+                    console.error("NotificationManager auth error:", err);
+                }
+            });
 
         // 2. Request browser notification permission
         if ("Notification" in window) {

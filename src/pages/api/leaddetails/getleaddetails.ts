@@ -113,7 +113,7 @@ export const getleadDetails = async (user: any, id: any) => {
 }
 
 export default async function handler(req: any, res: any) {
-    const user = await VerifyToken(req, res, 'leaddetails');
+    const user = await VerifyToken(req, res, 'lead_details');
     if (res.writableEnded) return;
 
     const leadid = req.query.id;

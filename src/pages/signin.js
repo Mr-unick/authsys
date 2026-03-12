@@ -17,12 +17,17 @@ export default function LoginPage() {
     useEffect(() => {
         const checkAuth = async () => {
             try {
-                const response = await axios.get('/api/auth/isauthenticated');
+                const response = await axios.get('/api/auth/isauthenticated', {
+                    validateStatus: (status) => (status >= 200 && status < 300) || status === 401
+                });
                 if (response.status === 200) {
                     router.push('/crm');
                 }
             } catch (error) {
-                // Not authenticated, stay on login
+                // Ignore 401, they just need to sign in
+                if (error.response?.status !== 401) {
+                    console.error("Auth check failed:", error);
+                }
             }
         };
         checkAuth();
