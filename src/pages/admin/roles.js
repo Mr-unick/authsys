@@ -63,18 +63,30 @@ export default function PortalRolesPage() {
         }
     };
 
+    const handleEdit = (role) => {
+        setEditing(role.id);
+        const rolePermIds = permissions
+            .filter(p => role.permissions.includes(p.permission))
+            .map(p => p.id);
+        
+        setFormData({
+            name: role.name,
+            selectedPermissions: rolePermIds,
+        });
+        setShowModal(true);
+    };
+
     const handleSave = async (e) => {
         e.preventDefault();
         try {
             const payload = {
                 name: formData.name,
                 permissions: formData.selectedPermissions,
-                branch: null // Portal roles don't have branches
+                branch: null
             };
 
             if (editing) {
-                // We'll need a PUT for Roles if not existing, for now handle POST
-                await axios.post('/api/getRoleProps', payload);
+                await axios.put(`/api/getRoleProps?id=${editing}`, payload);
                 toast.success("Role updated");
             } else {
                 await axios.post('/api/getRoleProps', payload);
@@ -134,7 +146,10 @@ export default function PortalRolesPage() {
                                 </div>
                                 <CardTitle className="text-lg font-bold">{r.name}</CardTitle>
                             </div>
-                            <button className="text-gray-300 hover:text-indigo-600 transition-colors">
+                            <button 
+                                onClick={() => handleEdit(r)}
+                                className="text-gray-300 hover:text-indigo-600 transition-colors"
+                            >
                                 <Edit2 size={16} />
                             </button>
                         </CardHeader>

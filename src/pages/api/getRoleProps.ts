@@ -11,6 +11,34 @@ export default async function handler(req: any, res: any) {
 
   if (req.method === "GET") {
     try {
+      const { id } = req.query;
+
+      if (id) {
+        const role = await prisma.role.findUnique({
+          where: { id: Number(id), deleted_at: null },
+          include: {
+            rolePermissions: {
+              include: {
+                permission: true
+              }
+            }
+          }
+        });
+
+        if (!role) {
+          return res.status(404).json({ message: "Role not found", status: 404 });
+        }
+
+        return res.status(200).json({
+          message: "Request successful",
+          data: {
+            ...role,
+            permissionIds: role.rolePermissions.map(rp => rp.permission_id)
+          },
+          status: 200,
+        });
+      }
+
       const branchId = user.branch;
       const whereClause: any = {
         business_id: user.business || null,

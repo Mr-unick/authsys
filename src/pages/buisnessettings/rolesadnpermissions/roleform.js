@@ -109,25 +109,66 @@ const RolePermissionsForm = () => {
         permissions: enabledPermissionIds
       };
 
-      console.log('Submitting role data:', roleData);
+      const { id } = router.query;
+      let response;
 
-      let response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData);
+      if (id) {
+        response = await axios.put(`${ROOT_URL}api/getRoleProps?id=${id}`, roleData);
+      } else {
+        response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData);
+      }
 
       if (response.status === 200 || response.status === 201) {
-        toast.success('Role created successfully!');
+        toast.success(id ? 'Role updated successfully!' : 'Role created successfully!');
         // Redirect back to roles list
         router.push('/buisnessettings/rolesadnpermissions/roles');
       } else {
-        toast.error(`Error ${response.status}: ${response.data?.message || 'Role creation failed'}`);
+        toast.error(`Error ${response.status}: ${response.data?.message || 'Role operation failed'}`);
       }
     } catch (error) {
       console.error('Submission error:', error);
       const errorMsg = error.response?.data?.message || error.message || 'An unexpected error occurred';
-      toast.error(`Role creation failed: ${errorMsg}`);
+      toast.error(`Operation failed: ${errorMsg}`);
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const fetchRoleData = useCallback(async (id) => {
+    try {
+      const response = await axios.get(`${ROOT_URL}api/getRoleProps?id=${id}`);
+      if (response.status === 200) {
+        const role = response.data.data;
+        setRoleName(role.name);
+        
+        // Match branch
+        if (role.branch_id && branches.length > 0) {
+          const matchedBranch = branches.find(b => b.id === role.branch_id);
+          if (matchedBranch) setSelectedBranch(matchedBranch);
+        }
+
+        // Match permissions
+        const rolePerms = {};
+        role.rolePermissions.forEach(rp => {
+          if (rp.permission) {
+            rolePerms[rp.permission.permission] = true;
+            rolePerms[`permission_id_${rp.permission.permission}`] = rp.permission.id;
+          }
+        });
+        setPermissions(rolePerms);
+      }
+    } catch (error) {
+      console.error("Failed to fetch role data:", error);
+      toast.error("Failed to load role data");
+    }
+  }, [branches]);
+
+  useEffect(() => {
+    const { id } = router.query;
+    if (id && branches.length > 0) {
+      fetchRoleData(id);
+    }
+  }, [router.query.id, branches, fetchRoleData]);
 
   useEffect(() => {
     handlefetchPermissions();
