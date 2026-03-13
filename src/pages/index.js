@@ -479,7 +479,7 @@ export default function Home() {
                                     <span className="text-[10px] text-slate-600">app.leadconverter.io</span>
                                 </div>
                             </div>
-                            <img src="/dashboard.png" alt="Platform" className="w-full h-auto animate-in fade-in duration-300" key={activeTab} />
+                            <img src="/ai.jpg" alt="Platformmmmmmmmmmmm" className="w-full h-auto animate-in fade-in duration-300" key={activeTab} />
                         </div>
                     </div>
                 </div>

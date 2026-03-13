@@ -15,3 +15,111 @@
     at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:408:24)
     at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:432:13)
     at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:146:13)
+
+[2026-03-13T10:49:36.932Z] API ERROR: PrismaClientInitializationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique()` invocation in
+C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:186
+
+  166 const branchId = user.branch;
+  167 try {
+  168     // Check if multi-branch is enabled
+→ 169     const multiBranchFeature = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique(
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "mysql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:7568)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async generateDashboard (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:36)
+    at async getDashboardProps (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:1202:26)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:4425)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:5955)
+    at async Module.handler (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07ac9e2d._.js:2952:13)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:747:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:392:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:929:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:387:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:157:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:383:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:248:21)
+    at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:447:24)
+    at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:496:13)
+    at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:226:13)
+
+[2026-03-13T10:49:42.138Z] API ERROR: PrismaClientInitializationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique()` invocation in
+C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:186
+
+  166 const branchId = user.branch;
+  167 try {
+  168     // Check if multi-branch is enabled
+→ 169     const multiBranchFeature = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique(
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "mysql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:7568)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async generateDashboard (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:36)
+    at async getDashboardProps (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:1202:26)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:4425)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:5955)
+    at async Module.handler (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07ac9e2d._.js:2952:13)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:747:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:392:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:929:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:387:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:157:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:383:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:248:21)
+    at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:447:24)
+    at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:496:13)
+    at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:226:13)
+
+[2026-03-13T10:50:21.278Z] API ERROR: PrismaClientInitializationError: 
+Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique()` invocation in
+C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:186
+
+  166 const branchId = user.branch;
+  167 try {
+  168     // Check if multi-branch is enabled
+→ 169     const multiBranchFeature = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$app$2f$lib$2f$prisma$2e$ts__$5b$api$5d$__$28$ecmascript$29$__["default"].businessFeature.findUnique(
+error: Environment variable not found: DATABASE_URL.
+  -->  schema.prisma:7
+   | 
+ 6 |   provider = "mysql"
+ 7 |   url      = env("DATABASE_URL")
+   | 
+
+Validation Error Count: 1
+    at ei.handleRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:7568)
+    at ei.handleAndLogRequestError (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6593)
+    at ei.request (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:121:6300)
+    at async a (C:\Users\CSI\Pro\authsys\node_modules\@prisma\client\runtime\library.js:130:9551)
+    at async generateDashboard (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:169:36)
+    at async getDashboardProps (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07bed519._.js:1202:26)
+    at async apiResolver (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:4425)
+    at async PagesAPIRouteModule.render (C:\Users\CSI\Pro\authsys\node_modules\next\dist\compiled\next-server\pages-api-turbo.runtime.dev.js:2:5955)
+    at async Module.handler (C:\Users\CSI\Pro\authsys\.next\dev\server\chunks\[root-of-the-server]__07ac9e2d._.js:2952:13)
+    at async DevServer.runApi (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:747:9)
+    at async NextNodeServer.handleCatchallRenderRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\next-server.js:392:37)
+    at async DevServer.handleRequestImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\base-server.js:929:17)
+    at async C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:387:20
+    at async Span.traceAsyncFn (C:\Users\CSI\Pro\authsys\node_modules\next\dist\trace\trace.js:157:20)
+    at async DevServer.handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\dev\next-dev-server.js:383:24)
+    at async invokeRender (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:248:21)
+    at async handleRequest (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:447:24)
+    at async requestHandlerImpl (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\router-server.js:496:13)
+    at async Server.requestListener (C:\Users\CSI\Pro\authsys\node_modules\next\dist\server\lib\start-server.js:226:13)

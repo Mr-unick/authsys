@@ -57,7 +57,9 @@ export default async function handler(req: any, res: any) {
             });
         }
 
+        console.log(`Checking password for ${email}`);
         const isPasswordValid = bcrypt.compareSync(password, user.password);
+        console.log(`Password valid: ${isPasswordValid}`);
 
         if (!isPasswordValid) {
             return res.status(401).json({
@@ -110,9 +112,11 @@ export default async function handler(req: any, res: any) {
         });
     } catch (error: any) {
         console.error("[Login API Error]:", error);
+        // Include stack trace only in dev for security
         return res.status(500).json({
             message: 'Login unsuccessful',
             error: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
             status: 500,
         });
     }
