@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import { ChevronRight, Home, BarChart2, Settings, Users, FileText, Calendar, Mail, HelpCircle, Folder, BriefcaseBusiness, Store, Map, Route, Split, ShieldQuestion, Table, LayoutDashboard, File, NotebookText } from "lucide-react";
 import {
   Accordion,
@@ -26,17 +27,41 @@ const getIconForRoute = (title) => {
 
 
 
-export const NavAccordion = ({ route,setOpen }) => {
+
+
+export const NavAccordion = ({ route, setOpen }) => {
+  const router = useRouter();
   const { nestedRoutes, title } = route;
   const icon = getIconForRoute(title);
 
+  // Check if any nested route is active
+  const isAnyChildActive = nestedRoutes.some((nestedRoute) => {
+    const { url } = nestedRoute;
+    return url === '/crm'
+      ? router.pathname === '/crm'
+      : router.pathname.startsWith(url);
+  });
+
   return (
-    <Accordion type="multiple"  collapsible className="border-none">
+    <Accordion type="multiple" collapsible className="border-none">
       <AccordionItem value={`item-${title}`} className="border-b-0">
-        <AccordionTrigger className="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:text-indigo-300 hover:bg-indigo-600/10 rounded-lg transition-all duration-200 ">
-          <span className="text-gray-400">{icon}</span>
-          <span className="flex-1 text-sm hover:no-underline">{title}</span>
-        
+        <AccordionTrigger
+          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group hover:no-underline border-none my-1 ${
+            isAnyChildActive
+              ? "text-indigo-400 bg-indigo-600/5"
+              : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
+          }`}
+        >
+          <span
+            className={`${
+              isAnyChildActive ? "text-indigo-400" : "text-gray-500 group-hover:text-indigo-400"
+            } transition-colors`}
+          >
+            {icon}
+          </span>
+          <span className="flex-1 text-sm tracking-wide text-left font-medium">
+            {title}
+          </span>
         </AccordionTrigger>
         <AccordionContent className="pt-1 pb-2">
           <div className="flex flex-col gap-1 pl-4">
