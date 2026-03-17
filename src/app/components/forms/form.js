@@ -46,7 +46,10 @@ export default function FormComponent({ formdata, id, onSuccess }) {
     setloder(true)
     try {
       if (res.method === "post") {
-        let response = await axios.post(`/api/${res.submiturl}`, data);
+        const url = id ? `/api/${res.submiturl}?id=${id}` : `/api/${res.submiturl}`;
+        let response = await axios.post(url, data, {
+          validateStatus: (status) => status >= 200 && status < 500
+        });
         if (response.status >= 200 && response.status < 300) {
           toast.success(response.data.message || "Saved successfully");
           if (onSuccess) onSuccess(response.data);
@@ -54,7 +57,9 @@ export default function FormComponent({ formdata, id, onSuccess }) {
           toast.error(response.data.message || "Failed to save");
         }
       } else if (res.method === "put") {
-        let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data);
+        let response = await axios.put(`/api/${res.submiturl}?id=${id}`, data, {
+          validateStatus: (status) => status >= 200 && status < 500
+        });
         if (response.status >= 200 && response.status < 300) {
           toast.success(response.data.message || "Updated successfully");
           if (onSuccess) onSuccess(response.data);

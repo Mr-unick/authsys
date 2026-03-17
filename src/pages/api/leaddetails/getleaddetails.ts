@@ -74,11 +74,12 @@ export const getleadDetails = async (user: any, id: any) => {
             addcomment: haspermission(user, 'add_comment'),
             deletecomment: haspermission(user, 'delete_comment'),
             editcomment: haspermission(user, 'edit_comment'),
-            viewcomment: haspermission(user, 'view_comment'),
-            changestage: haspermission(user, 'add_stage'),
+            viewcomment: haspermission(user, 'view_discussion'),
+            changestage: haspermission(user, 'update_stage'),
             deletestage: haspermission(user, 'delete_stage'),
             editstage: haspermission(user, 'edit_stage'),
-            viewstage: haspermission(user, 'view_stage'),
+            viewstage: haspermission(user, 'view_stage_pipeline'),
+            addfollowup: haspermission(user, 'add_followup'),
             allStages: await prisma.leadStage.findMany({
                 where: { business_id: lead.business_id, deleted_at: null },
                 orderBy: { id: 'asc' }

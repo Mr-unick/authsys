@@ -37,7 +37,9 @@ export default function LoginPage() {
         e.preventDefault();
         try {
             setLoader(true);
-            const response = await axios.post('/api/auth/login', { email, password });
+            const response = await axios.post('/api/auth/login', { email, password }, {
+                validateStatus: (status) => status >= 200 && status < 500
+            });
 
             if (response.data.status === 200) {
                 toast.success("Login successful!");

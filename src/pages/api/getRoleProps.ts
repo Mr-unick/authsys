@@ -21,7 +21,8 @@ export default async function handler(req: any, res: any) {
               include: {
                 permission: true
               }
-            }
+            },
+            branch: true
           }
         });
 
@@ -129,8 +130,8 @@ export default async function handler(req: any, res: any) {
         if (Array.isArray(permissions) && permissions.length > 0) {
           // Filter out invalid IDs
           const validPermissionIds = permissions
-            .map(id => Number(id))
-            .filter(id => !isNaN(id) && id > 0);
+            .map((id: any) => Number(id))
+            .filter((id: number) => !isNaN(id) && id > 0);
 
           if (validPermissionIds.length > 0) {
             await tx.rolePermission.createMany({

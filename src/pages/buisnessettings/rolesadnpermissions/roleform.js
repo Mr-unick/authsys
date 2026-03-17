@@ -113,9 +113,13 @@ const RolePermissionsForm = () => {
       let response;
 
       if (id) {
-        response = await axios.put(`${ROOT_URL}api/getRoleProps?id=${id}`, roleData);
+        response = await axios.put(`${ROOT_URL}api/getRoleProps?id=${id}`, roleData, {
+          validateStatus: (status) => status >= 200 && status < 500
+        });
       } else {
-        response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData);
+        response = await axios.post(`${ROOT_URL}api/getRoleProps`, roleData, {
+          validateStatus: (status) => status >= 200 && status < 500
+        });
       }
 
       if (response.status === 200 || response.status === 201) {
@@ -141,8 +145,10 @@ const RolePermissionsForm = () => {
         const role = response.data.data;
         setRoleName(role.name);
         
-        // Match branch
-        if (role.branch_id && branches.length > 0) {
+        // Match branch via direct relational include or manual fallback
+        if (role.branch) {
+          setSelectedBranch(role.branch);
+        } else if (role.branch_id && branches.length > 0) {
           const matchedBranch = branches.find(b => b.id === role.branch_id);
           if (matchedBranch) setSelectedBranch(matchedBranch);
         }
@@ -165,10 +171,10 @@ const RolePermissionsForm = () => {
 
   useEffect(() => {
     const { id } = router.query;
-    if (id && branches.length > 0) {
+    if (id) {
       fetchRoleData(id);
     }
-  }, [router.query.id, branches, fetchRoleData]);
+  }, [router.query.id, fetchRoleData]);
 
   useEffect(() => {
     handlefetchPermissions();

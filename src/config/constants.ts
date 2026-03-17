@@ -37,6 +37,11 @@ export const permissions = [
     'create_area_of_operation',
     'edit_area_of_operation',
     'delete_area_of_operation',
+    'view_discussion',
+    'view_stage_pipeline',
+    'add_comment',
+    'update_stage',
+    'add_followup',
 ] as const;
 
 export type Permission = (typeof permissions)[number];

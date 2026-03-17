@@ -108,6 +108,17 @@ async function main() {
                 { permission: 'view_settings', action: 'read', description: 'Can view business settings' },
                 { permission: 'update_settings', action: 'write', description: 'Can modify business info' },
             ]
+        },
+        {
+            name: 'Lead Details',
+            description: 'Advanced Lead Operations Module',
+            permissions: [
+                { permission: 'view_discussion', action: 'read', description: 'Can view lead discussions' },
+                { permission: 'view_stage_pipeline', action: 'read', description: 'Can view lead stage pipeline' },
+                { permission: 'add_comment', action: 'write', description: 'Can add comments to lead' },
+                { permission: 'update_stage', action: 'write', description: 'Can update lead stage' },
+                { permission: 'add_followup', action: 'write', description: 'Can add scheduled follow-ups' },
+            ]
         }
     ];
 

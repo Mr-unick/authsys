@@ -197,26 +197,28 @@ export default function LeadDetails({ data, refresh }) {
                 </div>
                 Next Objective
               </CardTitle>
-              <Modal
-                title={'Schedule Follow-up'}
-                classname={'hidden'}
-                open={followUpOpen}
-                onOpenChange={setFollowUpOpen}
-                customebutton={
-                  <button onClick={() => setFollowUpOpen(true)} className="text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-amber-100 border border-white/10 hover:scale-[1.02] active:scale-95">
-                    <Plus size={12} strokeWidth={3} /> Plan Objective
-                  </button>
-                }
-              >
-                <div className="p-4">
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-100 pb-3">Strategic Reminder</p>
-                  <FormComponent
-                    id={lead?.id}
-                    formdata={{ formurl: 'addfollowupform' }}
-                    onSuccess={() => { setFollowUpOpen(false); if (refresh) refresh(); }}
-                  />
-                </div>
-              </Modal>
+              {lead?.addfollowup && (
+                <Modal
+                  title={'Schedule Follow-up'}
+                  classname={'hidden'}
+                  open={followUpOpen}
+                  onOpenChange={setFollowUpOpen}
+                  customebutton={
+                    <button onClick={() => setFollowUpOpen(true)} className="text-[10px] font-black uppercase tracking-widest text-white bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 px-4 py-2 rounded-xl transition-all flex items-center gap-2 shadow-lg shadow-amber-100 border border-white/10 hover:scale-[1.02] active:scale-95">
+                      <Plus size={12} strokeWidth={3} /> Plan Objective
+                    </button>
+                  }
+                >
+                  <div className="p-4">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-100 pb-3">Strategic Reminder</p>
+                    <FormComponent
+                      id={lead?.id}
+                      formdata={{ formurl: 'addfollowupform' }}
+                      onSuccess={() => { setFollowUpOpen(false); if (refresh) refresh(); }}
+                    />
+                  </div>
+                </Modal>
+              )}
             </CardHeader>
             <CardContent className="p-6">
               {lead?.nextFollowUp ? (

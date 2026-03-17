@@ -89,15 +89,16 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
 
     const fetchActivities = async () => {
         try {
-            const res = await axios.get('/api/activities');
-            if (res.data.status === 200) {
+            const res = await axios.get('/api/activities', {
+                validateStatus: (status) => status >= 200 && status < 500
+            });
+            if (res.status === 401) {
+                router.push('/signin');
+            } else if (res.data.status === 200) {
                 setActivities(res.data.data);
             }
         } catch (error) {
             console.error("Failed to fetch activities:", error);
-            if (error.response && error.response.status === 401) {
-                router.push('/signin');
-            }
         } finally {
             setLoading(false);
         }
