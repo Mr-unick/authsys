@@ -291,9 +291,9 @@ export default function LeadDetails({ data, refresh }) {
         </div>
 
         {/* ── Right Column: Dynamic Timeline ── */}
-        <div className="lg:col-span-8 flex flex-col space-y-6">
-          <Card className="flex-1 border-none shadow-sm rounded-2xl overflow-hidden flex flex-col bg-white">
-            <Tabs defaultValue="comments" className="flex-1 flex flex-col">
+        <div className="lg:col-span-8 flex flex-col space-y-6 lg:sticky lg:top-4 lg:h-[calc(100vh-2rem)] z-10">
+          <Card className="flex-1 border-none shadow-sm rounded-2xl overflow-hidden flex flex-col bg-white min-h-0">
+            <Tabs defaultValue="comments" className="flex-1 flex flex-col min-h-0">
               <CardHeader className="bg-gray-50/50 border-b border-gray-100 py-3 sm:py-5 px-6 flex flex-row items-center justify-between">
                 <TabsList className="bg-slate-200/50 p-1 rounded-xl h-auto gap-1 w-full sm:w-auto">
                   <TabsTrigger value="comments" className="flex-1 sm:flex-none rounded-lg px-6 py-2 text-[10px] font-bold uppercase tracking-widest transition-all data-[state=active]:bg-[#0F1626] data-[state=active]:text-white data-[state=active]:shadow-md">
@@ -308,9 +308,9 @@ export default function LeadDetails({ data, refresh }) {
                   <span className="text-[10px] font-bold uppercase tracking-widest">Real-time update</span>
                 </div>
               </CardHeader>
-              <CardContent className="p-0 flex-1 flex flex-col min-h-[550px]">
-                <TabsContent value="comments" className="mt-0 flex-1 border-none ring-0 outline-none flex flex-col focus-visible:ring-0">
-                  <div className="flex-1 flex flex-col focus-visible:ring-0">
+              <CardContent className="p-0 flex-1 flex flex-col min-h-0">
+                <TabsContent value="comments" className="mt-0 flex-1 border-none ring-0 outline-none data-[state=active]:flex flex-col focus-visible:ring-0 min-h-0">
+                  <div className="flex-1 flex flex-col focus-visible:ring-0 min-h-0">
                     {lead?.viewcomment
                       ? <CommentsSection comments={lead.comments} addcomment={lead?.addcomment} />
                       : <div className="flex-1 flex flex-col items-center justify-center p-20 text-slate-300">
@@ -321,21 +321,21 @@ export default function LeadDetails({ data, refresh }) {
                   </div>
                 </TabsContent>
 
-                <TabsContent value="stage" className="mt-0 flex-1 border-none ring-0 outline-none flex flex-col focus-visible:ring-0">
+                <TabsContent value="stage" className="mt-0 flex-1 border-none ring-0 outline-none data-[state=active]:flex flex-col focus-visible:ring-0">
                   <div className="flex-1 flex flex-col p-6 focus-visible:ring-0">
                     {lead?.viewstage ? (
                       <div className="flex-1 flex flex-col">
 
                         {/* Understated Status Header */}
-                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-50/50">
-                          <div className="flex items-center gap-3">
-                            <div className="w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-indigo-50" />
+                        <div className="flex items-start justify-between mb-8 pb-4 border-b border-slate-50/50">
+                          <div className="flex items-start gap-3">
+                            <div className="w-2 h-2 rounded-full bg-indigo-500 ring-4 ring-indigo-50 mt-1" />
                             <div className="flex flex-col">
                               <span className="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">Status</span>
-                              <span className="text-xs font-black uppercase text-[#0F1626] tracking-widest leading-none">{lead.leadStage}</span>
+                              <span className="text-xs font-black uppercase text-[#0F1626] tracking-widest leading-none mt-0.5">{lead.leadStage}</span>
                             </div>
                           </div>
-                          <div className="flex items-center gap-3">
+                          <div className="flex items-start gap-3">
                             {lead?.changestage && (
                               <Modal
                                 title={'Update Stage'}
@@ -363,7 +363,7 @@ export default function LeadDetails({ data, refresh }) {
                                 </div>
                               </Modal>
                             )}
-                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest italic hidden sm:block px-2 border-l border-slate-100">History Log</span>
+                            <span className="text-[10px] font-bold text-slate-300 uppercase tracking-widest italic hidden sm:block px-2 border-l border-slate-100 mt-1.5">History Log</span>
                           </div>
                         </div>
 

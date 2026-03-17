@@ -114,9 +114,9 @@ const CommentsSection = ({ comments, addcomment }) => {
     }, [lead, comments]);
 
     return (
-        <div className="flex flex-col h-full bg-slate-50/30">
+        <div className="flex flex-col h-full min-h-[400px] bg-slate-50/30 relative">
             {/* Feed Area */}
-            <div className="flex-grow overflow-y-auto custom-scrollbar p-6 space-y-6 min-h-[400px]">
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
                 {Comments.length === 0 ? (
                     <div className="h-full flex flex-col items-center justify-center text-gray-400 gap-4 opacity-40">
                         <div className="bg-gray-100 p-6 rounded-full">
@@ -136,7 +136,7 @@ const CommentsSection = ({ comments, addcomment }) => {
             </div>
 
             {/* Input Area */}
-            <div className="p-6 bg-white border-t border-gray-100 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
+            <div className="shrink-0 sticky bottom-0 z-10 p-6 bg-white border-t border-gray-100 shadow-[0_-10px_40px_-15px_rgba(0,0,0,0.05)]">
                 {loader ? (
                     <div className="flex items-center justify-center h-24 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
                         <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
@@ -191,7 +191,7 @@ const CommentsSection = ({ comments, addcomment }) => {
                                 placeholder="Write a comment or type @ to mention..."
                                 value={newComment}
                                 onChange={handleCommentChange}
-                                className="w-full p-4 bg-transparent outline-none resize-none h-28 text-sm font-medium text-slate-700 placeholder:text-slate-300"
+                                className="w-full p-4 bg-transparent outline-none resize-y min-h-[112px] max-h-[400px] text-sm font-medium text-slate-700 placeholder:text-slate-300 custom-scrollbar block"
                             />
 
                             <div className="flex items-center justify-between px-4 py-3 border-t border-slate-200/40">
