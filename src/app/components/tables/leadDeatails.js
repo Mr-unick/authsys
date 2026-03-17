@@ -45,6 +45,7 @@ export default function LeadDetails({ data, refresh }) {
   const { lead, setLead } = useContext(LeadContext);
   const [followUpOpen, setFollowUpOpen] = useState(false);
   const [stageOpen, setStageOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   useEffect(() => {
     setLead(data);
@@ -132,6 +133,31 @@ export default function LeadDetails({ data, refresh }) {
                 <Mail size={18} className="group-hover:scale-110 transition-transform" />
               </a>
             </ToolTipComponent>
+            {lead?.editlead && (
+              <ToolTipComponent title="Edit Lead">
+                <Modal
+                  title={'Edit Lead'}
+                  classname={'hidden'}
+                  icon='Edit'
+                  open={editOpen}
+                  onOpenChange={setEditOpen}
+                  customebutton={
+                    <button onClick={() => setEditOpen(true)} className="h-10 w-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition-all active:scale-95">
+                      <Edit size={18} />
+                    </button>
+                  }
+                >
+                  <div className="p-4">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-100 pb-3">Modification Control</p>
+                    <FormComponent
+                      id={lead?.id}
+                      formdata={{ formurl: 'leadform' }}
+                      onSuccess={() => { setEditOpen(false); if (refresh) refresh(); }}
+                    />
+                  </div>
+                </Modal>
+              </ToolTipComponent>
+            )}
           </div>
         </div>
       </div>
@@ -168,14 +194,55 @@ export default function LeadDetails({ data, refresh }) {
                   </div>
                   <span className="text-xs font-extrabold text-[#0F1626]">{lead?.phone || '—'}</span>
                 </div>
-                <div className="p-5 flex flex-col gap-2 group">
+                <div className="p-5 flex items-center justify-between group">
+                  <div className="flex items-center gap-3">
+                    <div className="text-slate-400 group-hover:text-indigo-500 transition-colors"><PhoneCall size={16} /></div>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Sec. Contact</span>
+                  </div>
+                  <span className="text-xs font-extrabold text-[#0F1626]">{lead?.secondPhone || '—'}</span>
+                </div>
+                <div className="p-5 flex flex-col gap-3 group">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="text-slate-400 group-hover:text-indigo-500 transition-colors"><MapPin size={16} /></div>
-                      <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Region</span>
+                      <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Address</span>
                     </div>
                   </div>
-                  <span className="text-xs font-extrabold text-[#0F1626] leading-relaxed bg-slate-50/50 p-2.5 rounded-xl border border-slate-50">{lead?.address || '—'}</span>
+                  <div className="bg-slate-50/50 p-4 rounded-xl border border-slate-50 flex flex-col gap-3">
+                    <span className="text-xs font-extrabold text-[#0F1626] leading-relaxed">{lead?.address || '—'}</span>
+                    <div className="grid grid-cols-2 gap-4 pt-3 border-t border-slate-100">
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">City</span>
+                        <span className="text-xs font-bold text-slate-800">{lead?.city || '—'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">State</span>
+                        <span className="text-xs font-bold text-slate-800">{lead?.state || '—'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Country</span>
+                        <span className="text-xs font-bold text-slate-800">{lead?.country || '—'}</span>
+                      </div>
+                      <div className="flex flex-col gap-1">
+                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Pincode</span>
+                        <span className="text-xs font-bold text-slate-800">{lead?.pincode || '—'}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="p-5 flex items-center justify-between group">
+                  <div className="flex items-center gap-3">
+                    <div className="text-slate-400 group-hover:text-indigo-500 transition-colors"><Timer size={16} /></div>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Created At</span>
+                  </div>
+                  <span className="text-xs font-extrabold text-[#0F1626] font-mono">{new Date(lead?.created_at).toLocaleDateString('en-GB')}</span>
+                </div>
+                <div className="p-5 flex items-center justify-between group">
+                  <div className="flex items-center gap-3">
+                    <div className="text-slate-400 group-hover:text-indigo-500 transition-colors"><History size={16} /></div>
+                    <span className="text-xs font-bold text-slate-500 uppercase tracking-tighter">Last Updated</span>
+                  </div>
+                  <span className="text-xs font-extrabold text-[#0F1626] font-mono">{new Date(lead?.updated_at).toLocaleDateString('en-GB')}</span>
                 </div>
                 <div className="p-5 flex items-center justify-between group">
                   <div className="flex items-center gap-3">
@@ -187,6 +254,7 @@ export default function LeadDetails({ data, refresh }) {
               </div>
             </CardContent>
           </Card>
+
 
           {/* Strategic Planning Card */}
           <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">

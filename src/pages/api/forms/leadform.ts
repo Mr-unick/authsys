@@ -35,17 +35,22 @@ export default async function handler(req: any, res: any) {
                 where: { id: Number(id) }
             });
 
-            form.addField('name', 'text').required().value(lead?.name || '').disabled();
-            form.addField('email', 'text').value(lead?.email || '').disabled();
+            form.addField('name', 'text').required().value(lead?.name || '');
+            form.addField('email', 'text').value(lead?.email || '');
 
             if (isMultiBranchActive) {
                 const bField = form.addField('branch', 'select').options(branchOptions).value((lead as any)?.branch_id);
                 if (user.is_branch_admin) bField.disabled();
             }
 
-            form.addField('phone', 'text').value(lead?.phone || '').disabled();
+            form.addField('phone', 'text').value(lead?.phone || '');
             form.addField('second_phone', 'text').value(lead?.second_phone || '');
-            form.addField('address', 'textarea').newRow().value(lead?.address || '');
+            form.addField('address', 'textarea').value(lead?.address || '');
+            form.addField('city', 'text').value(lead?.city || '');
+            form.addField('state', 'text').value(lead?.state || '');
+            form.addField('country', 'text').value(lead?.country || '');
+            form.addField('pincode', 'text').value(lead?.pincode || '');
+            form.addField('notes', 'textarea').newRow().value(lead?.notes || '');
             form.submiturl('getLeadProps');
             form.method('put');
         } else {
@@ -62,6 +67,11 @@ export default async function handler(req: any, res: any) {
             form.addField('phone', 'text');
             form.addField('second_phone', 'text');
             form.addField('address', 'textarea');
+            form.addField('city', 'text');
+            form.addField('state', 'text');
+            form.addField('country', 'text');
+            form.addField('pincode', 'text');
+            form.addField('notes', 'textarea').newRow();
             form.submiturl('getLeadProps');
             form.method('post');
         }
