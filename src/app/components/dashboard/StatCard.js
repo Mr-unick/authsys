@@ -23,7 +23,7 @@ export const StatCard = ({ label, value, trend, trendDir = 'up', icon, color = "
     const p = palette[color] || palette.indigo;
 
     return (
-        <div className="bg-white rounded-2xl border border-slate-100 p-5 hover:shadow-lg hover:shadow-slate-100 hover:-translate-y-0.5 transition-all duration-300 group">
+        <div className="bg-white rounded-xl border border-slate-100 p-5 hover:shadow-lg hover:shadow-slate-100/50 hover:-translate-y-0.5 transition-all duration-300 group">
             <div className="flex items-start justify-between mb-5">
                 <div className={`w-10 h-10 rounded-xl ${p.bg} ${p.text} ring-1 ${p.ring} flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform duration-300`}>
                     {getIcon()}

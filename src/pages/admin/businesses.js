@@ -95,8 +95,8 @@ export default function BusinessesPage() {
         <div className="max-w-[1400px] mx-auto px-4 py-8 pb-32">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
                 <div>
-                    <h1 className="text-3xl font-extrabold text-[#0F1626] tracking-tight">Enterprise Directory</h1>
-                    <p className="text-sm text-gray-500 font-medium">Manage and monitor all tenant businesses from one portal</p>
+                    <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Enterprise Directory</h1>
+                    <p className="text-sm text-slate-500 font-medium">Manage and monitor all tenant businesses from one portal</p>
                 </div>
                 <button
                     onClick={() => {
@@ -109,7 +109,7 @@ export default function BusinessesPage() {
                         });
                         setShowModal(true);
                     }}
-                    className="bg-[#0F1626] text-white px-8 py-3.5 rounded-2xl text-xs font-black uppercase tracking-widest shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-3"
+                    className="bg-indigo-600 text-white px-6 py-3 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-colors flex items-center gap-2.5 shadow-sm"
                 >
                     <Plus size={18} /> Register New Business
                 </button>
@@ -117,66 +117,68 @@ export default function BusinessesPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {businesses.map((b) => (
-                    <Card key={b.id} className="border-none shadow-sm rounded-3xl overflow-hidden group hover:shadow-xl transition-all duration-500">
+                    <Card key={b.id} className="border border-slate-100 shadow-sm rounded-xl overflow-hidden group hover:shadow-md transition-all duration-300 bg-white">
                         <CardContent className="p-0">
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-6">
-                                    <div className="h-14 w-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-                                        <Building2 size={28} />
+                                    <div className="h-12 w-12 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-600">
+                                        <Building2 size={24} />
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-1.5">
                                         <button
                                             onClick={() => {
                                                 setSubEditing(b);
                                                 setShowSubModal(true);
                                             }}
-                                            className="p-2 text-gray-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all"
+                                            className="p-2 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors border border-transparent hover:border-emerald-100"
                                             title="Manage Subscription"
                                         >
                                             <Shield size={16} />
                                         </button>
-                                        <button onClick={() => openEdit(b)} className="p-2 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all">
+                                        <button onClick={() => openEdit(b)} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors border border-transparent hover:border-indigo-100">
                                             <Edit2 size={16} />
                                         </button>
-                                        <button onClick={() => deleteBusiness(b.id)} className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
+                                        <button onClick={() => deleteBusiness(b.id)} className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors border border-transparent hover:border-red-100">
                                             <Trash2 size={16} />
                                         </button>
                                     </div>
                                 </div>
 
-                                <h3 className="text-xl font-bold text-[#0F1626] mb-1">{b.business_name}</h3>
-                                <p className="text-xs text-gray-400 font-medium flex items-center gap-1 mb-4">
-                                    <MapPin size={12} /> {b.city}, {b.state}
+                                <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight">{b.business_name}</h3>
+                                <p className="text-xs text-slate-400 font-medium flex items-center gap-1.5 mb-5">
+                                    <MapPin size={12} className="text-slate-300" /> {b.city}, {b.state}
                                 </p>
 
-                                <div className="space-y-3 pt-4 border-t border-gray-50">
-                                    <div className="flex items-center justify-between text-[11px]">
-                                        <span className="text-gray-400 font-bold uppercase tracking-tighter">Tenant Stats</span>
+                                <div className="space-y-4 pt-5 border-t border-slate-50">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tenant Stats</span>
                                         <div className="flex gap-4">
-                                            <span className="flex items-center gap-1 font-bold text-indigo-600">
+                                            <span className="flex items-center gap-1.5 text-xs font-bold text-indigo-600">
                                                 <Users size={12} /> {b._count?.users || 0}
                                             </span>
-                                            <span className="flex items-center gap-1 font-bold text-emerald-600">
+                                            <span className="flex items-center gap-1.5 text-xs font-bold text-emerald-600">
                                                 <Target size={12} /> {b._count?.leads || 0}
                                             </span>
                                         </div>
                                     </div>
-                                    <div className="bg-gray-50 rounded-2xl p-3 flex flex-col gap-2">
-                                        <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600">
-                                            <Mail size={12} className="text-indigo-400" /> {b.email}
+                                    <div className="bg-slate-50 border border-slate-100/50 rounded-xl p-3.5 space-y-2.5">
+                                        <div className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
+                                            <Mail size={13} className="text-slate-400 shrink-0" /> <span className="truncate">{b.email}</span>
                                         </div>
-                                        <div className="flex items-center gap-2 text-[10px] font-bold text-gray-600">
-                                            <Phone size={12} className="text-indigo-400" /> {b.contact_number}
+                                        <div className="flex items-center gap-2.5 text-xs font-medium text-slate-600">
+                                            <Phone size={13} className="text-slate-400 shrink-0" /> {b.contact_number}
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div className="px-6 py-4 bg-[#0F1626] text-white flex items-center justify-between overflow-hidden relative">
+                            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between relative overflow-hidden">
                                 <div className="relative z-10">
-                                    <p className="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-0.5">Owner</p>
-                                    <p className="text-xs font-bold">{b.owner_name}</p>
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Business Owner</p>
+                                    <p className="text-sm font-semibold text-slate-700">{b.owner_name}</p>
                                 </div>
-                                <Info size={40} className="absolute right-[-10px] bottom-[-10px] opacity-10 rotate-12" />
+                                <div className="absolute right-[-4px] bottom-[-4px] opacity-10 bg-indigo-600/5 p-4 rounded-full">
+                                    <Info size={32} className="text-indigo-600 rotate-12" />
+                                </div>
                             </div>
                         </CardContent>
                     </Card>
@@ -184,80 +186,80 @@ export default function BusinessesPage() {
             </div>
 
             {showModal && (
-                <div className="fixed inset-0 bg-black/70 backdrop-blur-md z-50 flex items-center justify-center p-4">
-                    <div className="bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 shadow-2xl">
-                        <div className="p-8 border-b border-gray-100 flex items-center justify-between">
+                <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div className="bg-white rounded-xl w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 shadow-xl border border-slate-100 flex flex-col">
+                        <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
                             <div>
-                                <h3 className="text-2xl font-black text-[#0F1626] tracking-tight">
+                                <h3 className="text-xl font-bold text-slate-800">
                                     {editing ? 'Update Enterprise' : 'Register New Business'}
                                 </h3>
-                                <p className="text-xs text-gray-400 mt-1 font-medium">Please provide accurate compliance and contact details.</p>
+                                <p className="text-xs text-slate-400 mt-1 font-medium">Please provide accurate compliance and contact details.</p>
                             </div>
-                            <button onClick={() => setShowModal(false)} className="h-10 w-10 bg-gray-50 text-gray-400 hover:text-red-500 rounded-full flex items-center justify-center transition-all">
-                                <X size={20} />
+                            <button onClick={() => setShowModal(false)} className="h-9 w-9 bg-slate-50 text-slate-400 hover:text-red-500 rounded-lg flex items-center justify-center transition-colors">
+                                <X size={18} />
                             </button>
                         </div>
-                        <form onSubmit={handleSave} className="p-8">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[60vh] overflow-y-auto px-2 scrollbar-hide mb-8">
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Business Name</label>
-                                    <input required type="text" value={formData.business_name} onChange={e => setFormData({ ...formData, business_name: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100 font-bold" />
+                        <form onSubmit={handleSave} className="p-6">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 max-h-[60vh] overflow-y-auto px-1 scrollbar-hide mb-6">
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Business Name</label>
+                                    <input required type="text" value={formData.business_name} onChange={e => setFormData({ ...formData, business_name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Primary Email</label>
-                                    <input required type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Primary Email</label>
+                                    <input required type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Contact Number</label>
-                                    <input required type="text" value={formData.contact_number} onChange={e => setFormData({ ...formData, contact_number: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Contact Number</label>
+                                    <input required type="text" value={formData.contact_number} onChange={e => setFormData({ ...formData, contact_number: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">GST Number</label>
-                                    <input required type="text" value={formData.gst_number} onChange={e => setFormData({ ...formData, gst_number: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100 font-mono" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">GST Number</label>
+                                    <input required type="text" value={formData.gst_number} onChange={e => setFormData({ ...formData, gst_number: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors font-mono" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Owner Name</label>
-                                    <input required type="text" value={formData.owner_name} onChange={e => setFormData({ ...formData, owner_name: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Owner Name</label>
+                                    <input required type="text" value={formData.owner_name} onChange={e => setFormData({ ...formData, owner_name: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Owner Email</label>
-                                    <input required type="email" value={formData.owner_email} onChange={e => setFormData({ ...formData, owner_email: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Owner Email</label>
+                                    <input required type="email" value={formData.owner_email} onChange={e => setFormData({ ...formData, owner_email: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2 md:col-span-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Full Address</label>
-                                    <textarea required rows={2} value={formData.business_address} onChange={e => setFormData({ ...formData, business_address: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5 md:col-span-2">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">Full Address</label>
+                                    <textarea required rows={2} value={formData.business_address} onChange={e => setFormData({ ...formData, business_address: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors resize-none" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">City</label>
-                                    <input required type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">City</label>
+                                    <input required type="text" value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">State</label>
-                                    <input required type="text" value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" />
+                                <div className="space-y-1.5">
+                                    <label className="text-xs font-semibold text-slate-600 px-0.5">State</label>
+                                    <input required type="text" value={formData.state} onChange={e => setFormData({ ...formData, state: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" />
                                 </div>
 
                                 {!editing && (
                                     <>
-                                        <div className="md:col-span-2 pt-6 pb-2 border-t border-gray-100">
-                                            <h4 className="text-sm font-black text-indigo-600 uppercase tracking-widest">Business Admin Account</h4>
-                                            <p className="text-[10px] text-gray-400 font-medium">This account will be the primary administrator for the tenant.</p>
+                                        <div className="md:col-span-2 pt-5 pb-1 border-t border-slate-100 mt-2">
+                                            <h4 className="text-sm font-bold text-indigo-600">Business Admin Account</h4>
+                                            <p className="text-[11px] text-slate-400 font-medium">This account will be the primary administrator for the tenant.</p>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Admin Name</label>
-                                            <input required type="text" value={formData.admin_name} onChange={e => setFormData({ ...formData, admin_name: e.target.value })} className="w-full bg-white border-2 border-indigo-50 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100 font-bold" placeholder="Full Name" />
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-600 px-0.5">Admin Name</label>
+                                            <input required type="text" value={formData.admin_name} onChange={e => setFormData({ ...formData, admin_name: e.target.value })} className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-semibold focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" placeholder="Full Name" />
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Portal Email</label>
-                                            <input required type="email" value={formData.admin_email} onChange={e => setFormData({ ...formData, admin_email: e.target.value })} className="w-full bg-white border-2 border-indigo-50 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" placeholder="admin@company.com" />
+                                        <div className="space-y-1.5">
+                                            <label className="text-xs font-semibold text-slate-600 px-0.5">Portal Email</label>
+                                            <input required type="email" value={formData.admin_email} onChange={e => setFormData({ ...formData, admin_email: e.target.value })} className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" placeholder="admin@company.com" />
                                         </div>
-                                        <div className="space-y-2 md:col-span-2">
-                                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Secure Password</label>
-                                            <input required type="password" value={formData.admin_password} onChange={e => setFormData({ ...formData, admin_password: e.target.value })} className="w-full bg-white border-2 border-indigo-50 rounded-2xl px-4 py-3 text-sm focus:ring-2 focus:ring-indigo-100" placeholder="••••••••" />
+                                        <div className="space-y-1.5 md:col-span-2">
+                                            <label className="text-xs font-semibold text-slate-600 px-0.5">Secure Password</label>
+                                            <input required type="password" value={formData.admin_password} onChange={e => setFormData({ ...formData, admin_password: e.target.value })} className="w-full bg-white border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-medium focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors" placeholder="••••••••" />
                                         </div>
                                     </>
                                 )}
                             </div>
-                            <button type="submit" className="w-full bg-indigo-600 text-white py-5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.3em] shadow-2xl shadow-indigo-200 hover:bg-indigo-700 transition-all transform hover:scale-[0.99] active:scale-95">
+                            <button type="submit" className="w-full bg-indigo-600 text-white py-3 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-all shadow-sm">
                                 {editing ? 'Apply Updates' : 'Confirm Registration'}
                             </button>
                         </form>
@@ -363,28 +365,28 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
     if (loading) return null;
 
     return (
-        <div className="fixed inset-0 bg-[#0F1626]/80 backdrop-blur-xl z-[60] flex items-center justify-center p-4">
-            <div className="bg-white rounded-[3rem] w-full max-w-3xl overflow-hidden shadow-2xl animate-in fade-in zoom-in-95 duration-300">
-                <div className="p-10 border-b border-gray-100 flex items-center justify-between bg-gray-50/50">
-                    <div className="flex items-center gap-5">
-                        <div className="h-16 w-16 bg-[#0F1626] rounded-3xl flex items-center justify-center text-white shadow-xl shadow-indigo-100 rotate-3 group-hover:rotate-0 transition-transform">
-                            <Shield size={32} />
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
+            <div className="bg-white rounded-xl w-full max-w-3xl overflow-hidden shadow-xl animate-in fade-in zoom-in-95 duration-300 border border-slate-100 flex flex-col">
+                <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-white">
+                    <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 bg-indigo-50 border border-indigo-100 rounded-xl flex items-center justify-center text-indigo-600 shadow-sm transition-transform">
+                            <Shield size={24} />
                         </div>
                         <div>
-                            <h3 className="text-2xl font-black text-[#0F1626] tracking-tight">Privilege Governance</h3>
-                            <p className="text-xs text-gray-400 font-bold uppercase tracking-widest mt-1">Tenant: {business.business_name}</p>
+                            <h3 className="text-xl font-bold text-slate-800 tracking-tight">Privilege Governance</h3>
+                            <p className="text-xs text-slate-400 font-semibold uppercase tracking-wider mt-0.5">Tenant: {business.business_name}</p>
                         </div>
                     </div>
-                    <button onClick={onClose} className="h-12 w-12 bg-white text-gray-400 hover:text-red-500 rounded-2xl flex items-center justify-center shadow-sm transition-all">
-                        <X size={24} />
+                    <button onClick={onClose} className="h-9 w-9 bg-slate-50 text-slate-400 hover:text-red-500 rounded-lg flex items-center justify-center transition-all">
+                        <X size={18} />
                     </button>
                 </div>
 
-                <div className="p-10 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                <div className="p-6 max-h-[70vh] overflow-y-auto scrollbar-hide">
                     {/* Plan Selection */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                        <div className="space-y-2.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
                                 <CreditCard size={12} className="text-indigo-500" /> Subscription Plan
                             </label>
                             <div className="grid grid-cols-2 gap-2">
@@ -392,7 +394,7 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                                     <button
                                         key={p}
                                         onClick={() => setData({ ...data, plan: p })}
-                                        className={`px-4 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all ${data.plan === p ? 'bg-[#0F1626] text-white shadow-xl' : 'bg-gray-50 text-gray-400 hover:bg-gray-100'}`}
+                                        className={`px-3 py-2.5 rounded-lg text-xs font-semibold tracking-wide transition-all border ${data.plan === p ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'}`}
                                     >
                                         {p}
                                     </button>
@@ -400,14 +402,14 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                        <div className="space-y-2.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
                                 <Clock size={12} className="text-emerald-500" /> Free Trial Period
                             </label>
                             <select
                                 value={data.trial_months}
                                 onChange={e => setData({ ...data, trial_months: e.target.value })}
-                                className="w-full bg-gray-50 border-none rounded-2xl px-5 py-4 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-semibold text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors"
                             >
                                 <option value={0}>No Active Trial</option>
                                 <option value={1}>1 Month Trial</option>
@@ -419,65 +421,65 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                     </div>
 
                     {/* Granular Limits */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Branches</label>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Max Branches</label>
                             <input
                                 type="number"
                                 value={data.max_branches}
                                 onChange={e => setData({ ...data, max_branches: e.target.value })}
-                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors"
                             />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Total Users</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Total Users</label>
                             <input
                                 type="number"
                                 value={data.total_user_limit}
                                 onChange={e => setData({ ...data, total_user_limit: e.target.value })}
-                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors"
                             />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Stages</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Max Stages</label>
                             <input
                                 type="number"
                                 value={data.max_lead_stages}
                                 onChange={e => setData({ ...data, max_lead_stages: e.target.value })}
-                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors"
                             />
                         </div>
-                        <div className="space-y-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest px-1">Max Webhooks</label>
+                        <div className="space-y-1.5">
+                            <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest px-1">Max Webhooks</label>
                             <input
                                 type="number"
                                 value={data.max_webhooks}
                                 onChange={e => setData({ ...data, max_webhooks: e.target.value })}
-                                className="w-full bg-gray-50 border-none rounded-2xl px-4 py-3 text-sm font-bold focus:ring-2 focus:ring-indigo-100"
+                                className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2.5 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors"
                             />
                         </div>
                     </div>
 
                     {/* Features Grid */}
-                    <div className="space-y-6">
-                        <label className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] flex items-center gap-2">
+                    <div className="space-y-4">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-2 px-1">
                             <Sparkles size={12} className="text-amber-500" /> Premium Capability Matrix
                         </label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                             {featureList.map((f) => {
                                 const active = data.features.includes(f.key);
                                 return (
                                     <button
                                         key={f.key}
                                         onClick={() => toggleFeature(f.key)}
-                                        className={`flex items-start gap-4 p-5 rounded-[2rem] border-2 text-left transition-all ${active ? 'border-indigo-600 bg-indigo-50/30' : 'border-gray-50 bg-white hover:border-gray-200'}`}
+                                        className={`flex items-start gap-3.5 p-4 rounded-xl border transition-all text-left group/feat ${active ? 'border-indigo-600 bg-indigo-50/20' : 'border-slate-100 bg-white hover:border-slate-200 hover:bg-slate-50/30'}`}
                                     >
-                                        <div className={`h-10 w-10 rounded-2xl flex items-center justify-center shrink-0 ${active ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-400'}`}>
-                                            {active ? <CheckCircle2 size={20} /> : <div className="h-2 w-2 bg-gray-300 rounded-full" />}
+                                        <div className={`h-9 w-9 rounded-lg flex items-center justify-center shrink-0 border transition-colors ${active ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm' : 'bg-slate-50 text-slate-300 border-slate-100'}`}>
+                                            {active ? <CheckCircle2 size={18} /> : <div className="h-1.5 w-1.5 bg-slate-200 rounded-full" />}
                                         </div>
                                         <div>
-                                            <p className={`text-sm font-black ${active ? 'text-indigo-900' : 'text-gray-600'}`}>{f.name}</p>
-                                            <p className="text-[10px] text-gray-400 font-medium leading-tight mt-1">{f.description}</p>
+                                            <p className={`text-sm font-bold ${active ? 'text-indigo-900' : 'text-slate-700 group-hover/feat:text-slate-900'}`}>{f.name}</p>
+                                            <p className="text-[11px] text-slate-400 font-medium leading-tight mt-0.5">{f.description}</p>
                                         </div>
                                     </button>
                                 );
@@ -486,17 +488,17 @@ function SubscriptionModal({ business, onClose, onSuccess }) {
                     </div>
                 </div>
 
-                <div className="p-10 bg-gray-50/50 border-t border-gray-100 flex gap-4">
+                <div className="p-6 bg-slate-50 border-t border-slate-100 flex gap-3">
                     <button
                         onClick={handleSave}
                         disabled={saving}
-                        className="flex-1 bg-[#0F1626] text-white py-5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.3em] shadow-xl hover:scale-[0.99] active:scale-95 transition-all flex items-center justify-center gap-3"
+                        className="flex-1 bg-indigo-600 text-white py-3 rounded-lg text-sm font-semibold hover:bg-indigo-700 transition-all flex items-center justify-center gap-2 shadow-sm"
                     >
-                        {saving ? <Loader2 className="animate-spin h-5 w-5" /> : "Deploy Configuration"}
+                        {saving ? <Loader2 className="animate-spin h-4 w-4" /> : "Deploy Configuration"}
                     </button>
                     <button
                         onClick={onClose}
-                        className="px-10 bg-white text-gray-400 py-5 rounded-[1.5rem] text-xs font-black uppercase tracking-[0.2em] border border-gray-100 hover:bg-gray-50 transition-all font-bold"
+                        className="px-8 bg-white text-slate-500 py-3 rounded-lg text-sm font-semibold border border-slate-200 hover:bg-slate-50 transition-all"
                     >
                         Cancel
                     </button>

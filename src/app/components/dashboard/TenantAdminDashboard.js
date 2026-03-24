@@ -12,7 +12,7 @@ import { GettingStarted } from '../onboarding/GettingStarted';
 
 function SectionCard({ icon, iconBg, iconColor, title, action, children, className = "" }) {
     return (
-        <div className={`bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm ${className}`}>
+        <div className={`bg-white rounded-xl border border-slate-100 overflow-hidden shadow-sm ${className}`}>
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-50">
                 <div className="flex items-center gap-3">
                     <div className={`w-8 h-8 rounded-xl ${iconBg} flex items-center justify-center flex-shrink-0`}>
