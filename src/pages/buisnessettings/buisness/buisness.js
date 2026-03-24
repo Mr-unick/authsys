@@ -42,8 +42,8 @@ export default function BuisnessDetails() {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-                <Loader2 className="animate-spin text-indigo-600 h-10 w-10" />
-                <p className="text-sm font-bold text-gray-400 uppercase tracking-[0.2em] animate-pulse">Syncing Enterprise Data</p>
+                <Loader2 className="animate-spin text-indigo-600 h-6 w-6" />
+                <p className="text-xs text-slate-400 font-medium">Loading business data...</p>
             </div>
         );
     }
@@ -55,10 +55,10 @@ export default function BuisnessDetails() {
 
     if (!business) {
         return (
-            <div className="p-12 text-center bg-white rounded-3xl border-2 border-dashed border-gray-100">
-                <Info size={48} className="mx-auto text-gray-200 mb-4" />
-                <h2 className="text-xl font-black text-gray-400 uppercase tracking-widest">No business profile found</h2>
-                <p className="text-gray-400 mt-2">Initialize your business settings to see details here.</p>
+            <div className="p-10 text-center bg-white rounded-xl border border-dashed border-slate-200">
+                <Info size={40} className="mx-auto text-slate-200 mb-4" />
+                <h2 className="text-lg font-bold text-slate-600">No business profile found</h2>
+                <p className="text-sm text-slate-400 mt-1">Initialize your business settings to see details here.</p>
             </div>
         );
     }
@@ -92,26 +92,26 @@ export default function BuisnessDetails() {
     ];
 
     return (
-        <div className="max-w-5xl mx-auto px-6 py-10 animate-in fade-in duration-500">
-            {/* Minimal Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10 pb-8 border-b border-gray-100">
-                <div className="flex items-center gap-5">
-                    <div className="h-14 w-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600">
-                        <Building2 size={24} />
+        <div className="max-w-5xl mx-auto px-6 py-8 animate-in fade-in duration-300">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 mb-8 pb-6 border-b border-slate-100">
+                <div className="flex items-center gap-4">
+                    <div className="h-11 w-11 bg-indigo-50 rounded-xl flex items-center justify-center text-indigo-600 border border-indigo-100">
+                        <Building2 size={22} />
                     </div>
                     <div>
-                        <div className="flex items-center gap-2 mb-1">
-                            <span className="text-[10px] font-bold uppercase tracking-wider text-indigo-500 bg-indigo-50/50 px-2 py-0.5 rounded">Enterprise</span>
-                            <span className="text-gray-300 text-[10px] font-mono">#{business.id}</span>
+                        <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">Enterprise</span>
+                            <span className="text-slate-300 text-xs font-mono">#{business.id}</span>
                         </div>
-                        <h1 className="text-2xl font-bold text-gray-900 tracking-tight">{business.name}</h1>
+                        <h1 className="text-xl font-bold text-slate-800">{business.name}</h1>
                     </div>
                 </div>
 
                 {tableResponse?.update && (
                     <button
                         onClick={() => setEditOpen(true)}
-                        className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-xs font-bold hover:bg-gray-800 transition-all flex items-center gap-2"
+                        className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2"
                     >
                         <Edit3 size={14} /> Update Settings
                     </button>
@@ -119,25 +119,25 @@ export default function BuisnessDetails() {
             </div>
 
             {/* Content Sections */}
-            <div className="space-y-12">
+            <div className="space-y-10">
                 {sections.map((section, idx) => (
                     <div key={idx} className="group">
-                        <div className="flex items-center gap-3 mb-6">
-                            <h3 className="text-[11px] font-bold text-gray-400 uppercase tracking-[0.15em]">{section.title}</h3>
-                            <div className="h-[1px] flex-1 bg-gray-100"></div>
+                        <div className="flex items-center gap-3 mb-5">
+                            <h3 className="text-xs font-semibold text-slate-400 uppercase tracking-wide">{section.title}</h3>
+                            <div className="h-px flex-1 bg-slate-100"></div>
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-5">
                             {section.fields.map((field, fIdx) => (
                                 <div key={fIdx} className={`${field.full ? 'md:col-span-2 lg:col-span-4' : ''}`}>
-                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider block mb-1.5">{field.label}</label>
-                                    <div className="flex items-center gap-3">
+                                    <label className="text-xs font-semibold text-slate-400 block mb-1">{field.label}</label>
+                                    <div className="flex items-center gap-2.5">
                                         {field.icon && (
-                                            <div className="text-gray-300 group-hover:text-indigo-500 transition-colors">
+                                            <div className="text-slate-300">
                                                 {React.cloneElement(field.icon, { size: 14 })}
                                             </div>
                                         )}
-                                        <div className={`text-sm font-semibold text-gray-700 ${field.mono ? 'font-mono' : ''}`}>
+                                        <div className={`text-sm font-medium text-slate-700 ${field.mono ? 'font-mono' : ''}`}>
                                             {field.isLink && field.value !== 'Not configured' ? (
                                                 <a href={field.value.startsWith('http') ? field.value : `https://${field.value}`} target="_blank" rel="noreferrer" className="text-indigo-600 hover:underline">
                                                     {field.value}
@@ -153,11 +153,11 @@ export default function BuisnessDetails() {
             </div>
 
             {/* Footer */}
-            <div className="mt-20 pt-8 border-t border-gray-100 flex items-center justify-between text-gray-400">
-                <p className="text-[10px] font-medium">Enterprise Portal v4.2.0 • Last sync {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
-                <div className="flex items-center gap-2">
+            <div className="mt-12 pt-6 border-t border-slate-100 flex items-center justify-between text-slate-400">
+                <p className="text-xs font-medium">Last sync {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                <div className="flex items-center gap-1.5">
                     <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-600">Secure Node</span>
+                    <span className="text-xs font-medium text-emerald-600">Active</span>
                 </div>
             </div>
 

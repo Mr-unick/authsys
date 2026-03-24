@@ -2,17 +2,17 @@ import React from 'react';
 import { cn } from "../../../../components/lib/utils";
 
 const variants = {
-  default: "min-w-[10rem] max-sm:min-w-[5rem] text-gray-700 max-sm:text-xs",
+  default: "min-w-[10rem] max-sm:min-w-[5rem] text-slate-700 max-sm:text-xs",
   badge: "min-w-[10rem] max-sm:min-w-[5rem]",
   color: "flex items-center gap-2",
   list: "w-full"
 };
 
 const badgeVariants = {
-  active: "bg-green-500",
-  inactive: "bg-red-500",
-  pending: "bg-yellow-500",
-  draft: "bg-gray-500"
+  active: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  inactive: "bg-slate-50 text-slate-500 border-slate-200",
+  pending: "bg-amber-50 text-amber-700 border-amber-200",
+  draft: "bg-slate-50 text-slate-500 border-slate-200"
 };
 
 export default function TD({ 
@@ -33,8 +33,8 @@ export default function TD({
         return (
           <div className={cn(variants.badge, className)}>
             <span className={cn(
-              "inline-flex items-center px-2.5  py-1 rounded-full text-xs font-medium text-white",
-              badgeVariants[children ? "active" : 'inactive'] || "bg-gray-500",
+              "inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border",
+              badgeVariants[children ? "active" : 'inactive'] || "bg-slate-50 text-slate-500 border-slate-200",
               className
             )}>
               {children ? "Active" : 'Inactive'}
@@ -46,10 +46,9 @@ export default function TD({
         return (
           <div className={cn(variants.color, className)}>
             <div 
-              className="w-6 h-6 rounded-full border border-gray-200" 
+              className="w-5 h-5 rounded-md border border-slate-200" 
               style={{ backgroundColor: children }}
             />
-       
           </div>
         );
 
@@ -61,7 +60,7 @@ export default function TD({
                 {children.map((item, index) => (
                   <span 
                     key={index}
-                    className="inline-flex items-center px-2 py-1 rounded-md bg-gray-100 text-xs text-gray-700"
+                    className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-xs text-slate-600 font-medium"
                   >
                     {item}
                   </span>
@@ -79,7 +78,7 @@ export default function TD({
   return (
     <td 
       className={cn(
-        "px-4 max-sm:px-2  py-3 text-start border-y border-gray-200",
+        "px-5 py-3.5 text-start text-sm border-b border-slate-100",
         type === 'list' && "max-w-xs",
         className
       )}

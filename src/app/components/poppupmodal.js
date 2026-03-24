@@ -1,5 +1,6 @@
 
 
+
 import { Delete, Edit, FilePen, Loader2, Plus, Trash, UserPlus, X } from "lucide-react";
 import {
     Dialog,
@@ -103,9 +104,9 @@ export default function PopupModal({ modaltype, children, classname, data, url, 
 
     const getModalIcon = () => {
         switch (modaltype) {
-            case 'confirmdelete': return <Trash className="h-5 w-5 text-red-500" />;
-            case 'confirmassign': return <UserPlus className="h-5 w-5 text-indigo-500" />;
-            case 'addcollaborators': return <Plus className="h-5 w-5 text-emerald-500" />;
+            case 'confirmdelete': return <Trash className="h-4 w-4 text-red-500" />;
+            case 'confirmassign': return <UserPlus className="h-4 w-4 text-indigo-500" />;
+            case 'addcollaborators': return <Plus className="h-4 w-4 text-emerald-500" />;
             default: return null;
         }
     }
@@ -114,34 +115,31 @@ export default function PopupModal({ modaltype, children, classname, data, url, 
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                 <button
-                    className={`${classname} transition-all active:scale-95`}
+                    className={`${classname} transition-colors active:scale-[0.98]`}
                     onClick={() => setOpen(true)}
                 >
                     <span className="text-sm flex items-center gap-2">{children}</span>
                 </button>
             </DialogTrigger>
-            <DialogContent className="max-h-[90vh] sm:max-w-[400px] w-[95vw] rounded-[2rem] p-0 overflow-hidden border-none shadow-2xl bg-white animate-in zoom-in duration-300">
-                <DialogHeader className="p-6 pb-0 flex flex-row items-center gap-3 space-y-0">
-                    <div className="p-2.5 rounded-2xl bg-gray-50 border border-gray-100 shadow-sm">
+            <DialogContent className="max-h-[90vh] sm:max-w-[400px] w-[95vw] rounded-xl p-0 overflow-hidden border border-slate-200 bg-white animate-in zoom-in duration-200">
+                <DialogHeader className="p-5 pb-0 flex flex-row items-center gap-3 space-y-0">
+                    <div className="p-2 rounded-lg bg-slate-50 border border-slate-100">
                         {getModalIcon()}
                     </div>
                     <div>
-                        <DialogTitle className="text-xl font-black text-[#0F1626]">{getModalTitle()}</DialogTitle>
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Please confirm your action</p>
+                        <DialogTitle className="text-lg font-bold text-slate-800">{getModalTitle()}</DialogTitle>
+                        <p className="text-xs text-slate-400 mt-0.5">Please confirm your action</p>
                     </div>
                 </DialogHeader>
 
-                <div className="p-6 pt-2">
+                <div className="p-5 pt-3">
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center py-12 gap-4">
-                            <div className="relative">
-                                <div className="h-12 w-12 rounded-full border-4 border-gray-100 border-t-indigo-600 animate-spin"></div>
-                                <Loader2 className="h-6 w-6 text-indigo-600 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                            </div>
-                            <p className="text-xs font-bold text-gray-400 uppercase tracking-widest animate-pulse">Processing...</p>
+                        <div className="flex flex-col items-center justify-center py-10 gap-3">
+                            <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                            <p className="text-xs text-slate-400 font-medium">Processing...</p>
                         </div>
                     ) : (
-                        <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                        <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
                             {modaltype === 'confirmdelete' && (
                                 <ConfirmDelete setOpen={setOpen} handleDelete={handleDelete} />
                             )}

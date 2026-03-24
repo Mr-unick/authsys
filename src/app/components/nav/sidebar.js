@@ -37,7 +37,7 @@ const getIconForRoute = (title, unreadCount = 0) => {
       <div className="relative">
         <Bell size={18} />
         {unreadCount > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full px-1 leading-none shadow-md shadow-red-900/40">
+          <span className="absolute -top-1.5 -right-1.5 min-w-[16px] h-4 flex items-center justify-center bg-red-500 text-white text-[9px] font-bold rounded-full px-1 leading-none">
             {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
@@ -63,21 +63,20 @@ const getIconForRoute = (title, unreadCount = 0) => {
 
 export const NavLink = ({ href, children, icon, onClick }) => {
   const router = useRouter();
-  // Match exact for '/', prefix match for everything else
   const isActive = href === '/crm'
     ? router.pathname === '/crm'
     : router.pathname.startsWith(href);
 
   return (
     <Link href={href} onClick={onClick} className="block group">
-      <div className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 ${isActive
-        ? 'bg-indigo-600 shadow-lg shadow-indigo-900/20 text-white font-bold'
-        : 'text-gray-400 hover:bg-gray-800/50 hover:text-white'
+      <div className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-colors duration-200 ${isActive
+        ? 'bg-indigo-600 text-white font-semibold'
+        : 'text-gray-400 hover:bg-white/5 hover:text-white'
         }`}>
         <span className={`${isActive ? 'text-white' : 'text-gray-500 group-hover:text-indigo-400'} transition-colors`}>
           {icon}
         </span>
-        <span className="text-sm tracking-wide">{children}</span>
+        <span className="text-sm">{children}</span>
       </div>
     </Link>
   );
@@ -97,7 +96,6 @@ export default function SideBar({ setOpen }) {
       validateStatus: (status) => (status >= 200 && status < 300) || status === 401
     };
 
-    // Fetch user and sidebar in parallel
     Promise.all([
       axios.get(`/api/getSidebarProps`, config),
       axios.get('/api/auth/isauthenticated', config),
@@ -110,7 +108,6 @@ export default function SideBar({ setOpen }) {
         setUnreadCount(unread);
       }
     }).catch(err => {
-      // If we still get a real network error, log it
       if (err.response?.status !== 401) {
         console.error("Sidebar fetch error:", err);
       }
@@ -131,34 +128,34 @@ export default function SideBar({ setOpen }) {
   if (loading) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#0F1626]">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-500" />
+        <Loader2 className="h-6 w-6 animate-spin text-indigo-500" />
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-[#0F1626] flex flex-col pt-8 pb-6 border-r border-gray-800/30 shadow-2xl overflow-y-auto">
+    <div className="w-full h-full bg-[#0F1626] flex flex-col pt-6 pb-4 border-r border-gray-800/30 overflow-y-auto">
       {/* Brand Header */}
-      <Link href="/crm" className="px-6 mb-10 block hover:opacity-90 transition-opacity">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-500/20">
+      <Link href="/crm" className="px-5 mb-8 block hover:opacity-90 transition-opacity">
+        <div className="flex items-center gap-2.5">
+          <div className="p-1.5 bg-indigo-600 rounded-lg">
             <Layers className="h-5 w-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-black text-white tracking-tight">LEAD<span className="text-indigo-500">CONVERTER</span></h1>
-            <p className="text-[10px] font-bold text-gray-500 tracking-widest uppercase">Lead Intelligence</p>
+            <h1 className="text-base font-bold text-white tracking-tight">LEAD<span className="text-indigo-400">CONVERTER</span></h1>
+            <p className="text-[10px] text-gray-500 tracking-wide">Lead Intelligence</p>
           </div>
         </div>
       </Link>
 
       {/* Main Navigation */}
-      <div className="flex-1 overflow-y-auto px-4 custom-scrollbar">
-        <div className="space-y-1">
+      <div className="flex-1 overflow-y-auto px-3 custom-scrollbar">
+        <div className="space-y-0.5">
           {sideBarData && sideBarData.map((data, index) => (
             data.nestedRoutes ? (
               <NavAccordion key={`${data.title}-${index}`} route={data} setOpen={setOpen} />
             ) : (
-              <div key={`${data.title}-${index}`} className="my-1">
+              <div key={`${data.title}-${index}`}>
                 <button onClick={() => { setOpen && setOpen(false) }} className="w-full">
                   <NavLink
                     href={data.url}
@@ -174,33 +171,33 @@ export default function SideBar({ setOpen }) {
       </div>
 
       {/* Bottom Profile Section */}
-      <div className="px-4 mt-6">
-        <div className="bg-gray-800/20 rounded-2xl p-4 border border-gray-800/50">
+      <div className="px-3 mt-4">
+        <div className="bg-white/5 rounded-xl p-3.5 border border-white/5">
           {user && (
-            <div className="flex items-center gap-3 mb-4 px-1">
+            <div className="flex items-center gap-3 mb-3 px-1">
               <div className="relative">
                 <img
                   src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
-                  className="h-10 w-10 rounded-xl border border-gray-700 shadow-sm"
+                  className="h-9 w-9 rounded-lg border border-gray-700"
                   alt="avatar"
                 />
-                <div className="absolute -bottom-0.5 -right-0.5 w-3 h-3 bg-green-500 border-2 border-[#0F1626] rounded-full" />
+                <div className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 bg-green-500 border-2 border-[#0F1626] rounded-full" />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs font-bold text-white truncate">{user.name}</p>
-                <p className="text-[10px] font-medium text-gray-500 truncate uppercase tracking-tighter">{user.role}</p>
+                <p className="text-xs font-semibold text-white truncate">{user.name}</p>
+                <p className="text-[10px] text-gray-500 truncate">{user.role}</p>
               </div>
             </div>
           )}
 
-          <div className="space-y-1">
+          <div className="space-y-0.5">
             <NavLink href="/profile" icon={<UserCircle size={18} />}>
               My Profile
             </NavLink>
-            <div onClick={handleLogout} className="cursor-pointer mt-1">
-              <div className="flex items-center gap-3 px-4 py-2.5 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 transition-all duration-300">
+            <div onClick={handleLogout} className="cursor-pointer">
+              <div className="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-red-500/10 border border-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors duration-200">
                 <LogOut size={18} className="text-red-400" />
-                <span className="text-sm font-semibold tracking-wide text-red-400">Logout</span>
+                <span className="text-sm font-medium text-red-400">Logout</span>
               </div>
             </div>
           </div>

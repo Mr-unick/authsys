@@ -1,20 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Bell, Check, X, Loader2, MessageSquare, UserPlus, Inbox, ArrowRight } from 'lucide-react';
+import { Bell, Check, CheckCheck, Loader2, Trash2, Clock, AlertCircle, Info, X } from "lucide-react";
 import { toast } from 'react-toastify';
-import { getRelativeTime } from '@/utils/utility';
-import { useRouter } from 'next/router';
-import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
-} from "../components/components/ui/card";
 
-const NotificationsTab = () => {
+const NotificationsPage = () => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
-    const router = useRouter();
+    const [filter, setFilter] = useState('all');
 
     useEffect(() => {
         fetchNotifications();
@@ -23,13 +15,12 @@ const NotificationsTab = () => {
     const fetchNotifications = async () => {
         setLoading(true);
         try {
-            const response = await axios.get('/api/notifications/get');
-            if (response.data.status === 200) {
-                setNotifications(response.data.data);
+            const res = await axios.get('/api/notifications/get');
+            if (res.data?.data) {
+                setNotifications(res.data.data);
             }
-        } catch (error) {
-            console.error("Failed to fetch notifications:", error);
-            toast.error("Failed to load notifications");
+        } catch (err) {
+            toast.error('Failed to load notifications');
         } finally {
             setLoading(false);
         }
@@ -37,144 +28,138 @@ const NotificationsTab = () => {
 
     const markAsRead = async (id) => {
         try {
-            const response = await axios.post('/api/notifications/markRead', { id });
-            if (response.data.status === 200) {
-                setNotifications(notifications.map(n => n.id === id ? { ...n, status: 'read' } : n));
-            }
-        } catch {
-            toast.error("Failed to mark as read");
+            await axios.patch(`/api/notifications/markread`, { id });
+            setNotifications(prev =>
+                prev.map(n => n.id === id ? { ...n, status: 'read' } : n)
+            );
+        } catch (err) {
+            toast.error('Failed to update notification');
         }
     };
 
-    const markAllAsRead = async () => {
+    const markAllRead = async () => {
         try {
-            const response = await axios.post('/api/notifications/markRead', { all: true });
-            if (response.data.status === 200) {
-                setNotifications(notifications.map(n => ({ ...n, status: 'read' })));
-                toast.success("All marked as read");
-            }
-        } catch {
-            toast.error("Failed to mark all as read");
+            await axios.patch(`/api/notifications/markread`, { all: true });
+            setNotifications(prev =>
+                prev.map(n => ({ ...n, status: 'read' }))
+            );
+            toast.success('All notifications marked as read');
+        } catch (err) {
+            toast.error('Failed to update');
         }
     };
-
-    const getNotificationIcon = (message) => {
-        const msg = message.toLowerCase();
-        if (msg.includes('mentioned'))
-            return <div className="bg-purple-50 p-2 sm:p-2.5 rounded-xl border border-purple-100"><MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" /></div>;
-        if (msg.includes('assigned'))
-            return <div className="bg-blue-50 p-2 sm:p-2.5 rounded-xl border border-blue-100"><UserPlus className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" /></div>;
-        return <div className="bg-indigo-50 p-2 sm:p-2.5 rounded-xl border border-indigo-100"><Bell className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" /></div>;
-    };
-
-    const unreadCount = notifications.filter(n => n.status === 'unread').length;
 
     if (loading) {
         return (
-            <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Syncing Inbox...</p>
+            <div className="flex flex-col items-center justify-center min-h-[70vh] gap-3">
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                <p className="text-xs text-slate-400 font-medium">Loading notifications...</p>
             </div>
         );
     }
 
+    const unreadCount = notifications.filter(n => n.status === 'unread').length;
+    const filtered = filter === 'all' ? notifications : notifications.filter(n => n.status === filter);
+
+    const getIcon = (type) => {
+        switch (type) {
+            case 'alert': return <AlertCircle size={14} className="text-rose-500" />;
+            case 'info': return <Info size={14} className="text-blue-500" />;
+            case 'success': return <Check size={14} className="text-emerald-500" />;
+            default: return <Bell size={14} className="text-slate-400" />;
+        }
+    };
+
     return (
-        <div className="max-w-[1600px] mx-auto py-3 sm:py-4 px-2 sm:px-4 animate-in fade-in duration-500">
-            {/* Page Header */}
-            <div className="flex items-center justify-between gap-3 mb-5 sm:mb-8">
+        <div className="max-w-[900px] mx-auto px-4 py-6 pb-16">
+            {/* Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
                 <div className="flex items-center gap-3">
-                    <div className="bg-[#0F1626] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200">
-                        <Inbox className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                    <div className="bg-[#0F1626] dark:bg-indigo-600 p-2.5 rounded-xl text-white">
+                        <Bell size={20} />
                     </div>
                     <div>
-                        <h1 className="text-xl sm:text-3xl font-extrabold text-[#0F1626] tracking-tight leading-tight">Notifications</h1>
-                        <p className="text-xs sm:text-sm font-medium text-gray-400 mt-0.5 hidden sm:block">Manage your real-time alerts and mentions</p>
+                        <h1 className="text-xl font-bold text-slate-800 dark:text-white">Notifications</h1>
+                        <p className="text-xs text-slate-400 mt-0.5">
+                            {unreadCount > 0 ? `${unreadCount} unread notifications` : 'All caught up!'}
+                        </p>
                     </div>
                 </div>
                 {unreadCount > 0 && (
                     <button
-                        onClick={markAllAsRead}
-                        className="px-3 sm:px-5 py-2 sm:py-2.5 bg-indigo-50 text-indigo-600 rounded-xl text-xs font-bold uppercase tracking-wider hover:bg-indigo-100 transition-all border border-indigo-100 flex items-center gap-1.5 shrink-0"
+                        onClick={markAllRead}
+                        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 rounded-lg border border-indigo-100 transition-colors"
                     >
-                        <Check className="h-3.5 w-3.5" />
-                        <span className="hidden sm:inline">Mark All Read</span>
-                        <span className="sm:hidden">Read All</span>
+                        <CheckCheck size={14} />
+                        Mark all as read
                     </button>
                 )}
             </div>
 
-            <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                <CardHeader className="bg-gray-50/30 border-b border-gray-100 py-4 px-4 sm:px-6">
-                    <CardTitle className="text-sm sm:text-base font-bold text-[#0F1626] flex items-center gap-2">
-                        All Messages
-                        {unreadCount > 0 && (
-                            <span className="bg-rose-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
-                                {unreadCount} NEW
-                            </span>
-                        )}
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="p-0">
-                    <div className="divide-y divide-gray-50">
-                        {notifications.length > 0 ? (
-                            notifications.map((notification) => (
-                                <div
-                                    key={notification.id}
-                                    className={`group py-4 px-4 sm:py-5 sm:px-6 flex items-start gap-3 sm:gap-5 transition-all duration-300 relative ${notification.status === 'unread' ? 'bg-indigo-50/20' : 'hover:bg-gray-50/50'}`}
-                                >
-                                    {notification.status === 'unread' && (
-                                        <div className="absolute left-0 top-0 bottom-0 w-[3px] bg-indigo-600 rounded-r-full" />
-                                    )}
-                                    <div className="shrink-0 mt-0.5">
-                                        {getNotificationIcon(notification.message)}
-                                    </div>
-                                    <div className="flex-grow min-w-0 flex flex-col gap-1.5">
-                                        <div
-                                            onClick={() => notification.url && router.push(notification.url)}
-                                            className={`text-sm leading-relaxed ${notification.url ? 'cursor-pointer hover:text-indigo-600' : ''} ${notification.status === 'unread' ? 'text-[#0F1626] font-semibold' : 'text-gray-600 font-medium'} transition-colors`}
-                                        >
-                                            {notification.message}
-                                        </div>
-                                        <div className="flex items-center gap-2 flex-wrap">
-                                            <span className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
-                                                {getRelativeTime(notification.created_at)}
-                                            </span>
-                                            {notification.status === 'unread' && (
-                                                <button
-                                                    onClick={() => markAsRead(notification.id)}
-                                                    className="text-[10px] font-bold text-indigo-600 uppercase tracking-widest hover:underline"
-                                                >
-                                                    Mark Read
-                                                </button>
-                                            )}
-                                            {notification.url && (
-                                                <button
-                                                    onClick={() => router.push(notification.url)}
-                                                    className="text-[10px] font-bold text-gray-400 flex items-center gap-1 hover:text-indigo-600 transition-colors"
-                                                >
-                                                    View <ArrowRight size={10} />
-                                                </button>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="py-16 sm:py-24 text-center flex flex-col items-center justify-center text-gray-400 gap-4">
-                                <div className="bg-gray-50 p-5 rounded-3xl border-2 border-dashed border-gray-100">
-                                    <Bell className="h-10 w-10 opacity-20" />
-                                </div>
-                                <div>
-                                    <p className="text-base font-bold text-gray-400">All caught up!</p>
-                                    <p className="text-xs font-medium uppercase tracking-widest mt-1">No new notifications</p>
+            {/* Filters */}
+            <div className="flex gap-2 mb-5">
+                {[
+                    { id: 'all', label: 'All' },
+                    { id: 'unread', label: 'Unread' },
+                    { id: 'read', label: 'Read' },
+                ].map(f => (
+                    <button
+                        key={f.id}
+                        onClick={() => setFilter(f.id)}
+                        className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors ${filter === f.id
+                            ? 'bg-[#0F1626] dark:bg-indigo-600 text-white'
+                            : 'text-slate-500 bg-slate-100 dark:bg-white/5 hover:bg-slate-200'
+                            }`}
+                    >
+                        {f.label}
+                    </button>
+                ))}
+            </div>
+
+            {/* List */}
+            <div className="bg-white dark:bg-[#1A1F2C]/50 rounded-xl border border-slate-100 dark:border-white/5 divide-y divide-slate-50 dark:divide-white/5 overflow-hidden">
+                {filtered.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-16 gap-3">
+                        <div className="w-12 h-12 rounded-xl bg-slate-50 dark:bg-white/5 flex items-center justify-center">
+                            <Bell size={20} className="text-slate-300" />
+                        </div>
+                        <p className="text-sm font-medium text-slate-400">No notifications to show</p>
+                    </div>
+                ) : (
+                    filtered.map((notif) => (
+                        <div
+                            key={notif.id}
+                            className={`flex items-start gap-3 p-4 transition-colors hover:bg-slate-50/50 dark:hover:bg-white/5 ${notif.status === 'unread' ? 'bg-indigo-50/30 dark:bg-indigo-500/5' : ''
+                                }`}
+                        >
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-white/5 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                {getIcon(notif.type)}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm font-medium text-slate-700 dark:text-white">{notif.title || notif.message}</p>
+                                {notif.body && <p className="text-xs text-slate-400 mt-0.5">{notif.body}</p>}
+                                <div className="flex items-center gap-1 mt-1.5">
+                                    <Clock size={10} className="text-slate-300" />
+                                    <span className="text-xs text-slate-400">
+                                        {new Date(notif.created_at).toLocaleDateString()}
+                                    </span>
                                 </div>
                             </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                            {notif.status === 'unread' && (
+                                <button
+                                    onClick={() => markAsRead(notif.id)}
+                                    className="flex items-center gap-1 text-xs font-medium text-indigo-600 hover:bg-indigo-50 px-2.5 py-1.5 rounded-lg transition-colors flex-shrink-0"
+                                >
+                                    <Check size={12} />
+                                    Read
+                                </button>
+                            )}
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 };
 
-export default NotificationsTab;
+export default NotificationsPage;

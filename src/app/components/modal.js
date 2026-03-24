@@ -16,11 +16,11 @@ export default function Modal({ children, title, icon, classname, customebutton,
 
   const getIcon = () => {
     switch (icon) {
-      case 'Add': return <Plus size={18} />;
-      case 'Delete': return <Trash size={18} />;
-      case 'Edit': return <FilePen size={18} />;
-      case 'Export': return <Download size={18} />;
-      case 'Upload': return <FileUp size={18} />;
+      case 'Add': return <Plus size={16} />;
+      case 'Delete': return <Trash size={16} />;
+      case 'Edit': return <FilePen size={16} />;
+      case 'Export': return <Download size={16} />;
+      case 'Upload': return <FileUp size={16} />;
       default: return null;
     }
   }
@@ -30,8 +30,8 @@ export default function Modal({ children, title, icon, classname, customebutton,
       <DialogTrigger asChild>
         {
           customebutton ? customebutton : (
-            <Button className={`flex items-center gap-2 rounded-xl transition-all active:scale-95 shadow-sm ${classname}`}>
-              <span className="max-md:hidden font-bold">
+            <Button className={`flex items-center gap-2 rounded-lg transition-colors active:scale-[0.98] ${classname}`}>
+              <span className="max-md:hidden font-medium">
                 {title}
               </span>
               {getIcon()}
@@ -39,7 +39,7 @@ export default function Modal({ children, title, icon, classname, customebutton,
           )
         }
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] sm:max-w-[45vw] w-[95vw] rounded-[2.5rem] p-8 overflow-y-auto scrollbar-hide border-none shadow-2xl animate-in zoom-in-95 duration-200">
+      <DialogContent className="max-h-[90vh] sm:max-w-[45vw] w-[95vw] rounded-xl p-6 overflow-y-auto scrollbar-hide border border-slate-200 animate-in zoom-in-95 duration-200">
         <div className="relative">
           {children}
         </div>

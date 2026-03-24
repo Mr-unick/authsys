@@ -92,14 +92,14 @@ export default function FormComponent({ formdata, id, onSuccess }) {
       onSubmit={handleSubmit(onSubmit)}
       className={`flex flex-col gap-6 max-h-[85vh] overflow-y-auto scrollbar-hide w-full ${data?.fields?.length <= 10 ? "max-w-4xl" : "max-w-[1200px]"}`}
     >
-      <div className="mb-2">
-        <h1 className="text-2xl font-black text-[#0F1626] tracking-tight">
+      <div className="mb-1">
+        <h1 className="text-xl font-bold text-slate-800">
           {data?.title}
         </h1>
-        <p className="text-[10px] font-bold text-slate-400 mt-1 uppercase tracking-widest">Information Input Module</p>
+        <p className="text-xs text-slate-400 mt-0.5">Fill in the details below</p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-x-8 gap-y-5">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-x-6 gap-y-5">
         {data?.fields?.map((field, key) => {
           const gridClasses = field.newRow ? "sm:col-span-4" : "sm:col-span-2";
           const validationRules = field.required
@@ -119,7 +119,7 @@ export default function FormComponent({ formdata, id, onSuccess }) {
                   {...register(field.name, validationRules)}
                 />
                 {errors[field.name] && (
-                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 px-1">
+                  <p className="text-red-500 text-xs font-medium mt-1.5">
                     {errors[field.name]?.message}
                   </p>
                 )}
@@ -147,7 +147,7 @@ export default function FormComponent({ formdata, id, onSuccess }) {
                   {...register(field.name, validationRules)}
                 />
                 {errors[field?.name] && (
-                  <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 px-1">
+                  <p className="text-red-500 text-xs font-medium mt-1.5">
                     {errors[field?.name]?.message}
                   </p>
                 )}
@@ -169,14 +169,14 @@ export default function FormComponent({ formdata, id, onSuccess }) {
         })}
       </div>
 
-      <div className="flex justify-end pt-6 border-t border-gray-100 mt-4">
+      <div className="flex justify-end pt-5 border-t border-slate-100 mt-4">
         <Button
-          className="w-full sm:w-auto min-w-[140px] bg-indigo-600 hover:bg-indigo-700 text-white h-10 rounded-lg shadow-sm transition-all font-semibold text-sm"
+          className="w-full sm:w-auto min-w-[140px] bg-indigo-600 hover:bg-indigo-700 text-white h-10 rounded-lg transition-colors font-medium text-sm"
           type="submit"
           disabled={loder}
         >
           {
-            loder ? <Loader2 className="h-5 w-5 animate-spin text-white" /> : (id ? "Update Details" : "Save Changes")
+            loder ? <Loader2 className="h-4 w-4 animate-spin text-white" /> : (id ? "Update" : "Save")
           }
         </Button>
       </div>

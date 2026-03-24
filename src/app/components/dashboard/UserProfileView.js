@@ -67,32 +67,32 @@ export const UserProfileView = ({ userId, onBack }) => {
 
     if (loading) return (
         <div className="flex flex-col items-center justify-center p-20 gap-4">
-            <Loader2 className="w-8 h-8 animate-spin text-indigo-600" />
-            <p className="text-xs font-bold text-gray-400 tracking-widest uppercase">Analyzing Profile...</p>
+            <Loader2 className="w-6 h-6 animate-spin text-indigo-600" />
+            <p className="text-xs text-slate-400 font-medium">Analyzing Profile...</p>
         </div>
     );
 
     if (!data) return <div className="p-20 text-center text-gray-400">Profile data unavailable</div>;
 
     return (
-        <div className="space-y-8 animate-in slide-in-from-right duration-500">
+        <div className="space-y-6 animate-in slide-in-from-right duration-500">
             {/* Header / Actions - NOT in PDF */}
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-6">
                     <button
                         onClick={onBack}
-                        className="p-2.5 hover:bg-white rounded-xl transition-all border border-transparent hover:border-gray-100 group shadow-sm"
+                        className="p-2 hover:bg-white rounded-lg transition-colors border border-transparent hover:border-slate-100"
                     >
-                        <ArrowLeft className="text-gray-400 group-hover:text-indigo-600 transition-colors" size={20} />
+                        <ArrowLeft className="text-slate-400 group-hover:text-indigo-600 transition-colors" size={18} />
                     </button>
-                    <h2 className="text-lg font-bold text-gray-400 uppercase tracking-widest">User Performance Analytics</h2>
+                    <h2 className="text-lg font-bold text-slate-800">User Performance Analytics</h2>
                 </div>
 
                 <div className="flex gap-2">
                     <button
                         onClick={handleGeneratePDF}
                         disabled={generating}
-                        className="px-6 py-2.5 bg-indigo-600 text-white rounded-xl text-xs font-black uppercase tracking-widest shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:scale-[1.02] active:scale-95 transition-all flex items-center gap-2 disabled:opacity-50"
+                        className="px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors flex items-center gap-2 disabled:opacity-50"
                     >
                         {generating ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />}
                         {generating ? 'Processing...' : 'Generate PDF'}
@@ -103,40 +103,40 @@ export const UserProfileView = ({ userId, onBack }) => {
             {/* Printable Content Wrapper */}
             <div ref={reportRef} className="space-y-8 p-4 bg-[#f9fafb]">
                 {/* Profile Information */}
-                <div className="flex items-center gap-4 bg-white p-6 rounded-3xl shadow-sm border border-gray-100">
-                    <img src={data.user.profileImg} className="h-20 w-20 rounded-2xl shadow-lg border-2 border-white" alt={data.user.name} />
+                <div className="flex items-center gap-4 bg-white p-5 rounded-xl border border-slate-100">
+                    <img src={data.user.profileImg} className="h-16 w-16 rounded-xl border border-slate-200" alt={data.user.name} />
                     <div>
-                        <h2 className="text-3xl font-black text-[#0F1626] tracking-tight">{data.user.name}</h2>
-                        <div className="flex items-center gap-4 mt-2">
-                            <span className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                                <Mail size={12} className="text-indigo-500" /> {data.user.email}
+                        <h2 className="text-xl font-bold text-slate-800">{data.user.name}</h2>
+                        <div className="flex items-center gap-3 mt-1.5">
+                            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                                <Mail size={11} className="text-indigo-500" /> {data.user.email}
                             </span>
-                            <span className="flex items-center gap-2 text-xs font-bold text-gray-500 bg-gray-50 px-3 py-1.5 rounded-full border border-gray-100">
-                                <Briefcase size={12} className="text-indigo-500" /> Sales Professional
+                            <span className="flex items-center gap-1.5 text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-100">
+                                <Briefcase size={11} className="text-indigo-500" /> Sales Professional
                             </span>
                         </div>
                     </div>
                 </div>
 
                 {/* Performance Metrics */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {data.stats.map((stat, idx) => (
                         <StatCard key={idx} {...stat} />
                     ))}
                 </div>
 
-                <div className="grid grid-cols-12 gap-8">
+                <div className="grid grid-cols-12 gap-5">
                     {/* Trend Chart */}
-                    <Card className="col-span-12 lg:col-span-8 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                        <CardHeader className="border-b border-gray-50 py-5">
-                            <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                                <div className="p-2 bg-indigo-50 rounded-lg">
+                    <Card className="col-span-12 lg:col-span-8 border border-slate-100 rounded-xl overflow-hidden bg-white">
+                        <CardHeader className="border-b border-slate-100 px-5 py-3.5">
+                            <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-3">
+                                <div className="p-2 bg-indigo-50 rounded-lg border border-indigo-100">
                                     <CalendarIcon className="text-indigo-600" size={18} />
                                 </div>
                                 Performance Trend
                             </CardTitle>
                         </CardHeader>
-                        <CardContent className="p-8">
+                        <CardContent className="p-5">
                             <div className="h-[300px] w-full">
                                 <LineChartComponent
                                     data={data.charts.trend}
@@ -147,20 +147,20 @@ export const UserProfileView = ({ userId, onBack }) => {
                     </Card>
 
                     {/* Status Breakdown */}
-                    <Card className="col-span-12 lg:col-span-4 border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                        <CardHeader className="border-b border-gray-50 py-5">
-                            <CardTitle className="text-base font-bold text-[#0F1626]">Pipeline Mix</CardTitle>
+                    <Card className="col-span-12 lg:col-span-4 border border-slate-100 rounded-xl overflow-hidden bg-white">
+                        <CardHeader className="border-b border-slate-100 px-5 py-3.5">
+                            <CardTitle className="text-sm font-semibold text-slate-700">Pipeline Mix</CardTitle>
                         </CardHeader>
-                        <CardContent className="p-8 flex flex-col items-center">
+                        <CardContent className="p-5 flex flex-col items-center">
                             <PieChartComponent radius={75} data={data.charts.stages} />
-                            <div className="w-full mt-8 space-y-3">
+                            <div className="w-full mt-6 space-y-2 divide-y divide-slate-50">
                                 {data.charts.stages.map((stage, idx) => (
                                     <div key={idx} className="flex justify-between items-center text-xs">
                                         <div className="flex items-center gap-2.5">
                                             <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: stage.color }} />
-                                            <span className="text-gray-500 font-semibold">{stage.label}</span>
+                                            <span className="text-slate-500 font-medium">{stage.label}</span>
                                         </div>
-                                        <span className="font-bold text-[#0F1626]">{stage.value}</span>
+                                        <span className="font-semibold text-slate-700">{stage.value}</span>
                                     </div>
                                 ))}
                             </div>
@@ -169,31 +169,31 @@ export const UserProfileView = ({ userId, onBack }) => {
                 </div>
 
                 {/* Activity History */}
-                <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
-                    <CardHeader className="border-b border-gray-50 py-5">
-                        <CardTitle className="text-base font-bold text-[#0F1626] flex items-center gap-3">
-                            <div className="p-2 bg-gray-50 rounded-lg">
-                                <Clock className="text-gray-400" size={18} />
+                <Card className="border border-slate-100 rounded-xl overflow-hidden bg-white">
+                    <CardHeader className="border-b border-slate-100 px-5 py-3.5">
+                        <CardTitle className="text-sm font-semibold text-slate-700 flex items-center gap-3">
+                            <div className="p-2 bg-slate-50 rounded-lg border border-slate-100">
+                                <Clock className="text-slate-400" size={16} />
                             </div>
                             Recent Action Log
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-0">
-                        <div className="divide-y divide-gray-50">
+                        <div className="divide-y divide-slate-50">
                             {data.activities.map((activity) => (
-                                <div key={activity.id} className="p-5 flex items-start gap-4 hover:bg-gray-50/50 transition-colors">
+                                <div key={activity.id} className="p-4 flex items-start gap-3 hover:bg-slate-50/50 transition-colors">
                                     <div className="p-2 bg-indigo-50 rounded-lg border border-indigo-100">
-                                        <Briefcase className="h-4 w-4 text-indigo-600" />
+                                        <Briefcase className="h-3.5 w-3.5 text-indigo-600" />
                                     </div>
                                     <div className="flex-grow">
-                                        <p className="text-sm font-semibold text-[#0F1626]">{activity.description}</p>
-                                        <div className="flex items-center gap-3 mt-1.5">
+                                        <p className="text-sm font-medium text-slate-700">{activity.description}</p>
+                                        <div className="flex items-center gap-2 mt-1.5">
                                             {activity.lead && (
-                                                <span className="text-[10px] font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded uppercase">
+                                                <span className="text-xs font-medium text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-100">
                                                     Lead: {activity.lead.name}
                                                 </span>
                                             )}
-                                            <span className="text-[10px] font-medium text-gray-400 uppercase tracking-widest">
+                                            <span className="text-xs font-medium text-slate-400">
                                                 {getRelativeTime(activity.timestamp)}
                                             </span>
                                         </div>

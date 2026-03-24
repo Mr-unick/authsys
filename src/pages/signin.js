@@ -66,12 +66,12 @@ export default function LoginPage() {
                 </div>
 
                 <div className="relative z-10 px-20 text-center">
-                    <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-[2rem] backdrop-blur-xl mb-10">
-                        <div className="bg-indigo-600 p-4 rounded-2xl shadow-2xl shadow-indigo-500/30">
+                    <div className="inline-flex items-center gap-4 bg-white/5 border border-white/10 p-4 rounded-2xl backdrop-blur-xl mb-10">
+                        <div className="bg-indigo-600 p-4 rounded-xl">
                             <Layers className="h-10 w-10 text-white" />
                         </div>
                     </div>
-                    <h2 className="text-5xl font-black text-white tracking-tighter mb-6 leading-tight">
+                    <h2 className="text-3xl font-bold text-white tracking-tight mb-6 leading-tight">
                         Precision <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-violet-400">Intelligence</span><br />
                         At Your Fingertips
                     </h2>
@@ -83,7 +83,7 @@ export default function LoginPage() {
                     <div className="mt-16 flex items-center justify-center gap-8 opacity-50">
                         <div className="flex flex-col items-center gap-2">
                             <ShieldCheck className="text-white h-6 w-6" />
-                            <span className="text-[9px] font-bold text-white uppercase tracking-widest">Enterprise Secure</span>
+                            <span className="text-xs font-medium text-white/80">Enterprise Secure</span>
                         </div>
                     </div>
                 </div>
@@ -98,28 +98,28 @@ export default function LoginPage() {
 
                     {/* Mobile Header */}
                     <div className="lg:hidden flex items-center gap-3 mb-12">
-                        <div className="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
+                        <div className="bg-indigo-600 p-2 rounded-lg">
                             <Layers className="h-5 w-5 text-white" />
                         </div>
-                        <h1 className="text-xl font-black text-[#0F1626] tracking-tight">LEAD<span className="text-indigo-600">CONVERTER</span></h1>
+                        <h1 className="text-lg font-bold text-[#0F1626] tracking-tight">LEAD<span className="text-indigo-600">CONVERTER</span></h1>
                     </div>
 
                     <div className="space-y-3">
-                        <h1 className="text-2xl font-black text-[#0F1626] tracking-tight">System Login</h1>
-                        <p className="text-slate-400 text-[10px] font-bold uppercase tracking-widest">Administrative Access Portal</p>
+                        <h1 className="text-xl font-bold text-slate-800">System Login</h1>
+                        <p className="text-xs text-slate-400 mt-0.5">Sign in to access your workspace</p>
                     </div>
 
                     <form onSubmit={handleLogin} className="space-y-6">
                         <div className="space-y-4">
                             <div className="space-y-1.5">
-                                <Label htmlFor="email" className="text-[13px] font-bold text-slate-700 ml-0.5">
+                                <Label htmlFor="email" className="text-xs font-semibold text-slate-600">
                                     Your Email
                                 </Label>
                                 <Input
                                     id="email"
                                     type="email"
                                     placeholder="Ex. james@bond.com"
-                                    className="h-11 px-4 bg-white border-slate-100 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all font-medium text-sm placeholder:text-slate-300 shadow-sm"
+                                    className="h-10 px-3.5 bg-white border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors text-sm placeholder:text-slate-400"
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
@@ -127,7 +127,7 @@ export default function LoginPage() {
                             </div>
 
                             <div className="space-y-1.5">
-                                <Label htmlFor="password" className="text-[13px] font-bold text-slate-700 ml-0.5">
+                                <Label htmlFor="password" className="text-xs font-semibold text-slate-600">
                                     Your Password
                                 </Label>
                                 <div className="relative group">
@@ -135,7 +135,7 @@ export default function LoginPage() {
                                         id="password"
                                         type={showPassword ? "text" : "password"}
                                         placeholder="••••••••••••"
-                                        className="h-11 px-4 pr-12 bg-white border-slate-100 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all font-medium text-sm placeholder:text-slate-300 shadow-sm"
+                                        className="h-10 px-3.5 pr-12 bg-white border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors text-sm placeholder:text-slate-400"
                                         required
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
@@ -155,12 +155,12 @@ export default function LoginPage() {
                             <Button
                                 type="submit"
                                 disabled={loader}
-                                className="w-full h-12 bg-[#0F1626] hover:bg-slate-800 text-white font-black uppercase tracking-[0.15em] text-[10px] rounded-lg shadow-xl shadow-indigo-100/10 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2.5"
+                                className="w-full h-10 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm rounded-lg transition-colors active:scale-[0.98] flex items-center justify-center gap-2"
                             >
                                 {loader ? (
-                                    <Loader2 className="h-5 w-5 animate-spin text-white" />
+                                    <Loader2 className="h-4 w-4 animate-spin text-white" />
                                 ) : (
-                                    <>Sign In <Plus size={14} strokeWidth={3} /></>
+                                    <>Sign In</>
                                 )}
                             </Button>
                         </div>
@@ -168,10 +168,10 @@ export default function LoginPage() {
 
                     <div className="pt-10 border-t border-slate-100">
                         <div className="flex items-center justify-between">
-                            <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest italic">LeadConverter v2.4.0</span>
-                            <div className="flex gap-4">
-                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/20" />
-                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Server Operational</span>
+                            <span className="text-xs text-slate-400">LeadConverter v2.4.0</span>
+                            <div className="flex gap-3 items-center">
+                                <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                <span className="text-xs font-medium text-slate-500">Server Operational</span>
                             </div>
                         </div>
                     </div>

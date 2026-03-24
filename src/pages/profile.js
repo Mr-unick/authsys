@@ -31,8 +31,8 @@ const ProfilePage = () => {
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center min-h-[70vh] gap-4">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-                <p className="font-bold text-xs text-gray-400 uppercase tracking-widest">Loading Profile...</p>
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                <p className="text-xs text-slate-400 font-medium">Loading Profile...</p>
             </div>
         );
     }

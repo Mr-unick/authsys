@@ -274,15 +274,15 @@ const DataTable = ({ url }) => {
     <div className="w-full font-pretty max-sm:px-2 pb-16">
 
       {
-        tableData?.rows?.length > 0 && <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div className="flex flex-wrap gap-3 w-full md:w-auto">
-            <div className="flex px-4 py-2 items-center rounded-xl border border-gray-100 gap-3 bg-white shadow-sm flex-1 md:min-w-[300px]">
-              <Search size={16} className="text-indigo-500" />
+        tableData?.rows?.length > 0 && <div className="mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+          <div className="flex flex-wrap gap-2.5 w-full md:w-auto">
+            <div className="flex px-3.5 py-2 items-center rounded-lg border border-slate-200 gap-2.5 bg-white flex-1 md:min-w-[280px]">
+              <Search size={15} className="text-slate-400" />
               <input
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="border-none outline-none text-sm w-full font-medium placeholder:text-gray-400"
+                className="border-none outline-none text-sm w-full font-normal placeholder:text-slate-400"
                 type="text"
-                placeholder="Search database..."
+                placeholder="Search..."
                 value={searchTerm}
               />
             </div>
@@ -291,12 +291,12 @@ const DataTable = ({ url }) => {
               onValueChange={(value) => handleSortChange(value)}
               value={sortConfig.key || ""}
             >
-              <SelectTrigger className="w-[180px] h-full bg-white rounded-xl border-gray-100 shadow-sm text-xs font-bold text-gray-500 uppercase tracking-widest max-md:hidden">
+              <SelectTrigger className="w-[160px] h-full bg-white rounded-lg border-slate-200 text-xs font-medium text-slate-500 max-md:hidden">
                 <SelectValue placeholder="Sort By" />
               </SelectTrigger>
-              <SelectContent className="rounded-xl border-gray-100 shadow-xl">
+              <SelectContent className="rounded-lg border-slate-200">
                 {tableData?.columns?.map((column, key) => (
-                  <SelectItem key={key} value={column} className="text-xs font-bold text-gray-500 uppercase tracking-widest cursor-pointer">
+                  <SelectItem key={key} value={column} className="text-xs font-medium text-slate-600 cursor-pointer">
                     {column.replace(/_/g, ' ')} {sortConfig.key === column && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </SelectItem>
                 ))}
@@ -309,20 +309,20 @@ const DataTable = ({ url }) => {
 
             {selectedRows?.length > 0 && tableData?.delete && (
               <div className="flex items-center gap-2">
-                <PopupModal url={url} setChange={setChange} data={selectedRows} modaltype={'confirmdelete'} classname={'bg-rose-600 text-white hover:bg-rose-700 text-sm font-medium flex items-center gap-2 h-10 px-4 rounded-lg shadow-sm transition-all'} > <p className='max-md:hidden'>Delete {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'} </p><Trash size={16} /></PopupModal>
+                <PopupModal url={url} setChange={setChange} data={selectedRows} modaltype={'confirmdelete'} classname={'bg-red-600 text-white hover:bg-red-700 text-sm font-medium flex items-center gap-2 h-9 px-3.5 rounded-lg transition-colors'} > <p className='max-md:hidden'>Delete {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'} </p><Trash size={15} /></PopupModal>
               </div>
             )}
 
             {selectedRows?.length > 0 && tableData?.assign && (
               <div className="flex items-center gap-2">
-                <PopupModal setChange={setChange} modaltype={'confirmassign'} data={selectedRows} classname={'bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-medium flex items-center gap-2 h-10 px-4 rounded-lg shadow-sm transition-all'} ><p className='max-md:hidden'>Assign </p><UserPlus size={16} /></PopupModal>
+                <PopupModal setChange={setChange} modaltype={'confirmassign'} data={selectedRows} classname={'bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-medium flex items-center gap-2 h-9 px-3.5 rounded-lg transition-colors'} ><p className='max-md:hidden'>Assign </p><UserPlus size={15} /></PopupModal>
               </div>
             )}
 
 
             <Button
               onClick={handleExport}
-              className="font-medium bg-emerald-600 hover:bg-emerald-700 text-white h-10 px-4 rounded-lg shadow-sm transition-all text-sm border-none"
+              className="font-medium bg-emerald-600 hover:bg-emerald-700 text-white h-9 px-3.5 rounded-lg transition-colors text-sm border-none"
               variant="outline"
             >
               <>
@@ -341,7 +341,7 @@ const DataTable = ({ url }) => {
                   tableData?.formtype == 'modal' ? (
                     <Modal
                       title={`Add ${tableData?.name}`}
-                      classname={'bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-4 rounded-lg shadow-sm transition-all font-medium text-sm'}
+                      classname={'bg-indigo-600 hover:bg-indigo-700 text-white h-9 px-3.5 rounded-lg transition-colors font-medium text-sm'}
                       icon='Add'
                       open={addOpen}
                       onOpenChange={setAddOpen}
@@ -355,7 +355,7 @@ const DataTable = ({ url }) => {
                       />
                     </Modal>
                   ) : (
-                    <Link className="bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-medium text-sm px-4 h-10 flex items-center shadow-sm transition-all gap-2" href={`${tableData?.createform?.formurl}`}>
+                    <Link className="bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-medium text-sm px-3.5 h-9 flex items-center transition-colors gap-2" href={`${tableData?.createform?.formurl}`}>
                       <p className="max-md:hidden">Add {tableData?.name}</p>
                       <Plus size={16} />
                     </Link>
@@ -376,12 +376,12 @@ const DataTable = ({ url }) => {
 
 
       {/* ─── TABLE (desktop md+) ─── */}
-      <div className="hidden md:block bg-white border border-gray-100 rounded-2xl shadow-sm overflow-hidden mb-8">
+      <div className="hidden md:block bg-white border border-slate-100 rounded-xl overflow-hidden mb-6">
         {
           tableData?.rows?.length > 0 && <Table className="min-w-full text-sm text-left bg-white">
-            <thead className="bg-gray-50/50 text-[11px] font-bold text-gray-400 uppercase tracking-widest border-b border-gray-100">
+            <thead className="bg-slate-50 text-xs font-semibold text-slate-500 uppercase tracking-wide border-b border-slate-100">
               <tr>
-                <TH className="px-6 py-4">
+                <TH className="px-5 py-3">
                   <input type="checkbox"
                     checked={selectAll && filteredRows.length > 0}
                     onChange={toggleSelectAll}
@@ -392,12 +392,12 @@ const DataTable = ({ url }) => {
                   <TH
                     key={key}
                     onClick={() => handleSortChange(key)}
-                    classname={`px-6 py-4 cursor-pointer hover:text-indigo-600 transition-colors ${key == 'id' ? "hidden" : ""}`}
+                    classname={`px-5 py-3 cursor-pointer hover:text-indigo-600 transition-colors ${key == 'id' ? "hidden" : ""}`}
                   >
                     {key.replace(/_/g, ' ')} {sortConfig.key === key && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </TH>
                 ))}
-                {(tableData?.update || tableData?.delete) && <TH classname="px-6 py-4">Actions</TH>}
+                {(tableData?.update || tableData?.delete) && <TH classname="px-5 py-3">Actions</TH>}
 
               </tr>
             </thead>
@@ -414,7 +414,7 @@ const DataTable = ({ url }) => {
                   return (
                     <tr
                       key={index}
-                      className={`hover:bg-gray-50/50 transition-colors border-b border-gray-50 last:border-0 ${isSelected ? 'bg-indigo-50/30' : ''}`}
+                      className={`hover:bg-slate-50/50 transition-colors border-b border-slate-50 last:border-0 ${isSelected ? 'bg-indigo-50/30' : ''}`}
                     >
                       <TD className="px-4 py-3 text-center">
                         <input type="checkbox"
@@ -469,7 +469,7 @@ const DataTable = ({ url }) => {
                                       setEditingId(row.id);
                                       setEditOpen(true);
                                     }}
-                                    className={`bg-indigo-600 text-white hover:text-white hover:bg-indigo-700 shadow-sm px-3 h-8 rounded-xl flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest transition-all`}
+                                    className={`bg-indigo-600 text-white hover:text-white hover:bg-indigo-700 px-3 h-8 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-colors`}
                                   >
                                     <FilePen size={14} />
                                     <span className="max-sm:hidden">Edit</span>
@@ -485,7 +485,7 @@ const DataTable = ({ url }) => {
                             </button>
                             {tableData?.delete && (
                               <div className="flex items-center gap-2">
-                                <PopupModal url={url} setChange={setChange} data={[row]} modaltype={'confirmdelete'} classname={'bg-rose-500 text-white px-3 py-1.5 rounded-xl hover:bg-rose-600 shadow-sm transition-all text-[10px] font-bold uppercase tracking-widest flex items-center gap-2'} > <p className='max-md:hidden'>Delete </p><Trash size={14} /></PopupModal>
+                                <PopupModal url={url} setChange={setChange} data={[row]} modaltype={'confirmdelete'} classname={'bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors text-xs font-medium flex items-center gap-1.5 border border-red-100'} > <p className='max-md:hidden'>Delete </p><Trash size={13} /></PopupModal>
                               </div>
                             )}
                           </div>
@@ -501,8 +501,8 @@ const DataTable = ({ url }) => {
         }
 
         {
-          tableData?.rows?.length == 0 && <div className="w-full h-[85vh] flex justify-center items-center flex-col gap-6">
-            <h1 className="text-2xl font-bold">No data found</h1>
+          tableData?.rows?.length == 0 && <div className="w-full h-[85vh] flex justify-center items-center flex-col gap-5">
+            <h1 className="text-lg font-bold text-slate-600">No data found</h1>
             <div className="flex gap-4">
               {tableData?.create && (
                 <div className="flex items-center">
@@ -511,7 +511,7 @@ const DataTable = ({ url }) => {
                       <Modal
                         title={`Add ${tableData?.name}`}
                         icon={'Add'}
-                        classname={'bg-[#4E49F2] text-white px-4 py-2 rounded-md'}
+                        classname={'bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm'}
                         open={addOpen}
                         onOpenChange={setAddOpen}
                       >
@@ -523,16 +523,16 @@ const DataTable = ({ url }) => {
                           }}
                         />
                       </Modal>
-                    ) : <Link className="bg-[#4E49F2] text-white p-3 rounded-md" href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
+                    ) : <Link className="bg-indigo-600 text-white p-3 rounded-lg font-medium text-sm" href={`${tableData?.createform?.formurl}`}>Add {tableData?.name}</Link>
                   }
                 </div>
               )}
               {tableData?.upload && (
                 <div className="flex items-center">
                   {
-                    tableData?.formtype == 'modal' ? <Modal title={`Upload ${tableData?.name}`} classname={'bg-[#4E49F2] text-white px-4 py-2 rounded-md'} icon='upload' open={addOpen} onOpenChange={setAddOpen}>
+                    tableData?.formtype == 'modal' ? <Modal title={`Upload ${tableData?.name}`} classname={'bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium text-sm'} icon='upload' open={addOpen} onOpenChange={setAddOpen}>
                       <FormComponent formdata={tableData?.createform} onSuccess={() => { setChange(true); setAddOpen(false); }} />
-                    </Modal> : <Link className="text-sm px-3 flex gap-2 bg-[#4E49F2] text-white p-3 rounded-md" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add {tableData?.name}</p><Plus size={18} strokeWidth={3} />
+                    </Modal> : <Link className="text-sm px-3 flex gap-2 bg-indigo-600 text-white p-3 rounded-lg font-medium" href={`${tableData?.createform?.formurl}`}><p className="max-sm:hidden">Add {tableData?.name}</p><Plus size={18} strokeWidth={3} />
                     </Link>
                   }
                 </div>
@@ -544,10 +544,10 @@ const DataTable = ({ url }) => {
         {/* Pagination */}
 
         {tableData?.pagination && (
-          <div className="w-full bg-white flex flex-col md:flex-row justify-between items-center gap-4 p-4 border-t">
+          <div className="w-full bg-white flex flex-col md:flex-row justify-between items-center gap-3 p-4 border-t border-slate-100">
 
             {/* Showing text */}
-            <div className="text-sm text-gray-600 w-full md:w-1/3 text-center md:text-left">
+            <div className="text-sm text-slate-500 w-full md:w-1/3 text-center md:text-left font-medium">
               Showing {tableData?.pagination.startIndex + 1}–{tableData?.pagination.endIndex + 1} of {tableData?.pagination.totalRows} entries
               {selectedRows.length > 0 && (
                 <span className="text-blue-500"> ({selectedRows.length} selected)</span>
@@ -603,7 +603,7 @@ const DataTable = ({ url }) => {
             </Pagination>
 
             {/* Spacer or additional actions */}
-            <div className="w-full md:w-1/3 text-center md:text-right text-sm text-gray-500">
+            <div className="w-full md:w-1/3 text-center md:text-right text-sm text-slate-400 font-medium">
               {/* You can show page info here, e.g., Page 1 of 5 */}
               Page {tableData.pagination.page} of {tableData.pagination.totalPages}
             </div>
@@ -615,9 +615,9 @@ const DataTable = ({ url }) => {
       {/* ─── MOBILE CARD LIST (hidden on md+) ─── */}
       <div className="md:hidden space-y-3 mb-8">
         {tableData?.rows?.length === 0 ? (
-          <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-10 text-center flex flex-col items-center gap-4">
+          <div className="bg-white rounded-xl border border-slate-100 p-8 text-center flex flex-col items-center gap-3">
             <div className="text-4xl">📭</div>
-            <p className="font-bold text-gray-500">No data found</p>
+            <p className="font-medium text-slate-500">No data found</p>
           </div>
         ) : (
           displayData?.map((row, index) => {
@@ -634,10 +634,10 @@ const DataTable = ({ url }) => {
             return (
               <div
                 key={index}
-                className={`bg-white rounded-2xl border shadow-sm overflow-hidden transition-all ${isSelected ? 'border-indigo-300 bg-indigo-50/20' : 'border-gray-100'}`}
+                className={`bg-white rounded-xl border overflow-hidden transition-colors ${isSelected ? 'border-indigo-200 bg-indigo-50/20' : 'border-slate-100'}`}
               >
                 {/* Card header: checkbox + primary field + actions */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-gray-50">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-50">
                   <div className="flex items-center gap-3 min-w-0">
                     <input
                       type="checkbox"
@@ -645,21 +645,21 @@ const DataTable = ({ url }) => {
                       onChange={() => toggleRowSelection(row.id)}
                       className="w-4 h-4 accent-indigo-600 shrink-0"
                     />
-                    <span className="font-bold text-[#0F1626] text-sm truncate">{firstVal ?? '—'}</span>
+                    <span className="font-semibold text-slate-700 text-sm truncate">{firstVal ?? '—'}</span>
                   </div>
                   <div className="flex gap-2 shrink-0">
                     {tableData?.update && (
                       tableData?.formtype === 'modal' ? (
                         <button
                           onClick={() => { setEditingId(row.id); setEditOpen(true); }}
-                          className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+                          className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
                         >
                           <FilePen size={13} /> Edit
                         </button>
                       ) : (
                         <Link
                           href={`${tableData?.updateform?.formurl}?id=${row.id}`}
-                          className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+                          className="bg-indigo-50 text-indigo-600 border border-indigo-100 px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
                         >
                           <FilePen size={13} /> Edit
                         </Link>
@@ -671,7 +671,7 @@ const DataTable = ({ url }) => {
                         setChange={setChange}
                         data={[row]}
                         modaltype="confirmdelete"
-                        classname="bg-rose-50 text-rose-600 border border-rose-100 px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1"
+                        classname="bg-red-50 text-red-600 border border-red-100 px-2.5 py-1.5 rounded-lg text-xs font-medium flex items-center gap-1"
                       >
                         <Trash size={13} /> Del
                       </PopupModal>
@@ -688,7 +688,7 @@ const DataTable = ({ url }) => {
                       const isBadge = isStatus || ['active', 'inactive', 'pending', 'draft'].includes(valStr);
                       return (
                         <React.Fragment key={idx}>
-                          <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest self-center truncate">
+                          <span className="text-xs font-medium text-slate-400 uppercase tracking-wide self-center truncate">
                             {key.replace(/_/g, ' ')}
                           </span>
                           {isBadge ? (
@@ -696,7 +696,7 @@ const DataTable = ({ url }) => {
                               {value}
                             </span>
                           ) : (
-                            <span className="text-sm text-gray-800 font-medium truncate">{value ?? '—'}</span>
+                            <span className="text-sm text-slate-700 font-medium truncate">{value ?? '—'}</span>
                           )}
                         </React.Fragment>
                       );
@@ -711,21 +711,21 @@ const DataTable = ({ url }) => {
         {/* Mobile pagination */}
         {tableData?.pagination && (
           <div className="flex items-center justify-between pt-1 pb-4">
-            <span className="text-xs text-gray-500 font-medium">
+            <span className="text-xs text-slate-500 font-medium">
               Page {tableData.pagination.page} / {tableData.pagination.totalPages}
             </span>
             <div className="flex gap-2">
               <button
                 onClick={() => goToPage(tableData.pagination.page - 1, tableData.pagination.perPage)}
                 disabled={!tableData.pagination.hasPrevPage}
-                className="px-4 py-2 text-xs font-bold border border-gray-100 rounded-xl bg-white disabled:opacity-40 text-gray-600 active:bg-gray-50"
+                className="px-4 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white disabled:opacity-40 text-slate-600 active:bg-slate-50"
               >
                 ← Prev
               </button>
               <button
                 onClick={() => goToPage(tableData.pagination.page + 1, tableData.pagination.perPage)}
                 disabled={!tableData.pagination.hasNextPage}
-                className="px-4 py-2 text-xs font-bold border border-gray-100 rounded-xl bg-white disabled:opacity-40 text-gray-600 active:bg-gray-50"
+                className="px-4 py-2 text-xs font-medium border border-slate-200 rounded-lg bg-white disabled:opacity-40 text-slate-600 active:bg-slate-50"
               >
                 Next →
               </button>

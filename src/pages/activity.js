@@ -72,14 +72,14 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
                 <div className="bg-orange-50 p-6 rounded-full mb-6">
                     <Zap className="h-10 w-10 text-orange-500" />
                 </div>
-                <h2 className="text-2xl font-black text-[#0F1626] mb-2">Activity Stream Restricted</h2>
-                <p className="text-gray-500 max-w-md mx-auto font-medium">
+                <h2 className="text-xl font-bold text-slate-800 mb-2">Activity Stream Restricted</h2>
+                <p className="text-slate-500 max-w-md mx-auto text-sm">
                     The real-time activity logging feature is not enabled for your subscription.
                     Please contact your administrator to upgrade your plan.
                 </p>
                 <button
                     onClick={() => window.location.href = '/'}
-                    className="mt-8 px-8 py-3 bg-[#0F1626] text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 transition-all shadow-xl shadow-gray-200"
+                    className="mt-6 px-5 py-2.5 bg-indigo-600 text-white rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
                 >
                     Return to Dashboard
                 </button>
@@ -145,21 +145,21 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
     const getActivityIcon = (type) => {
         switch (type) {
             case 'Stage Change':
-                return <div className="bg-blue-50 p-2 sm:p-2.5 rounded-xl border border-blue-100"><FileText className="h-4 w-4 sm:h-5 sm:w-5 text-blue-600" /></div>;
+                return <div className="bg-blue-50 p-2 rounded-lg border border-blue-100"><FileText className="h-4 w-4 text-blue-600" /></div>;
             case 'Comment':
-                return <div className="bg-emerald-50 p-2 sm:p-2.5 rounded-xl border border-emerald-100"><MessageSquare className="h-4 w-4 sm:h-5 sm:w-5 text-emerald-600" /></div>;
+                return <div className="bg-emerald-50 p-2 rounded-lg border border-emerald-100"><MessageSquare className="h-4 w-4 text-emerald-600" /></div>;
             case 'Assign':
-                return <div className="bg-purple-50 p-2 sm:p-2.5 rounded-xl border border-purple-100"><User className="h-4 w-4 sm:h-5 sm:w-5 text-purple-600" /></div>;
+                return <div className="bg-purple-50 p-2 rounded-lg border border-purple-100"><User className="h-4 w-4 text-purple-600" /></div>;
             default:
-                return <div className="bg-indigo-50 p-2 sm:p-2.5 rounded-xl border border-indigo-100"><Clock className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-600" /></div>;
+                return <div className="bg-indigo-50 p-2 rounded-lg border border-indigo-100"><Clock className="h-4 w-4 text-indigo-600" /></div>;
         }
     };
 
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
-                <Loader2 className="h-8 w-8 animate-spin text-indigo-600" />
-                <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Loading Feed...</p>
+                <Loader2 className="h-6 w-6 animate-spin text-indigo-600" />
+                <p className="text-xs text-slate-400 font-medium">Loading Feed...</p>
             </div>
         );
     }
@@ -167,28 +167,28 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
     return (
         <div className={`mx-auto ${showHeader ? 'max-w-[1600px] py-3 sm:py-4 px-2 sm:px-4' : 'w-full'} animate-in fade-in duration-500`}>
             {showHeader && (
-                <div className="flex items-center gap-3 mb-5 sm:mb-8">
-                    <div className="bg-[#0F1626] p-2.5 sm:p-3 rounded-xl sm:rounded-2xl shadow-lg shadow-gray-200">
-                        <Zap className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="bg-[#0F1626] dark:bg-indigo-600 p-2.5 rounded-xl">
+                        <Zap className="h-5 w-5 text-white" />
                     </div>
                     <div>
-                        <h1 className="text-xl sm:text-3xl font-extrabold text-[#0F1626] tracking-tight leading-tight">Activity</h1>
-                        <p className="text-xs sm:text-sm font-medium text-gray-400 mt-0.5 hidden sm:block">Real-time tracker for all lead interactions</p>
+                        <h1 className="text-xl font-bold text-slate-800 dark:text-white">Activity</h1>
+                        <p className="text-xs text-slate-400 mt-0.5 hidden sm:block">Real-time tracker for all lead interactions</p>
                     </div>
                 </div>
             )}
 
-            <Card className="border-none shadow-sm rounded-2xl overflow-hidden bg-white">
+            <Card className="border border-slate-100 dark:border-white/5 rounded-xl overflow-hidden bg-white dark:bg-[#1A1F2C]/50">
                 {showHeader && (
-                    <CardHeader className="bg-gray-50/30 border-b border-gray-100 py-3 px-4 sm:py-4 sm:px-6">
+                    <CardHeader className="bg-slate-50/50 dark:bg-white/5 border-b border-slate-100 dark:border-white/5 py-3 px-4 sm:px-5">
                         <div className="flex gap-2 overflow-x-auto pb-0.5 scrollbar-hide">
                             {filters.map(filter => (
                                 <button
                                     key={filter.value}
                                     onClick={() => setSelectedFilter(filter.value)}
-                                    className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-[11px] sm:text-xs font-bold transition-all duration-200 uppercase tracking-wider border whitespace-nowrap shrink-0 ${selectedFilter === filter.value
-                                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-100'
-                                        : 'bg-white text-gray-500 border-gray-100 hover:border-indigo-100 hover:text-indigo-500 hover:bg-indigo-50/30'
+                                    className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-colors duration-200 whitespace-nowrap shrink-0 ${selectedFilter === filter.value
+                                        ? 'bg-[#0F1626] dark:bg-indigo-600 text-white'
+                                        : 'bg-white dark:bg-white/5 text-slate-500 border border-slate-100 dark:border-white/5 hover:border-slate-200 hover:text-slate-700'
                                         }`}
                                 >
                                     {filter.label}
@@ -198,37 +198,37 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
                     </CardHeader>
                 )}
                 <CardContent className="p-0">
-                    <div className="divide-y divide-gray-50">
+                    <div className="divide-y divide-slate-50 dark:divide-white/5">
                         {filteredActivities.length > 0 ? (
                             filteredActivities.map((activity) => (
                                 <div
                                     key={activity.id}
-                                    className={`py-3.5 px-4 sm:py-5 sm:px-6 flex items-start gap-3 sm:gap-5 transition-all duration-300 hover:bg-gray-50/50`}
+                                    className={`py-3.5 px-4 sm:px-5 flex items-start gap-3 transition-colors hover:bg-slate-50/50 dark:hover:bg-white/5`}
                                 >
                                     <div className="shrink-0 mt-0.5">
                                         {getActivityIcon(activity.type)}
                                     </div>
                                     <div className="flex-grow min-w-0 flex flex-col gap-1.5">
                                         <div className="flex flex-wrap items-baseline gap-1.5 min-w-0">
-                                            <span className="text-sm font-bold text-[#0F1626] shrink-0">
+                                            <span className="text-sm font-semibold text-slate-700 dark:text-white shrink-0">
                                                 {activity.superAdmin?.name || activity.user?.name || 'System'}
                                             </span>
-                                            <span className="w-1 h-1 rounded-full bg-gray-300 shrink-0 self-center" />
-                                            <p className="text-sm font-medium text-gray-600 flex-1 min-w-0 break-words">
+                                            <span className="w-1 h-1 rounded-full bg-slate-300 shrink-0 self-center" />
+                                            <p className="text-sm text-slate-500 dark:text-slate-400 flex-1 min-w-0 break-words">
                                                 {activity.description}
                                             </p>
                                         </div>
                                         <div className="flex items-center gap-2 flex-wrap">
                                             {activity.lead && (
-                                                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50/50 rounded-lg border border-indigo-100/30">
-                                                    <span className="text-[10px] font-extrabold text-indigo-600 uppercase tracking-widest">Lead</span>
-                                                    <span className="font-bold text-[#0F1626] text-[11px] max-w-[100px] sm:max-w-[150px] truncate">
+                                                <div className="inline-flex items-center gap-1.5 px-2 py-0.5 bg-indigo-50 rounded-md border border-indigo-100">
+                                                    <span className="text-xs font-semibold text-indigo-600">Lead</span>
+                                                    <span className="font-medium text-slate-700 text-xs max-w-[100px] sm:max-w-[150px] truncate">
                                                         {activity.lead.name}
                                                     </span>
                                                 </div>
                                             )}
-                                            <div className="flex items-center text-[10px] font-bold text-gray-400 uppercase tracking-tighter bg-gray-50 px-2 py-0.5 rounded border border-gray-100">
-                                                <Clock className="h-3 w-3 mr-1 text-gray-300" />
+                                            <div className="flex items-center text-xs font-medium text-slate-400 bg-slate-50 dark:bg-white/5 px-2 py-0.5 rounded-md border border-slate-100 dark:border-white/5">
+                                                <Clock className="h-3 w-3 mr-1 text-slate-300" />
                                                 {getRelativeTime(activity.timestamp)}
                                             </div>
                                         </div>
@@ -236,13 +236,13 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
                                 </div>
                             ))
                         ) : (
-                            <div className="py-16 sm:py-24 text-center flex flex-col items-center justify-center text-gray-400 gap-4">
-                                <div className="bg-gray-50 p-5 rounded-3xl border-2 border-dashed border-gray-100">
-                                    <Activity className="h-10 w-10 opacity-20" />
+                            <div className="py-14 text-center flex flex-col items-center justify-center text-slate-400 gap-3">
+                                <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-dashed border-slate-200 dark:border-white/10">
+                                    <Activity className="h-8 w-8 opacity-20" />
                                 </div>
                                 <div>
-                                    <p className="text-base font-bold text-gray-400">Quiet day...</p>
-                                    <p className="text-xs font-medium uppercase tracking-widest mt-1">No activities found</p>
+                                    <p className="text-sm font-semibold text-slate-400">No activities found</p>
+                                    <p className="text-xs text-slate-300 mt-0.5">Quiet day so far</p>
                                 </div>
                             </div>
                         )}
@@ -251,9 +251,9 @@ const ActivityTab = ({ showHeader = true, restricted = false }) => {
             </Card>
 
             {showHeader && filteredActivities.length > 5 && (
-                <div className="mt-6 text-center">
-                    <button className="px-6 py-2.5 sm:px-8 sm:py-3 rounded-2xl bg-[#0F1626] text-white text-xs font-bold uppercase tracking-widest hover:bg-indigo-600 transition-all hover:shadow-xl hover:shadow-indigo-100 transform hover:-translate-y-1">
-                        Load More History
+                <div className="mt-5 text-center">
+                    <button className="px-5 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700 transition-colors">
+                        Load More
                     </button>
                 </div>
             )}
