@@ -841,6 +841,61 @@ export default function Home() {
                     </div>
                 </div>
             </footer>
+
+            {/* Pricing Modal */}
+            {isPricingModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm transition-opacity">
+                    <div className="bg-[#0D1220] border border-white/10 w-full max-w-md rounded-2xl p-6 shadow-2xl relative">
+                        <button
+                            onClick={() => setIsPricingModalOpen(false)}
+                            className="absolute top-4 right-4 text-slate-400 hover:text-white transition-colors"
+                        >
+                            <X size={20} />
+                        </button>
+                        <h3 className="text-xl font-bold text-white mb-2">Request Custom Quote</h3>
+                        <p className="text-sm text-slate-400 mb-6">Let us know exactly how to reach you so we can send your customized pricing and features plan.</p>
+                        
+                        <form onSubmit={handlePricingSubmit} className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-slate-300 mb-1.5">Full Name *</label>
+                                <input required type="text"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                                    value={pricingForm.name} onChange={e => setPricingForm({ ...pricingForm, name: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-300 mb-1.5">Work Email *</label>
+                                <input required type="email"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                                    value={pricingForm.email} onChange={e => setPricingForm({ ...pricingForm, email: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-300 mb-1.5">Mobile Number *</label>
+                                <input required type="tel"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                                    value={pricingForm.mobile} onChange={e => setPricingForm({ ...pricingForm, mobile: e.target.value })}
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-medium text-slate-300 mb-1.5">Business Name</label>
+                                <input type="text"
+                                    className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500"
+                                    value={pricingForm.business_name} onChange={e => setPricingForm({ ...pricingForm, business_name: e.target.value })}
+                                />
+                            </div>
+
+                            <button
+                                type="submit"
+                                disabled={isSubmitting}
+                                className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-500 disabled:opacity-50 text-white rounded-lg text-sm font-semibold transition-all mt-4"
+                            >
+                                {isSubmitting ? 'Submitting...' : 'Submit Request'}
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }
