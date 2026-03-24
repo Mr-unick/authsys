@@ -25,16 +25,11 @@ const getIconForRoute = (title) => {
   return iconMap[title] || <Folder size={18} />;
 };
 
-
-
-
-
 export const NavAccordion = ({ route, setOpen }) => {
   const router = useRouter();
   const { nestedRoutes, title } = route;
   const icon = getIconForRoute(title);
 
-  // Check if any nested route is active
   const isAnyChildActive = nestedRoutes.some((nestedRoute) => {
     const { url } = nestedRoute;
     return url === '/crm'
@@ -46,10 +41,10 @@ export const NavAccordion = ({ route, setOpen }) => {
     <Accordion type="multiple" collapsible className="border-none">
       <AccordionItem value={`item-${title}`} className="border-b-0">
         <AccordionTrigger
-          className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group hover:no-underline border-none my-1 ${
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg transition-colors duration-200 group hover:no-underline border-none ${
             isAnyChildActive
               ? "text-indigo-400 bg-indigo-600/5"
-              : "text-gray-400 hover:bg-gray-800/50 hover:text-white"
+              : "text-gray-400 hover:bg-white/5 hover:text-white"
           }`}
         >
           <span
@@ -59,12 +54,12 @@ export const NavAccordion = ({ route, setOpen }) => {
           >
             {icon}
           </span>
-          <span className="flex-1 text-sm tracking-wide text-left font-medium">
+          <span className="flex-1 text-sm text-left font-medium">
             {title}
           </span>
         </AccordionTrigger>
-        <AccordionContent className="pt-1 pb-2">
-          <div className="flex flex-col gap-1 pl-4">
+        <AccordionContent className="pt-0.5 pb-1.5">
+          <div className="flex flex-col gap-0.5 pl-4">
             {nestedRoutes.map((nestedRoute, index) => {
               const nestedIcon = getIconForRoute(nestedRoute.title);
               return (

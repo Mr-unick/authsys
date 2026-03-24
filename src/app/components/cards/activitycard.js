@@ -40,20 +40,20 @@ const ActivityCard = ({ type, user, timestamp, description }) => {
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-white border-b border-gray-100 last:border-0 hover:bg-gray-50">
+    <div className="flex items-center gap-3 p-3 bg-white border-b border-slate-50 last:border-0 hover:bg-slate-50/50 transition-colors">
       <div className={`flex-shrink-0 h-8 w-8 rounded-full flex items-center justify-center ${getIconAndColor().bgColor}`}>
         {getIconAndColor().icon}
       </div>
 
       <div className="flex-grow">
         <div className="text-sm">
-          <span className="font-medium text-gray-900">{user}</span>
-          <span className="text-gray-500"> · {type}</span>
+          <span className="font-semibold text-slate-700">{user}</span>
+          <span className="text-slate-400"> · {type}</span>
         </div>
-        <p className="text-sm text-gray-700 mt-1">{description}</p>
+        <p className="text-sm text-slate-500 mt-1">{description}</p>
       </div>
 
-      <div className="text-xs text-gray-400 flex-shrink-0">
+      <div className="text-xs text-slate-400 flex-shrink-0">
         {timestamp}
       </div>
     </div>

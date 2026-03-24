@@ -18,10 +18,8 @@ const SelectComponent = forwardRef(({
   name,
   ...rest
 }, ref) => {
-  // Use internal state to manage the value for controlled component behavior
   const [internalValue, setInternalValue] = useState(value?.toString() || "");
 
-  // Update internal value if the prop changes
   useEffect(() => {
     if (value !== undefined && value !== null) {
       setInternalValue(value.toString());
@@ -32,8 +30,6 @@ const SelectComponent = forwardRef(({
 
   const handleValueChange = (newValue) => {
     setInternalValue(newValue);
-
-    // Call the onChange handler from react-hook-form with a synthetic event
     if (onChange) {
       onChange({
         target: {
@@ -46,8 +42,8 @@ const SelectComponent = forwardRef(({
 
   return (
     <div className="flex flex-col gap-1.5 w-full">
-      <label className="text-[13px] font-bold text-slate-700 ml-0.5">
-        {label}{required ? <span className="text-red-500 ml-1">*</span> : <span className="text-slate-400 ml-1 text-[10px] font-medium tracking-tight">(optional)</span>}
+      <label className="text-xs font-semibold text-slate-600">
+        {label}{required ? <span className="text-red-500 ml-0.5">*</span> : <span className="text-slate-400 ml-1 text-xs font-normal">(optional)</span>}
       </label>
       <Select
         value={internalValue}
@@ -55,13 +51,13 @@ const SelectComponent = forwardRef(({
         disabled={disabled}
         {...rest}
       >
-        <SelectTrigger onBlur={onBlur} className="h-11 w-full px-4 border-slate-200 rounded-lg focus:ring-4 focus:ring-indigo-50/20 focus:border-indigo-500 transition-all bg-white text-sm shadow-sm font-medium text-slate-600">
+        <SelectTrigger onBlur={onBlur} className="h-10 w-full px-3.5 border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-colors bg-white text-sm font-normal text-slate-700">
           <SelectValue
             className="text-slate-400"
             placeholder={"Select " + label}
           />
         </SelectTrigger>
-        <SelectContent className="rounded-lg border-gray-100 shadow-xl">
+        <SelectContent className="rounded-lg border-slate-200">
           {options && options.length > 0 ? (
             options.map((option, key) => (
               <SelectItem key={key} value={option.id.toString()} >
@@ -69,16 +65,11 @@ const SelectComponent = forwardRef(({
               </SelectItem>
             ))
           ) : (
-            <div className="p-2 text-sm text-gray-500">No options available</div>
+            <div className="p-2 text-sm text-slate-500">No options available</div>
           )}
         </SelectContent>
       </Select>
 
-      {/* 
-        This hidden input is crucial for react-hook-form's register to work properly.
-        It holds the actual value and receives the ref, allowing RHF to read 
-        the value during validation and submission.
-      */}
       <input
         type="hidden"
         name={name}
