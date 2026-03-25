@@ -13,6 +13,8 @@ export default async function handler(req: any, res: any) {
         try {
             let branchData;
             if (user?.business) {
+                const count = await prisma.branch.count({ where: { business_id: user.business, deleted_at: null } });
+                console.log(`[BRANCH_API] User Role: ${user.role}, Active Branches: ${count}`);
                 branchData = await prisma.branch.findMany({
                     where: {
                         business_id: user.business,
@@ -31,6 +33,13 @@ export default async function handler(req: any, res: any) {
                 name: "Branches",
                 data: branchData,
             }).policy(user, 'branches').addform('branchform').gettable();
+
+            const logLine = `[${new Date().toISOString()}] BRANCHES_GET: User: ${user.email}, Role: ${user.role}, Create: ${tableData.create}, Update: ${tableData.update}\n`;
+            try { 
+                const fs = require('fs');
+                const path = require('path');
+                fs.appendFileSync(path.join(process.cwd(), 'api_debug.log'), logLine); 
+            } catch (e) {}
 
             return res.status(200).json({
                 status: 200,
@@ -79,11 +88,14 @@ export default async function handler(req: any, res: any) {
 
             // 2. Enforcement: Check max_branches limit
             const business = await prisma.business.findUnique({
-                where: { id: targetBusinessId },
-                include: { _count: { select: { branches: true } } }
+                where: { id: targetBusinessId }
             });
 
-            if (business && business.max_branches > 0 && (business._count?.branches || 0) >= business.max_branches) {
+            const activeBranchCount = await prisma.branch.count({
+                where: { business_id: targetBusinessId, deleted_at: null }
+            });
+
+            if (business && business.max_branches > 0 && activeBranchCount >= business.max_branches) {
                 return res.status(403).json({
                     status: 403,
                     message: `Branch limit reached. Your subscription allows up to ${business.max_branches} branches.`,
@@ -147,6 +159,67 @@ export default async function handler(req: any, res: any) {
             return res.status(500).json({
                 status: 500,
                 message: "Something went wrong during branch creation",
+                data: [error.message],
+            });
+        }
+    }
+
+    if (req.method === "PUT") {
+        try {
+            const id = Number(req.query.id);
+            if (!id || isNaN(id)) {
+                return res.status(400).json({ status: 400, message: "Branch ID is required", data: [] });
+            }
+
+            const {
+                name, email, branch_code, number, address, state, district, city, pincode, discription
+            } = req.body;
+
+            // Optional: Role checks (User MUST belong to business)
+            const targetBusinessId = Number(user.business);
+            const whereClause: any = { id };
+            
+            // Non-SuperAdmins can only mutate branches inside their own business
+            if (user.role !== 'SUPER_ADMIN') {
+                whereClause.business_id = targetBusinessId;
+            }
+
+            const branch = await prisma.branch.findFirst({
+                where: whereClause
+            });
+
+            if (!branch) {
+                return res.status(404).json({ status: 404, message: "Branch not found or unauthorized", data: [] });
+            }
+
+            const updatedBranch = await prisma.branch.update({
+                where: { id },
+                data: {
+                    name, 
+                    email, 
+                    branch_code, 
+                    number, 
+                    address, 
+                    state, 
+                    district, 
+                    city, 
+                    pincode, 
+                    discription,
+                    location: city || state || 'Main',
+                    updated_at: new Date()
+                }
+            });
+
+            return res.status(200).json({
+                status: 200,
+                message: "Branch updated successfully",
+                data: updatedBranch,
+            });
+        } catch (error: any) {
+            console.error("[getBranchProps PUT ERROR]:", error);
+            return res.status(500).json({
+                status: 500,
+                message: "Failed to update branch",
                 data: [error.message],
             });
         }

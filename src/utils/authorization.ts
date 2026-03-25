@@ -15,7 +15,17 @@ export interface UserInstance {
  * Admin users bypass all permission checks.
  */
 export const haspermission = (user: any, requiredPermission: string): boolean => {
-    const role = (user?.role || '').toString().toLowerCase().replace(/\s+/g, '_');
+    const rawRole = typeof user?.role === 'string' ? user.role : (user?.role?.name || '');
+    const role = rawRole.toString().toLowerCase().replace(/\s+/g, '_');
+
+    const authLog = `[${new Date().toISOString()}] AUTH_CHECK: Role: "${role}", Permission: "${requiredPermission}"\n`;
+    try { 
+        const fs = require('fs');
+        const path = require('path');
+        fs.appendFileSync(path.join(process.cwd(), 'api_debug.log'), authLog); 
+    } catch (e) {}
+
+    console.log(`[AUTH_CHECK] Role: "${role}", Permission: "${requiredPermission}"`);
 
     // Super Admin bypass
     if (['super_admin', 'superadmin'].includes(role)) return true;
@@ -41,7 +51,8 @@ export const haspermission = (user: any, requiredPermission: string): boolean =>
  */
 export const hasroutepermission = (user: UserInstance, route: string): boolean => {
     // Admin users have access to all routes
-    const role = (user.role || '').toString().toLowerCase().replace(/\s+/g, '_');
+    const rawRole = typeof user?.role === 'string' ? user?.role : (user?.role as any)?.name || '';
+    const role = rawRole.toString().toLowerCase().replace(/\s+/g, '_');
     if (['admin', 'tenant_admin', 'business_admin', 'buisness_admin', 'branch_admin', 'super_admin', 'superadmin'].includes(role)) {
         return true;
     }

@@ -5,7 +5,7 @@ import {
     CheckCircle2, ArrowRight, Zap, Shield, BarChart3, Users,
     Layers, Globe, Target, AlertCircle, Mail, Phone, PlayCircle,
     Activity, GitBranch, Lock, Sparkles, TrendingUp, ChevronRight,
-    Star, MessageSquare, Building2
+    Star, MessageSquare, Building2, X
 } from "lucide-react";
 import { useRouter } from 'next/router';
 import axios from 'axios';
@@ -206,6 +206,12 @@ export default function Home() {
     // toggle selections: Set of enabled feature IDs
     const [enabledToggles, setEnabledToggles] = React.useState(new Set());
 
+    const [isPricingModalOpen, setIsPricingModalOpen] = React.useState(false);
+    const [pricingForm, setPricingForm] = React.useState({
+        name: '', email: '', mobile: '', business_name: ''
+    });
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
     const setTier = (id, idx) => setTierSelections(prev => ({ ...prev, [id]: idx }));
     const toggleAddon = (id) => setEnabledToggles(prev => {
         const next = new Set(prev);
@@ -220,6 +226,29 @@ export default function Home() {
     const toggleTotal = pricing.toggleFeatures.filter(f => enabledToggles.has(f.id)).reduce((sum, f) => sum + f.price, 0);
     const totalPrice = pricing.basePrice + tierTotal + toggleTotal;
     const enabledCount = enabledToggles.size;
+
+    const handlePricingSubmit = async (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        try {
+            await axios.post('/api/pricing-requests', {
+                ...pricingForm,
+                selected_features: {
+                    tiers: tierSelections,
+                    toggles: Array.from(enabledToggles)
+                },
+                total_price: totalPrice
+            });
+            setIsPricingModalOpen(false);
+            setPricingForm({ name: '', email: '', mobile: '', business_name: '' });
+            alert("Pricing request submitted successfully!");
+        } catch (error) {
+            console.error("Pricing submission failed:", error);
+            alert("Failed to submit pricing request. Please try again.");
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     React.useEffect(() => {
         const loadPricing = async () => {
@@ -773,7 +802,7 @@ export default function Home() {
                                 <Link href="/signin" className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white px-8 py-4 rounded-xl text-base font-semibold transition-all shadow-[0_0_40px_rgba(99,102,241,0.3)]">
                                     Start for free today <ArrowRight size={16} />
                                 </Link>
-                                <button className="flex items-center gap-2 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/8 text-white px-8 py-4 rounded-xl text-base font-semibold transition-all">
+                                <button onClick={() => setIsPricingModalOpen(true)} className="flex items-center gap-2 border border-white/10 hover:border-white/20 bg-white/5 hover:bg-white/8 text-white px-8 py-4 rounded-xl text-base font-semibold transition-all">
                                     Talk to sales
                                 </button>
                             </div>

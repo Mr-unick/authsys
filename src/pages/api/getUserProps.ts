@@ -91,12 +91,23 @@ export default async function handler(req: any, res: any) {
       if (targetBranchId !== null && targetBranchId <= 0) targetBranchId = null;
       const isBranchManager = user.is_branch_admin ? false : (is_branch_admin === true || is_branch_admin === "true");
 
-      // 1. Enforcement: Check max_users_per_branch limit
-      if (targetBranchId) {
-        const business = await prisma.business.findUnique({
-          where: { id: targetBusinessId }
-        });
+      // 1. Enforcement: Check user limits
+      const business = await prisma.business.findUnique({
+        where: { id: targetBusinessId }
+      });
 
+      const activeBusinessUserCount = await prisma.user.count({
+        where: { business_id: targetBusinessId, deleted_at: null }
+      });
+
+      if (business && business.total_user_limit > 0 && activeBusinessUserCount >= business.total_user_limit) {
+        return res.status(403).json({
+          message: `Business user limit reached. Max allowed: ${business.total_user_limit}`,
+          status: 403
+        });
+      }
+
+      if (targetBranchId) {
         const currentBranchUserCount = await prisma.user.count({
           where: { branch_id: targetBranchId, deleted_at: null }
         });

@@ -71,6 +71,22 @@ export default async function handler(req: any, res: any) {
         return res.status(400).json({ message: "Business ID is required to create a stage", status: 400 });
       }
 
+      const business = await (prisma as any).business.findUnique({
+        where: { id: businessId }
+      });
+
+      const stageCount = await (prisma as any).leadStage.count({
+        where: { business_id: businessId, deleted_at: null }
+      });
+
+      if (business && business.max_lead_stages > 0 && stageCount >= business.max_lead_stages) {
+        return res.status(403).json({
+          message: `Lead stage limit reached. Your subscription allows up to ${business.max_lead_stages} stages.`,
+          data: [],
+          status: 403,
+        });
+      }
+
       if (!stage_name) {
         return res.status(400).json({
           message: "Stage name is required",

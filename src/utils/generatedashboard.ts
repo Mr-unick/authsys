@@ -298,41 +298,81 @@ async function getTenantAdminData(businessId: number, branchId: number | null) {
         const featureKeys = enabledFeatures.map(f => f.feature_key);
 
         if (!branchId) {
-            // Business Admin (Super-Admin style dashboard)
-            return {
-                role: 'BUSINESS_ADMIN',
-                featureKeys,
-                onboardingStats,
-                summary: [
-                    { label: 'Total Business Leads', value: leads.length, icon: 'activity' },
-                    { label: 'Total Team Members', value: users.length, icon: 'users' },
-                    { label: 'Total Active Branches', value: await prisma.branch.count({ where: { business_id: businessId, deleted_at: null } }), icon: 'business' },
-                    { label: 'Total Conversions', value: teamPerformance.reduce((acc: any, curr: any) => acc + curr.conversions, 0), icon: 'zap' }
-                ],
-                charts: {
-                    leadGrowth: {
-                        title: 'Enterprise Lead Growth',
-                        data: leadTrend
+            if (branchCount > 0) {
+                // Business Admin (Super-Admin style dashboard)
+                return {
+                    role: 'BUSINESS_ADMIN',
+                    featureKeys,
+                    onboardingStats,
+                    summary: [
+                        { label: 'Total Business Leads', value: leads.length, icon: 'activity' },
+                        { label: 'Total Team Members', value: users.length, icon: 'users' },
+                        { label: 'Total Active Branches', value: branchCount, icon: 'business' },
+                        { label: 'Total Conversions', value: teamPerformance.reduce((acc: any, curr: any) => acc + curr.conversions, 0), icon: 'zap' }
+                    ],
+                    charts: {
+                        leadGrowth: {
+                            title: 'Enterprise Lead Growth',
+                            data: leadTrend
+                        },
+                        userDistribution: {
+                            title: 'Team Composition',
+                            data: userDistribution.filter(d => d.value > 0)
+                        },
+                        leadSources: {
+                            title: 'Enterprise Lead Sources',
+                            data: mapLeadSourcesToChartData(sources.map((s: any) => ({ source: s.lead_source || 'Unknown', count: s._count?._all || 0 })))
+                        },
+                        pipeline: {
+                            title: 'Enterprise Pipeline',
+                            data: stageDistribution
+                        }
                     },
-                    userDistribution: {
-                        title: 'Team Composition',
-                        data: userDistribution.filter(d => d.value > 0)
+                    branches: {
+                        title: 'Recently Added Branches',
+                        recent: recentBranches
                     },
-                    leadSources: {
-                        title: 'Enterprise Lead Sources',
-                        data: mapLeadSourcesToChartData(sources.map((s: any) => ({ source: s.lead_source || 'Unknown', count: s._count?._all || 0 })))
+                    leaderboard: teamPerformance.slice(0, 5)
+                };
+            } else {
+                // Business Admin WITHOUT branches (Tenant Admin Dashboard)
+                return {
+                    role: 'TENANT_ADMIN',
+                    featureKeys,
+                    onboardingStats,
+                    summary: [
+                        { label: 'Business Leads', value: leads.length, icon: 'activity' },
+                        { label: 'Business Team', value: users.length, icon: 'users' },
+                        { label: 'Total Conversions', value: teamPerformance.reduce((acc: any, curr: any) => acc + curr.conversions, 0), icon: 'zap' },
+                        { label: 'Avg Conversion', value: `${teamPerformance.length > 0 ? Math.round(teamPerformance.reduce((acc: any, curr: any) => acc + curr.rate, 0) / teamPerformance.length) : 0}%`, icon: 'trending-up' }
+                    ],
+                    remindersToday: remindersToday.map((r: any) => ({
+                        id: r.id,
+                        name: r.name,
+                        time: r.nextFollowUp,
+                        stage: r.stage?.stage_name
+                    })),
+                    charts: {
+                        leadsByMonth: {
+                            title: 'Monthly Lead Trend',
+                            data: leadTrend
+                        },
+                        stageDistribution: {
+                            title: 'Lead Pipeline',
+                            data: stageDistribution
+                        },
+                        leadSources: {
+                            title: 'Lead Sources',
+                            data: mapLeadSourcesToChartData(sources.map((s: any) => ({ source: s.lead_source || 'Unknown', count: s._count?._all || 0 })))
+                        },
+                        teamActivity: {
+                            title: 'Leads Assigned Per User',
+                            data: teamPerformance.map((u: any) => ({ name: u.name, count: u.assigned }))
+                        }
                     },
-                    pipeline: {
-                        title: 'Enterprise Pipeline',
-                        data: stageDistribution
-                    }
-                },
-                branches: {
-                    title: 'Recently Added Branches',
-                    recent: recentBranches
-                },
-                leaderboard: teamPerformance.slice(0, 5)
-            };
+                    leaderboard: teamPerformance
+                };
+            }
         }
 
         // Branch Admin (Standard Team Dashboard)

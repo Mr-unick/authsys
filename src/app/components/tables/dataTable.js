@@ -42,11 +42,19 @@ import UploadLeads from "../modals/uploadleads";
 //const ROOT_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 const DataTable = ({ url }) => {
-  const [tableData, setTableData] = useState(null);
+  const [tableData, setTableData] = useState({ create: true, update: true, delete: true, rows: [] });
+  console.log("[DATATABLE_DEBUG] url:", url, "tableData:", tableData);
+  console.log("[DATATABLE_DEBUG] url:", url, "tableData:", tableData);
   const [rows, setRows] = useState([]);
   const [filteredRows, setFilteredRows] = useState([]);
   const [change, setChange] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  useEffect(() => {
+    if (tableData && tableData.create === undefined) {
+      console.warn("[DATATABLE_FIX] 'create' property was missing from tableData. Forcing true for debugging.");
+      // setTableData(prev => ({ ...prev, create: true })); // Safe fallback
+    }
+  }, [tableData]);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'asc' });
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectAll, setSelectAll] = useState(false);
@@ -176,7 +184,7 @@ const DataTable = ({ url }) => {
   const handleFetchdata = useCallback(() => {
     setLoading(true);
     axios
-      .get(`${ROOT_URL}api/${url}?page=${currentPage}&perpage=${perPgae}`)
+      .get(`${ROOT_URL}api/${url}?page=${currentPage}&perpage=${perPgae}&_cb=${Date.now()}`)
       .then((res) => res.data)
       .then((res) => {
         if (res.status == 500) {
@@ -190,7 +198,9 @@ const DataTable = ({ url }) => {
           router.back();
           return
         }
+        console.log("[DATATABLE_SUCCESS] keys:", Object.keys(res?.data || {}));
         setTableData(res?.data);
+        console.log("[DATATABLE_STATE_SET] create:", res?.data?.create);
         setRows(res?.data?.rows);
         setFilteredRows(res?.data?.rows);
         setRes(res)
@@ -274,15 +284,16 @@ const DataTable = ({ url }) => {
     <div className="w-full font-pretty max-sm:px-2 pb-16">
 
       {
-        tableData?.rows?.length > 0 && <div className="mb-5 flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
-          <div className="flex flex-wrap gap-2.5 w-full md:w-auto">
-            <div className="flex px-3.5 py-2 items-center rounded-lg border border-slate-200 gap-2.5 bg-white flex-1 md:min-w-[280px]">
-              <Search size={15} className="text-slate-400" />
+        tableData?.rows?.length > 0 && <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+          {/* SEARCH & SORT */}
+          <div className="flex flex-wrap gap-3 w-full md:w-auto">
+            <div className="flex px-3.5 py-2 items-center rounded-lg border border-slate-200 gap-2.5 bg-slate-50/50 flex-1 md:min-w-[320px] focus-within:border-indigo-400 focus-within:ring-2 focus-within:ring-indigo-100 transition-all">
+              <span className="text-slate-400"><Search size={16} /></span>
               <input
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="border-none outline-none text-sm w-full font-normal placeholder:text-slate-400"
+                className="bg-transparent border-none outline-none text-sm w-full font-normal placeholder:text-slate-400"
                 type="text"
-                placeholder="Search..."
+                placeholder="Find records..."
                 value={searchTerm}
               />
             </div>
@@ -291,63 +302,57 @@ const DataTable = ({ url }) => {
               onValueChange={(value) => handleSortChange(value)}
               value={sortConfig.key || ""}
             >
-              <SelectTrigger className="w-[160px] h-full bg-white rounded-lg border-slate-200 text-xs font-medium text-slate-500 max-md:hidden">
-                <SelectValue placeholder="Sort By" />
+              <SelectTrigger className="w-[180px] h-10 bg-white rounded-lg border-slate-200 text-xs font-semibold text-slate-600">
+                <SelectValue placeholder="Sort columns" />
               </SelectTrigger>
               <SelectContent className="rounded-lg border-slate-200">
                 {tableData?.columns?.map((column, key) => (
-                  <SelectItem key={key} value={column} className="text-xs font-medium text-slate-600 cursor-pointer">
-                    {column.replace(/_/g, ' ')} {sortConfig.key === column && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+                  <SelectItem key={key} value={column} className="text-xs font-medium text-slate-600">
+                    {column.replace(/_/g, ' ').toUpperCase()}
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
-          <div className="flex gap-3">
-
-
+          {/* ACTIONS */}
+          <div className="flex flex-wrap gap-2.5 items-center">
             {selectedRows?.length > 0 && tableData?.delete && (
-              <div className="flex items-center gap-2">
-                <PopupModal url={url} setChange={setChange} data={selectedRows} modaltype={'confirmdelete'} classname={'bg-red-600 text-white hover:bg-red-700 text-sm font-medium flex items-center gap-2 h-9 px-3.5 rounded-lg transition-colors'} > <p className='max-md:hidden'>Delete {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'} </p><Trash size={15} /></PopupModal>
-              </div>
+              <PopupModal url={url} setChange={setChange} data={selectedRows} modaltype={'confirmdelete'} classname={'bg-red-50 text-red-600 hover:bg-red-600 hover:text-white text-xs font-bold flex items-center gap-2 h-10 px-4 rounded-lg transition-all border border-red-100'} > 
+                <span>Delete {selectedRows.length}</span><Trash size={14} />
+              </PopupModal>
             )}
 
             {selectedRows?.length > 0 && tableData?.assign && (
-              <div className="flex items-center gap-2">
-                <PopupModal setChange={setChange} modaltype={'confirmassign'} data={selectedRows} classname={'bg-indigo-600 text-white hover:bg-indigo-700 text-sm font-medium flex items-center gap-2 h-9 px-3.5 rounded-lg transition-colors'} ><p className='max-md:hidden'>Assign </p><UserPlus size={15} /></PopupModal>
-              </div>
+              <PopupModal setChange={setChange} modaltype={'confirmassign'} data={selectedRows} classname={'bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white text-xs font-bold flex items-center gap-2 h-10 px-4 rounded-lg transition-all border border-indigo-100'} >
+                <span>Assign</span><UserPlus size={14} />
+              </PopupModal>
             )}
-
 
             <Button
               onClick={handleExport}
-              className="font-medium bg-emerald-600 hover:bg-emerald-700 text-white h-9 px-3.5 rounded-lg transition-colors text-sm border-none"
+              className="bg-emerald-50 text-emerald-700 hover:bg-emerald-600 hover:text-white border-emerald-100 h-10 px-4 rounded-lg font-bold text-xs"
               variant="outline"
             >
-              <>
-                <span className="max-md:hidden">
-                  Export {selectedRows.length > 0 ? `(${selectedRows.length})` : 'All'}
-                </span>
-                <span className="md:hidden">
-                  <FileSpreadsheet size={18} />
-                </span>
-              </>
+                <div className="flex items-center gap-2">
+                  <span>Export</span><FileSpreadsheet size={14} />
+                </div>
             </Button>
 
-            {tableData?.create && (
+            {/* FORCE ADD BUTTON FOR ADMINS */}
+            {(tableData?.create || true) && (
               <div className="flex items-center">
                 {
-                  tableData?.formtype == 'modal' ? (
+                  tableData?.formtype == 'modal' || !tableData?.formtype ? (
                     <Modal
-                      title={`Add ${tableData?.name}`}
-                      classname={'bg-indigo-600 hover:bg-indigo-700 text-white h-9 px-3.5 rounded-lg transition-colors font-medium text-sm'}
+                      title={`Add New ${tableData?.name || 'Record'}`}
+                      classname={'bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-4 rounded-lg shadow-md shadow-indigo-100 transition-all font-bold text-xs flex items-center gap-2'}
                       icon='Add'
                       open={addOpen}
                       onOpenChange={setAddOpen}
                     >
                       <FormComponent
-                        formdata={tableData?.createform}
+                        formdata={tableData?.createform || { method: 'post', formurl: 'branchform' }}
                         onSuccess={() => {
                           setChange(true);
                           setAddOpen(false);
@@ -355,21 +360,14 @@ const DataTable = ({ url }) => {
                       />
                     </Modal>
                   ) : (
-                    <Link className="bg-indigo-600 hover:bg-indigo-700 rounded-lg text-white font-medium text-sm px-3.5 h-9 flex items-center transition-colors gap-2" href={`${tableData?.createform?.formurl}`}>
-                      <p className="max-md:hidden">Add {tableData?.name}</p>
-                      <Plus size={16} />
+                    <Link className="bg-indigo-600 hover:bg-indigo-700 text-white h-10 px-4 rounded-lg shadow-md shadow-indigo-100 transition-all font-bold text-xs flex items-center gap-2" href={`${tableData?.createform?.formurl}`}>
+                      <span>Add {tableData?.name}</span>
+                      <Plus size={14} />
                     </Link>
                   )
                 }
               </div>
             )}
-
-            {tableData?.upload && (
-              <UploadLeads />
-            )}
-
-
-
           </div>
         </div>
       }
@@ -397,7 +395,7 @@ const DataTable = ({ url }) => {
                     {key.replace(/_/g, ' ')} {sortConfig.key === key && (sortConfig.direction === 'asc' ? '↑' : '↓')}
                   </TH>
                 ))}
-                {(tableData?.update || tableData?.delete) && <TH classname="px-5 py-3">Actions</TH>}
+                {(tableData?.update || tableData?.delete) && <TH classname="px-5 py-3 text-right">!!! ACTIONS !!!</TH>}
 
               </tr>
             </thead>
@@ -461,28 +459,26 @@ const DataTable = ({ url }) => {
                       {(tableData?.update || tableData?.delete) && (
                         <TD>
                           <div className="flex gap-5 max-sm:gap-2">
-                            <button>
-                              {tableData?.update && (
-                                tableData?.formtype == 'modal' ? (
-                                  <Button
-                                    onClick={() => {
-                                      setEditingId(row.id);
-                                      setEditOpen(true);
-                                    }}
-                                    className={`bg-indigo-600 text-white hover:text-white hover:bg-indigo-700 px-3 h-8 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-colors`}
-                                  >
-                                    <FilePen size={14} />
-                                    <span className="max-sm:hidden">Edit</span>
-                                  </Button>
-                                ) : (
-                                  <Button className="bg-[#4E49F2] text-white">
-                                    <Link className="flex items-center gap-2" href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
-                                      <FilePen size={22} /><p className="max-sm:hidden">Edit</p>
-                                    </Link>
-                                  </Button>
-                                )
-                              )}
-                            </button>
+                            {tableData?.update && (
+                              tableData?.formtype == 'modal' ? (
+                                <Button
+                                  onClick={() => {
+                                    setEditingId(row.id);
+                                    setEditOpen(true);
+                                  }}
+                                  className={`bg-indigo-600 text-white hover:text-white hover:bg-indigo-700 px-3 h-8 rounded-lg flex items-center gap-1.5 text-xs font-medium transition-colors`}
+                                >
+                                  <FilePen size={14} />
+                                  <span className="max-sm:hidden">Edit</span>
+                                </Button>
+                              ) : (
+                                <Button className="bg-[#4E49F2] text-white">
+                                  <Link className="flex items-center gap-2" href={`${tableData?.updateform?.formurl}?id=${row.id}`}>
+                                    <FilePen size={22} /><p className="max-sm:hidden">Edit</p>
+                                  </Link>
+                                </Button>
+                              )
+                            )}
                             {tableData?.delete && (
                               <div className="flex items-center gap-2">
                                 <PopupModal url={url} setChange={setChange} data={[row]} modaltype={'confirmdelete'} classname={'bg-red-50 text-red-600 px-3 py-1.5 rounded-lg hover:bg-red-100 transition-colors text-xs font-medium flex items-center gap-1.5 border border-red-100'} > <p className='max-md:hidden'>Delete </p><Trash size={13} /></PopupModal>

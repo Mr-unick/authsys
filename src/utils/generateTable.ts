@@ -54,6 +54,14 @@ export class GenerateTable {
     this.newtable.delete = haspermission(user, `delete_${policy}`);
     this.newtable.view = haspermission(user, `view_${policy}`);
     this.newtable.assign = haspermission(user, `assign_${policy}`);
+
+    const policyLog = `[${new Date().toISOString()}] POLICY_CHECK: ${policy}, Create: ${this.newtable.create}, Assign: ${this.newtable.assign}\n`;
+    try {
+        const fs = require('fs');
+        const path = require('path');
+        fs.appendFileSync(path.join(process.cwd(), 'api_debug.log'), policyLog);
+    } catch (e) {}
+
     return this;
   }
 

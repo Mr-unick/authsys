@@ -22,6 +22,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             where: { business_id: businessId, provider: 'custom' },
         });
 
+        const business = await prisma.business.findUnique({
+            where: { id: businessId }
+        });
+
+        if (business && business.max_webhooks > 0 && count >= business.max_webhooks) {
+            return res.status(403).json({ message: `Webhook limit reached. Your subscription allows up to ${business.max_webhooks} custom hooks.`, status: 403 });
+        }
+
         // Generate a secure API key
         const apiKey = `crm_${randomBytes(24).toString('hex')}`;
 

@@ -16,7 +16,11 @@ export function LeadSourceAnalytics() {
                 const res = await axios.get('/api/integrations/analytics');
                 setData(res.data);
             } catch (err) {
-                console.error('Failed to fetch lead source analytics:', err);
+                if (err.response?.status === 401) {
+                    // Let the global dashboard or auth check handle the redirect
+                    return;
+                }
+                console.error('Failed to fetch lead source analytics:', err?.message || err);
             } finally {
                 setLoading(false);
             }
@@ -32,7 +36,7 @@ export function LeadSourceAnalytics() {
         );
     }
 
-    const pieData = data?.byProvider?.filter(p => p.status === 'imported').map(p => ({
+    const pieData = data?.byProvider?.filter(p => p.status === 'imported')?.map(p => ({
         name: p.provider === 'meta' ? 'Meta' : p.provider === 'linkedin' ? 'LinkedIn' : 'Custom',
         value: p._count.id
     })) || [];
